@@ -63,7 +63,14 @@
                             class="w-full bg-gray-50 border border-gray-100 focus:border-violet-400 focus:bg-white rounded-2xl py-4 pl-11 pr-4 transition-all outline-none text-sm shadow-sm">
                     </div>
                 </div>
-
+                {% if messages %}
+                {% for message in messages %}
+                <div class="toast-message {% if message.tags == 'error' %}bg-red-500{% else %}bg-green-500{% endif %} text-white px-6 py-4 rounded-xl shadow-xl flex items-center gap-3">
+                    <i class="fa-solid {% if message.tags == 'error' %}fa-circle-xmark{% else %}fa-check-circle{% endif %}"></i>
+                    <span class="font-bold">{{ message }}</span>
+                </div>
+                {% endfor %}
+                {% endif %}
                 <div class="space-y-1">
                     <div class="flex justify-between items-center px-1">
                         <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Password</label>

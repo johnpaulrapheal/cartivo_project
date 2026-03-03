@@ -50,7 +50,7 @@
     <nav class="glass sticky top-0 z-50 border-b border-violet-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <a href="index.html" class="flex items-center gap-2 group">
+                <a href="{% url 'home' %}" class="flex items-center gap-2 group">
                     <div class="w-10 h-10 violet-gradient rounded-xl flex items-center justify-center shadow-lg shadow-violet-200 transition-transform group-hover:rotate-12">
                         <i class="fa-solid fa-bag-shopping text-white"></i>
                     </div>
@@ -68,9 +68,9 @@
                         </button>
                         <div class="dropdown-menu hidden absolute right-0 mt-3 w-60 bg-white rounded-[2rem] shadow-2xl border border-violet-50 overflow-hidden z-[60]">
                             <div class="p-2">
-                                <a href="#" class="flex items-center gap-3 px-5 py-3 text-sm text-slate-700 hover:bg-violet-50 transition font-semibold rounded-xl"><i class="fa-regular fa-user-circle w-5 text-violet-500"></i> My Profile</a>
-                                <a href="orders.html" class="flex items-center gap-3 px-5 py-3 text-sm text-slate-700 hover:bg-violet-50 transition font-semibold rounded-xl"><i class="fa-solid fa-box w-5 text-violet-500"></i> My Orders</a>
-                                <a href="addresses.html" class="flex items-center gap-3 px-5 py-3 text-sm text-slate-700 hover:bg-violet-50 transition font-semibold rounded-xl"><i class="fa-solid fa-location-dot w-5 text-violet-500"></i> Saved Addresses</a>
+                                <a href="{% url 'profile' %}" class="flex items-center gap-3 px-5 py-3 text-sm text-slate-700 hover:bg-violet-50 transition font-semibold rounded-xl"><i class="fa-regular fa-user-circle w-5 text-violet-500"></i> My Profile</a>
+                                <a href="{% url 'myorders' %}" class="flex items-center gap-3 px-5 py-3 text-sm text-slate-700 hover:bg-violet-50 transition font-semibold rounded-xl"><i class="fa-solid fa-box w-5 text-violet-500"></i> My Orders</a>
+                                <a href="{% url 'address' %}" class="flex items-center gap-3 px-5 py-3 text-sm text-slate-700 hover:bg-violet-50 transition font-semibold rounded-xl"><i class="fa-solid fa-location-dot w-5 text-violet-500"></i> Saved Addresses</a>
                                 <a href="#" class="flex items-center gap-3 px-5 py-3 text-sm text-violet-700 bg-violet-50 font-bold rounded-xl"><i class="fa-solid fa-credit-card w-5"></i> Payment Methods</a>
                                 <div class="border-t border-gray-50 my-2"></div>
                                 <a href="#" class="flex items-center gap-3 px-5 py-3 text-sm text-rose-600 hover:bg-rose-50 transition font-bold rounded-xl"><i class="fa-solid fa-arrow-right-from-bracket w-5"></i> Sign Out</a>

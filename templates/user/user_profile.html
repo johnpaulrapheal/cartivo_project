@@ -106,25 +106,52 @@
                         </div>
                     </div>
                 </div>
-
+                
+                <form method="POST" action="{% url 'profile' %}">
+                {% csrf_token %}
                 <div class="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-violet-100/50 border border-violet-50">
                     <div class="flex justify-between items-center mb-10">
                         <h3 class="text-2xl font-extrabold text-slate-900">Personal Information</h3>
                         <button class="text-sm font-bold text-violet-600 hover:underline">Edit Details</button>
                     </div>
-
+                    <!-- {% if messages %}
+                    {% for message in messages %}
+                    <div class="toast-message {% if message.tags == 'error' %}bg-red-500{% else %}bg-green-500{% endif %} text-white px-6 py-4 rounded-xl shadow-xl flex items-center gap-3">
+                        <i class="fa-solid {% if message.tags == 'error' %}fa-circle-xmark{% else %}fa-check-circle{% endif %}"></i>
+                        <span class="font-bold">{{ message }}</span>
+                    </div>
+                    {% endfor %}
+                    {% endif %} -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="space-y-2">
-                            <label class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Full Name</label>
-                            <div class="p-4 bg-violet-50/50 rounded-2xl font-bold text-slate-700 border border-transparent">{{ user.username }}</div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Username</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
+                                    <i class="fa-regular fa-envelope"></i>
+                                </span>
+                                <input type="text" value="{{user.username}}" name="username"
+                                    class="w-full bg-gray-50 border border-gray-100 focus:border-violet-400 focus:bg-white rounded-2xl py-4 pl-11 pr-4 transition-all outline-none text-sm shadow-sm">
+                            </div>
                         </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Email Address</label>
-                            <div class="p-4 bg-violet-50/50 rounded-2xl font-bold text-slate-700 border border-transparent">{{ user.email }}</div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Email</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
+                                    <i class="fa-regular fa-envelope"></i>
+                                </span>
+                                <input type="text" value="{{user.email}}" name="email"
+                                    class="w-full bg-gray-50 border border-gray-100 focus:border-violet-400 focus:bg-white rounded-2xl py-4 pl-11 pr-4 transition-all outline-none text-sm shadow-sm">
+                            </div>
                         </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Phone Number</label>
-                            <div class="p-4 bg-violet-50/50 rounded-2xl font-bold text-slate-700 border border-transparent">{{ user.phone_number }}</div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Phone number</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
+                                    <i class="fa-regular fa-envelope"></i>
+                                </span>
+                                <input type="text" value="{{user.phone_number}}" name="phone_number"
+                                    class="w-full bg-gray-50 border border-gray-100 focus:border-violet-400 focus:bg-white rounded-2xl py-4 pl-11 pr-4 transition-all outline-none text-sm shadow-sm">
+                            </div>
                         </div>
                         <div class="space-y-2">
                             <label class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Gender</label>
@@ -132,6 +159,7 @@
                         </div>
                     </div>
                 </div>
+                </form>
 
                 <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl shadow-slate-300">
                     <div class="flex items-center gap-6">
@@ -155,6 +183,18 @@
     <footer class="py-12 text-center text-gray-400 text-xs">
         &copy; 2026 Cartivo User Dashboard | Security Certified
     </footer>
-
+<!-- <script>
+    setTimeout(function () {
+        const messages = document.querySelectorAll('.toast-message');
+        messages.forEach(function (message) {
+            message.style.transition = "opacity 0.5s ease";
+            message.style.opacity = "0";
+            
+            setTimeout(() => {
+                message.remove();
+            }, 500); // remove after fade out
+        });
+    }, 2000); // 5 seconds
+</script> -->
 </body>
 </html>

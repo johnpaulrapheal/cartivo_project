@@ -206,49 +206,57 @@
         <h2 class="text-3xl font-extrabold text-slate-900 mb-10 text-center">Featured Essentials</h2>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-10">
             
-            {% for product in products %}
+        {% for product in products %}
             {% with variant=product.variants.first %}
-            {% if variant %}
-            
-            <a href="{% url 'product_view' product.id %}">
-                <div class="group cursor-pointer">
-                    
-                    <div class="relative bg-violet-50 rounded-[2rem] aspect-[4/5] mb-6 overflow-hidden shadow-inner">
-                        
-                        {% if variant.images.first %}
-                            <img src="{{ variant.images.first.product_images.url }}" 
-                                class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                        {% else %}
-                            <img src="/media/default.jpg"
-                                class="w-full h-full object-cover">
-                        {% endif %}
-                        
-                        <button class="absolute bottom-6 right-6 bg-white w-12 h-12 rounded-2xl flex items-center justify-center text-violet-600 shadow-xl opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                            <i class="fa-solid fa-cart-plus font-bold"></i>
-                        </button>
-                    </div>
+                {% if variant %}
+                    <a href="{% url 'product_view' product.id %}">
+                        <div class="group cursor-pointer">
 
-                    <h3 class="font-bold text-lg text-slate-800 group-hover:text-violet-700 transition">
-                        {{ product.name }}
-                    </h3>
+                            <!-- Product Image -->
+                            <div class="relative bg-violet-50 rounded-[2rem] aspect-[4/5] mb-6 overflow-hidden shadow-inner">
+                                
+                                {% if variant.images.first %}
+                                    <img src="{{ variant.images.first.product_images.url }}"
+                                        class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                                {% else %}
+                                    <img src="/media/default.jpg"
+                                        class="w-full h-full object-cover">
+                                {% endif %}
 
-                    <p class="text-gray-500 text-sm mb-2">
-                        {{ product.description|truncatechars:60 }}
-                    </p>
+                                <!-- Add to Cart Button -->
+                                <button type="button"
+                                        class="absolute bottom-6 right-6 bg-white w-12 h-12 rounded-2xl 
+                                            flex items-center justify-center text-violet-600 shadow-xl 
+                                            opacity-0 group-hover:opacity-100 translate-y-4 
+                                            group-hover:translate-y-0 transition-all duration-300">
+                                    <i class="fa-solid fa-cart-plus font-bold"></i>
+                                </button>
+                            </div>
 
-                    <div class="text-xl font-extrabold text-violet-900">
-                        ₹{{ variant.selling_price }}
-                        <span class="text-sm font-normal text-gray-400 line-through ml-2">
-                            ₹{{ variant.mrp }}
-                        </span>
-                    </div>
+                            <!-- Product Info -->
+                            <h3 class="font-bold text-lg text-slate-800 group-hover:text-violet-700 transition">
+                                {{ product.name }}
+                            </h3>
 
-                </div>
-            </a>
+                            <p class="text-gray-500 text-sm mb-2">
+                                {{ product.description|truncatechars:60 }}
+                            </p>
 
-            {% endif %}
+                            <!-- Pricing -->
+                            <div class="text-xl font-extrabold text-violet-900">
+                                ₹{{ variant.cost_price }}
+                                {% if variant.mrp %}
+                                    <span class="text-sm font-normal text-gray-400 line-through ml-2">
+                                        ₹{{ variant.mrp }}
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </a>
+                {% endif %}
             {% endwith %}
-            {% endfor %}
+        {% endfor %}
         </div>
     </section>
 

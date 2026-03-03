@@ -38,7 +38,7 @@
     <nav class="glass sticky top-0 z-50 border-b border-violet-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <a href="index.html" class="flex items-center gap-2 cursor-pointer">
+                <a href="{% url 'home' %}" class="flex items-center gap-2 cursor-pointer">
                     <div class="w-10 h-10 violet-gradient rounded-xl flex items-center justify-center shadow-lg shadow-violet-200">
                         <i class="fa-solid fa-bag-shopping text-white"></i>
                     </div>
@@ -94,7 +94,7 @@
     <main class="max-w-7xl mx-auto px-4 py-12">
         <div class="mb-10">
             <nav class="flex text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 gap-2">
-                <a href="index.html" class="hover:text-violet-600">Home</a>
+                <a href="{% url 'home' %}" class="hover:text-violet-600">Home</a>
                 <span>/</span>
                 <span class="text-violet-600">Shopping Cart</span>
             </nav>
@@ -105,57 +105,76 @@
         <div class="flex flex-col lg:gap-12 lg:flex-row">
             <div id="cart-items" class="lg:w-2/3 space-y-6">
                 
-                <div class="product-card bg-white p-6 rounded-[2.5rem] shadow-xl shadow-violet-100/50 border border-violet-50 flex flex-col md:flex-row items-center gap-6 group" data-price="3499">
+                {% for item in cart_item %}
+                <div class="product-card bg-white p-6 rounded-[2.5rem] shadow-xl shadow-violet-100/50 border border-violet-50 flex flex-col md:flex-row items-center gap-6 group">
+
+                    <!-- Product Image -->
                     <div class="w-32 h-40 bg-violet-50 rounded-[2rem] overflow-hidden flex-shrink-0">
-                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=500" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        {% if item.variant.images.first %}
+                            <img src="{{ item.variant.images.first.product_images.url }}"
+                                class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        {% else %}
+                            <img src="/media/default.jpg"
+                                class="w-full h-full object-cover">
+                        {% endif %}
                     </div>
+
                     <div class="flex-1 w-full">
                         <div class="flex justify-between items-start">
                             <div>
-                                <h3 class="font-bold text-xl text-slate-800">Crimson Runner 2.0</h3>
-                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Size: UK 10 | Color: Red</p>
+                                <!-- Product Name -->
+                                <h3 class="font-bold text-xl text-slate-800">
+                                    {{ item.variant.product.name }}
+                                </h3>
+
+                                <!-- SKU or variant info -->
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
+                                    SKU: {{ item.variant.sku_code }}
+                                </p>
                             </div>
-                            <button onclick="removeItem(this)" class="w-10 h-10 rounded-full flex items-center justify-center text-gray-300 hover:bg-rose-50 hover:text-rose-500 transition">
+
+                            <!-- Remove Button -->
+                            <a href="{% url 'delete_cart_item' item.variant.id %}"
+                            class="w-10 h-10 rounded-full flex items-center justify-center text-gray-300 hover:bg-rose-50 hover:text-rose-500 transition">
                                 <i class="fa-solid fa-trash-can"></i>
-                            </button>
+                            </a>
                         </div>
+
                         <div class="flex justify-between items-center mt-8">
+
+                            <!-- Quantity -->
                             <div class="flex items-center bg-violet-50 rounded-2xl p-1.5 border border-violet-100">
-                                <button onclick="updateQty(this, -1)" class="w-9 h-9 flex items-center justify-center text-violet-600 hover:bg-white rounded-xl transition shadow-sm active:scale-90"><i class="fa-solid fa-minus"></i></button>
-                                <span class="qty-val px-5 font-bold text-slate-800">1</span>
-                                <button onclick="updateQty(this, 1)" class="w-9 h-9 flex items-center justify-center text-violet-600 hover:bg-white rounded-xl transition shadow-sm active:scale-90"><i class="fa-solid fa-plus"></i></button>
+                                <a href="{% url 'sub_cart_quantity' item.variant.id %}"
+                                class="w-9 h-9 flex items-center justify-center text-violet-600 hover:bg-white rounded-xl transition shadow-sm">
+                                    <i class="fa-solid fa-minus"></i>
+                                </a>
+
+                                <span class="px-5 font-bold text-slate-800">
+                                    {{ item.quantity }}
+                                </span>
+
+                                <a href="{% url 'add_cart_quantity' item.variant.id %}"
+                                class="w-9 h-9 flex items-center justify-center text-violet-600 hover:bg-white rounded-xl transition shadow-sm">
+                                    <i class="fa-solid fa-plus"></i>
+                                </a>
                             </div>
-                            <div class="text-2xl font-black text-slate-900">₹<span class="item-total">3,499</span></div>
+
+                            <!-- Total Price -->
+                            <div class="text-2xl font-black text-slate-900">
+                                ₹ {{ item.price_at_time|floatformat:2 }}
+                            </div>
+
                         </div>
                     </div>
                 </div>
-
-                <div class="product-card bg-white p-6 rounded-[2.5rem] shadow-xl shadow-violet-100/50 border border-violet-50 flex flex-col md:flex-row items-center gap-6 group" data-price="12999">
-                    <div class="w-32 h-40 bg-violet-50 rounded-[2rem] overflow-hidden flex-shrink-0">
-                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=500" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                    </div>
-                    <div class="flex-1 w-full">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="font-bold text-xl text-slate-800">Classic Silver Watch</h3>
-                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Standard Edition</p>
-                            </div>
-                            <button onclick="removeItem(this)" class="w-10 h-10 rounded-full flex items-center justify-center text-gray-300 hover:bg-rose-50 hover:text-rose-500 transition">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                        <div class="flex justify-between items-center mt-8">
-                            <div class="flex items-center bg-violet-50 rounded-2xl p-1.5 border border-violet-100">
-                                <button onclick="updateQty(this, -1)" class="w-9 h-9 flex items-center justify-center text-violet-600 hover:bg-white rounded-xl transition shadow-sm active:scale-90"><i class="fa-solid fa-minus"></i></button>
-                                <span class="qty-val px-5 font-bold text-slate-800">1</span>
-                                <button onclick="updateQty(this, 1)" class="w-9 h-9 flex items-center justify-center text-violet-600 hover:bg-white rounded-xl transition shadow-sm active:scale-90"><i class="fa-solid fa-plus"></i></button>
-                            </div>
-                            <div class="text-2xl font-black text-slate-900">₹<span class="item-total">12,999</span></div>
-                        </div>
-                    </div>
+                {% empty %}
+                <div class="text-center py-20">
+                    <h2 class="text-2xl font-bold text-gray-400">Your Cart is Empty</h2>
                 </div>
+                {% endfor %}
 
-                <a href="index.html" class="inline-flex items-center gap-2 text-violet-600 font-bold hover:gap-4 transition-all px-4 py-2">
+
+                <a href="{% url 'home' %}" class="inline-flex items-center gap-2 text-violet-600 font-bold hover:gap-4 transition-all px-4 py-2">
                     <i class="fa-solid fa-arrow-left"></i> Continue Shopping
                 </a>
             </div>
