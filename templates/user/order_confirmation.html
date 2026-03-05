@@ -82,7 +82,9 @@
                             <p class="text-sm font-bold text-slate-800">Nandana Unnikrishnan <span class="mx-2 text-slate-300">|</span> <span class="font-normal text-slate-500">+91 90489 16806</span></p>
                         </div>
                     </div>
-                    <button class="text-violet-600 text-[10px] font-black border-2 border-violet-50 px-5 py-2 rounded-xl hover:bg-violet-50 transition uppercase tracking-widest">Change</button>
+                    <a href="{% url 'profile' %}">
+                        <button class="text-violet-600 text-[10px] font-black border-2 border-violet-50 px-5 py-2 rounded-xl hover:bg-violet-50 transition uppercase tracking-widest">Change</button>
+                    </a>
                 </div>
 
                 <div class="bg-white rounded-[2rem] border border-violet-100 flex items-center justify-between p-6 shadow-sm">
@@ -95,7 +97,9 @@
                             <p class="text-sm text-slate-600 leading-relaxed font-medium">Thekkedath House, Alangad PO, Kochi, Kerala - 683511</p>
                         </div>
                     </div>
-                    <button class="text-violet-600 text-[10px] font-black border-2 border-violet-50 px-5 py-2 rounded-xl hover:bg-violet-50 transition uppercase tracking-widest">Modify</button>
+                    <a href="{% url 'address' %}">
+                        <button class="text-violet-600 text-[10px] font-black border-2 border-violet-50 px-5 py-2 rounded-xl hover:bg-violet-50 transition uppercase tracking-widest">Modify</button>
+                    </a>
                 </div>
 
                 <div class="bg-white rounded-[2.5rem] border-2 border-violet-600 overflow-hidden shadow-2xl shadow-violet-100">
@@ -107,29 +111,36 @@
                         <span class="text-xs font-bold bg-white/20 px-3 py-1 rounded-full">2 Items Selected</span>
                     </div>
                     
+                    {% for items in order_item %}
                     <div class="p-8 space-y-8">
                         <div class="flex flex-col md:flex-row gap-8 group">
                             <div class="w-32 h-32 bg-violet-50 rounded-[2rem] overflow-hidden flex-shrink-0 border border-violet-100 shadow-inner">
-                                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                                <img src="{{items.variant.images.first.product_images.url}}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
                             </div>
                             <div class="flex-1">
                                 <div class="flex justify-between items-start">
                                     <div>
-                                        <h3 class="font-bold text-xl text-slate-800">Crimson Runner 2.0</h3>
+                                        <h3 class="font-bold text-xl text-slate-800">{{items.variant.product.name}}</h3>
                                         <p class="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Variant: Scarlet Red / UK 9</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-xl font-black text-slate-900">₹3,499</p>
+                                        <p class="text-xl font-black text-slate-900">{{ items.variant.cost_price }}</p>
                                         <p class="text-xs text-rose-500 font-bold">Save ₹1,500</p>
                                     </div>
                                 </div>
                                 <div class="mt-6 flex items-center gap-6">
                                     <div class="flex items-center bg-slate-50 rounded-xl p-1 border">
-                                        <button class="w-8 h-8 flex items-center justify-center hover:bg-white rounded-lg transition">-</button>
-                                        <span class="px-4 font-bold text-sm">1</span>
-                                        <button class="w-8 h-8 flex items-center justify-center hover:bg-white rounded-lg transition">+</button>
+                                        <a href="{% url 'sub_order_quantity'  items.variant.id %}">
+                                            <button class="w-8 h-8 flex items-center justify-center hover:bg-white rounded-lg transition">-</button>
+                                        </a>
+                                        <span class="px-4 font-bold text-sm">{{items.quantity}}</span>
+                                        <a href="{% url 'add_order_quantity' items.variant.id %}">
+                                            <button class="w-8 h-8 flex items-center justify-center hover:bg-white rounded-lg transition">+</button>
+                                        </a>
                                     </div>
-                                    <button class="text-xs font-black text-rose-500 uppercase tracking-widest hover:underline">Remove Item</button>
+                                    <a href="{% url 'delete_order_item' items.variant.id %}">
+                                        <button class="text-xs font-black text-rose-500 uppercase tracking-widest hover:underline">Remove Item</button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -137,19 +148,24 @@
                         <hr class="border-slate-100">
 
                     </div>
+                    {% endfor %}
+
                 </div>
             </div>
 
+            
             <div class="lg:w-1/3">
                 <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-violet-100 border border-violet-50 overflow-hidden sticky top-28">
                     <div class="p-8 border-b border-slate-50">
                         <h2 class="text-slate-400 font-black text-xs uppercase tracking-[0.2em] mb-6">Price Breakdown</h2>
                         
+            
                         <div class="space-y-4">
                             <div class="flex justify-between text-sm font-medium">
                                 <span class="text-slate-500">Bag Total (2 items)</span>
-                                <span>₹19,999</span>
+                                <span>{{ order.total_amount }}</span>
                             </div>
+                            
                             <div class="flex justify-between text-sm font-medium">
                                 <span class="text-slate-500">Bag Discount</span>
                                 <span class="text-emerald-500">-₹3,501</span>
@@ -186,6 +202,7 @@
                     </div>
                 </div>
             </div>
+           
         </div>
     </main>
 
