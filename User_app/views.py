@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from .models import User,Cart,CartItem,Order,OrderItem,Wishlist,WishlistItem
 from User_app.decorators import customer_login_required,customer_required
-from Seller_app.models import Product,ProductImage,ProductVariant,VariantAttributeBridge
+from Seller_app.models import Product,ProductImage,ProductVariant,VariantAttributeBridge,Attribute
 
 
 # Create your views here.
@@ -59,6 +59,7 @@ def user_profile(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
         phone_number = request.POST.get('phone_number')
+        gender=request.POST.get('gender')
 
         if User.objects.filter(username=username).exclude(id=user.id).exists():
             messages.error(request, "Username already exists")
@@ -81,6 +82,7 @@ def user_profile(request):
         user.username=username
         user.email=email
         user.phone_number=phone_number
+        user.gender=gender
         user.save()
 
     return render(request,'user/user_profile.html')
@@ -90,7 +92,6 @@ def user_logout(request):
     logout(request)
     return redirect('login')
 
-@customer_required
 def user_home(request):
     user = request.user
     products = products = Product.objects.filter(is_active=True,approval_status='APPROVED').prefetch_related('variants__images')
@@ -101,7 +102,7 @@ def user_wishlist(request,id):
     user_name=request.user
     variant=ProductVariant.objects.get(id=id)
     wishlist, created=Wishlist.objects.get_or_create(user=user_name)
-    wishlist_item=WishlistItem.objects.filter(cart=cart,variant=variant).first()
+    wishlist_item=WishlistItem.objects.filter(wishlist=wishlist,variant=variant).first()
     if wishlist_item:
             messages.error(request,"item already in your wishlist")
     else:
@@ -208,6 +209,10 @@ def user_product_view(request,id):
     user=request.user
     variant = ProductVariant.objects.select_related('product').prefetch_related('images').get(id=id)
     variants = ProductVariant.objects.filter(product=variant.product).prefetch_related('images')
+    attributebridge =VariantAttributeBridge.objects.filter(variant=variants)
+    if attributebridge:
+        for item in attributebridge:
+            attribute =Attribute.objects.filter(id=attributebridge.option)
     return render(request,'user/product_view.html',{'variant':variant,'variants':variants,'user':user})
 
 @customer_login_required
@@ -234,6 +239,8 @@ def user_order_confirmation(request,id):
         else:
             order_item1=OrderItem(order=order,variant=variant,seller=variant.product.seller,price_at_purchase=product_price)
             order_item1.save()
+            order.total_amount+=product_price
+            order.save()
     else:
         order1=Order(user=user_name,total_amount=product_price)
         order1.save()
@@ -285,3 +292,39 @@ def user_order_display(request):
     order=Order.objects.filter(user=user_name).first()
     order_item=OrderItem.objects.filter(order=order)
     return render(request,'user/order_confirmation.html',{'order_item':order_item,'order':order})
+
+@customer_required
+def user_order_cart_confirmation(request,id):
+    user_name=request.user
+    cart=Cart.objects.get(id=id)
+    cart_item=CartItem.objects.filter(cart=cart)
+    order=Order.objects.filter(user=user_name).first()     
+    if cart_item:
+        for i in cart_item:
+            variant=i.variant
+            product_price=variant.cost_price
+            if order:
+                order_item=OrderItem.objects.filter(order=order,variant=variant).first()
+                if order_item:
+                    if order_item.quantity < variant.stock_quantity:
+                        order_item.quantity += 1
+                        order_item.seller=variant.product.seller
+                        order_item.save() 
+                        order.total_amount+=order_item.price_at_purchase
+                        order.save() 
+                    else:     
+                        messages.error(request,"item stock out")
+                else:
+                    order_item1=OrderItem(order=order,variant=variant,seller=variant.product.seller,price_at_purchase=product_price)
+                    order_item1.save()
+                    order.total_amount+=product_price
+                    order.save() 
+            else:
+                order1=Order(user=user_name,total_amount=product_price)
+                order1.save()
+                print(order1.total_amount)
+                order_item1=OrderItem(order=order1,variant=variant,seller=variant.product.seller,price_at_purchase=product_price)
+                order_item1.save()
+    else:
+        messages.error(request,'zero items in your cart')
+    return redirect('user_order_display')

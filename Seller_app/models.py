@@ -46,7 +46,7 @@ class ProductVariant(models.Model):
     stock_quantity = models.IntegerField()
     weight = models.FloatField(help_text="Weight in kg")
     length = models.FloatField(help_text="Length in cm",null=True)
-    width = models.FloatField(help_text="Width in cm",null=True)
+    width = models.FloatField(help_text="Width in cm",null=True)   
     height = models.FloatField(help_text="Height in cm",null=True)
     tax_percentage = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)

@@ -9,8 +9,9 @@ urlpatterns=[
     path('home/',views.user_home,name='home'),
     path('product_view/<int:id>/',views.user_product_view,name='product_view'),
 
-    path('wishlist/',views.user_wishlist,name='wishlist'),
-    path('wishlist_item_delete/',views.user_wishlist_item_delete,name='wishlist_item_delete'),
+    path('wishlist/',views.user_wishlist_display,name='wishlist'),
+    path('wishlist_add/<int:id>/    ',views.user_wishlist,name='wishlist_add'),
+    path('wishlist_item_delete/<int:id>/',views.user_wishlist_item_delete,name='wishlist_item_delete'),
     
     path('address/',views.user_address,name='address'),
 
@@ -25,6 +26,7 @@ urlpatterns=[
 
     path('myorders/',views.user_orders,name='myorders'),
     path('user_order_confirm/<int:id>/',views.user_order_confirmation,name='user_order_confirm'),
+    path('user_order_cart_confirm/<int:id>/',views.user_order_cart_confirmation,name='user_order_cart_confirm'),
     path('user_order_display/',views.user_order_display,name='user_order_display'),
     path('add_order_quantity/<int:id>/',views.user_order_add_quantity,name='add_order_quantity'),
     path('sub_order_quantity/<int:id>/',views.user_order_substract_quantity,name='sub_order_quantity'),      

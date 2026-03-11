@@ -127,11 +127,11 @@
 
     <main class="max-w-7xl mx-auto px-4 py-12">
         <nav class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">
-            Electronics / Wearables / <span class="text-violet-600">Elite Smart Watch</span>
+            {{variant.product.subcategory.category.name}} / {{variant.product.subcategory.name}} / <span class="text-violet-600">{{variant.product.name}}</span>
         </nav>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            
+        
             <div class="lg:col-span-4 space-y-6">
                 <div class="relative aspect-square rounded-[3rem] overflow-hidden bg-white border border-violet-50 shadow-2xl shadow-violet-100/50">
                     {% if variant.images.first %}
@@ -148,7 +148,7 @@
                     <div onclick="changeImage(this, '{{ images.product_images.url }}')" class="product-thumb active w-20 h-20 shrink-0 rounded-2xl border-2 border-transparent p-1 cursor-pointer transition-all duration-300">
                         <img src="{{ images.product_images.url }}" class="w-full h-full object-cover rounded-xl">
                     </div>
-                    {% endfor %}
+                    {% endfor %} 
                 </div>
             </div>
 
@@ -205,6 +205,7 @@
                 </div>
                 
             </div>
+            
             <div class="lg:col-span-3">
                 <div class="sticky top-32 p-8 rounded-[2.5rem] bg-white border border-violet-100 shadow-2xl shadow-violet-200/50 space-y-6">
                     <div class="space-y-1">
@@ -213,6 +214,12 @@
                     </div>
                     {% if variant.product %}
                     <div class="space-y-3">
+                        <a href="{% url 'wishlist_add' variant.id %}">
+                        <button class="w-full violet-gradient text-white py-5 rounded-2xl font-bold shadow-xl shadow-violet-200 hover:scale-[1.02] transition active:scale-95">
+                            <i class="fa-solid fa-heart"></i> Add to wishlist
+                        </button>
+                        </a>
+                        <br><br>
                         <a href="{% url 'add_cart' variant.id %}">
                         <button class="w-full violet-gradient text-white py-5 rounded-2xl font-bold shadow-xl shadow-violet-200 hover:scale-[1.02] transition active:scale-95">
                             <i class="fa-solid fa-cart-plus mr-2"></i> Add to Cart
@@ -243,10 +250,9 @@
                             Product Experience
                         </h2>
                         <p class="text-slate-600 leading-relaxed text-lg">
-                            The <span class="text-violet-600 font-bold">Elite Smart Watch v4</span> isn't just a wearable; it's a statement of sophistication. Crafted with an aerospace-grade aluminum chassis and a vibrant AMOLED retina display, it seamlessly bridges the gap between high-performance tech and luxury fashion. 
+                            <span class="text-violet-600 font-bold">{{variant.product.description}}
                         </p>
                     </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="p-6 rounded-[2rem] bg-violet-50 border border-violet-100 hover:shadow-xl hover:shadow-violet-200/40 transition-all duration-300 group">
                             <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-violet-600 mb-4 shadow-sm group-hover:violet-gradient group-hover:text-white transition-colors">
@@ -288,7 +294,7 @@
                     </div>
                 </div>
 
-                <div class="lg:col-span-4">
+                <!-- <div class="lg:col-span-4">
                     <div class="bg-violet-50/50 border border-violet-100 rounded-[2.5rem] p-8">
                         <h3 class="font-black text-slate-900 uppercase text-xs tracking-[0.2em] mb-6">What's in the Box</h3>
                         <ul class="space-y-4">
@@ -318,7 +324,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </section>
     </main>
@@ -393,6 +399,61 @@
             btn.classList.add('border-violet-600', 'bg-violet-50', 'text-violet-700');
             btn.classList.remove('border-transparent', 'bg-white', 'text-slate-600');
         }
+    </script>
+        <style>
+    /* CSS Styling */
+    .wishlist-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 2px solid #e2e8f0;
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: sans-serif;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    color: #4a5568;
+    }
+
+    .heart-icon {
+    fill: none;
+    stroke: #4a5568;
+    stroke-width: 2;
+    transition: all 0.3s ease;
+    }
+
+    /* Hover State */
+    .wishlist-btn:hover {
+    border-color: #ff4d4d;
+    background-color: #fff5f5;
+    }
+
+    /* Active/Selected State */
+    .wishlist-btn.active {
+    background-color: #ff4d4d;
+    border-color: #ff4d4d;
+    color: white;
+    }
+
+    .wishlist-btn.active .heart-icon {
+    fill: white;
+    stroke: white;
+    }
+    </style>
+
+    <script>
+    // Simple toggle logic
+    function toggleWishlist(btn) {
+    btn.classList.toggle('active');
+    const text = btn.querySelector('span');
+    if (btn.classList.contains('active')) {
+        text.innerText = 'Saved to Wishlist';
+    } else {
+        text.innerText = 'Add to Wishlist';
+    }
+    }
     </script>
 </body>
 </html>

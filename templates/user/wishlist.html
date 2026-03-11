@@ -106,95 +106,64 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            
-            <div class="group relative bg-white rounded-[2.5rem] p-4 shadow-xl shadow-violet-100/50 border border-transparent hover:border-violet-200 transition-all duration-300">
-                <button class="absolute top-6 right-6 z-10 w-10 h-10 bg-white/80 backdrop-blur-md text-gray-400 hover:text-rose-500 rounded-full flex items-center justify-center shadow-sm transition">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+           {% for i in wishlist_item %}
+                <div class="group relative bg-white rounded-[2.5rem] p-4 shadow-xl shadow-violet-100/50 border border-transparent hover:border-violet-200 transition-all duration-300">
 
-                <div class="relative aspect-[4/5] rounded-[2rem] overflow-hidden bg-violet-50 mb-6">
-                    <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                    <div class="absolute bottom-4 left-4 bg-rose-500 text-white text-[10px] font-bold px-3 py-1 rounded-lg shadow-lg">
-                        ₹500 PRICE DROP
+                    <a href="{% url 'wishlist_item_delete' i.variant.id %}">
+                        <button class="absolute top-6 right-6 z-10 w-10 h-10 bg-white/80 backdrop-blur-md text-gray-400 hover:text-rose-500 rounded-full flex items-center justify-center shadow-sm transition">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </a>
+
+                    <div class="relative aspect-[4/5] rounded-[2rem] overflow-hidden bg-violet-50 mb-6">
+
+                        {% with img=i.variant.images.first %}
+                            {% if img %}
+                                <img src="{{ img.product_images.url }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                            {% endif %}
+                        {% endwith %}
+
+                        <div class="absolute bottom-4 left-4 bg-rose-500 text-white text-[10px] font-bold px-3 py-1 rounded-lg shadow-lg">
+                            Wishlist
+                        </div>
                     </div>
+
+                    <div class="px-2 pb-2">
+
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-slate-800 text-lg leading-tight">
+                                {{ i.variant.product.name }}
+                            </h3>
+                        </div>
+
+                        <p class="text-gray-400 text-xs font-medium mb-3 uppercase tracking-tighter">
+                            {{ i.variant.product.category.name }}
+                        </p>
+
+                        <div class="flex items-center gap-3 mb-5">
+                            <span class="text-2xl font-black text-slate-900">
+                                ₹{{ i.variant.cost_price }}
+                            </span>
+                        </div>
+
+                        <a href="{% url 'add_cart' i.variant.id %}">
+                            <button class="w-full violet-gradient text-white py-4 rounded-2xl font-bold shadow-lg shadow-violet-200 hover:scale-[1.02] transition active:scale-95 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                            </button>
+                        </a>
+
+                    </div>
+
+                </div>
+                {% empty %}
+
+                <div class="text-center py-20">
+                    <h2 class="text-xl font-semibold text-gray-500">Your wishlist is empty</h2>
                 </div>
 
-                <div class="px-2 pb-2">
-                    <div class="flex justify-between items-start mb-1">
-                        <h3 class="font-bold text-slate-800 text-lg leading-tight">Crimson Runner 2.0</h3>
-                    </div>
-                    <p class="text-gray-400 text-xs font-medium mb-3 uppercase tracking-tighter">Performance Footwear</p>
-                    
-                    <div class="flex items-center gap-3 mb-5">
-                        <span class="text-2xl font-black text-slate-900">₹3,499</span>
-                        <span class="text-sm text-gray-400 line-through">₹3,999</span>
-                    </div>
-
-                    <button class="w-full violet-gradient text-white py-4 rounded-2xl font-bold shadow-lg shadow-violet-200 hover:scale-[1.02] transition active:scale-95 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-cart-plus"></i> Add to Cart
-                    </button>
-                </div>
+                {% endfor %}
             </div>
 
-            <div class="group relative bg-white rounded-[2.5rem] p-4 shadow-xl shadow-violet-100/50 border border-transparent hover:border-violet-200 transition-all duration-300">
-                <button class="absolute top-6 right-6 z-10 w-10 h-10 bg-white/80 backdrop-blur-md text-gray-400 hover:text-rose-500 rounded-full flex items-center justify-center shadow-sm transition">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-                <div class="relative aspect-[4/5] rounded-[2rem] overflow-hidden bg-violet-50 mb-6">
-                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                </div>
-                <div class="px-2 pb-2">
-                    <h3 class="font-bold text-slate-800 text-lg leading-tight">Classic Silver Watch</h3>
-                    <p class="text-gray-400 text-xs font-medium mb-3 uppercase tracking-tighter">Accessories</p>
-                    <div class="flex items-center gap-3 mb-5 text-2xl font-black text-slate-900">
-                        ₹12,999
-                    </div>
-                    <button class="w-full violet-gradient text-white py-4 rounded-2xl font-bold shadow-lg shadow-violet-200 hover:scale-[1.02] transition active:scale-95 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-cart-plus"></i> Add to Cart
-                    </button>
-                </div>
-            </div>
-
-            <div class="group relative bg-white rounded-[2.5rem] p-4 shadow-xl shadow-violet-100/50 border border-transparent opacity-80 overflow-hidden">
-                <button class="absolute top-6 right-6 z-10 w-10 h-10 bg-white/80 text-gray-400 rounded-full flex items-center justify-center shadow-sm">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-                <div class="relative aspect-[4/5] rounded-[2rem] overflow-hidden bg-gray-100 mb-6 grayscale">
-                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-slate-900/40 flex items-center justify-center">
-                        <span class="bg-white text-slate-900 px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-widest">Out of Stock</span>
-                    </div>
-                </div>
-                <div class="px-2 pb-2">
-                    <h3 class="font-bold text-slate-800 text-lg leading-tight">Studio Pro Headphones</h3>
-                    <p class="text-gray-400 text-xs font-medium mb-3 uppercase tracking-tighter">Audio</p>
-                    <div class="flex items-center gap-3 mb-5 text-2xl font-black text-slate-400">
-                        ₹6,999
-                    </div>
-                    <button class="w-full bg-slate-100 text-slate-400 py-4 rounded-2xl font-bold cursor-not-allowed">
-                        Notify Me
-                    </button>
-                </div>
-            </div>
-
-            <div class="group relative bg-white rounded-[2.5rem] p-4 shadow-xl shadow-violet-100/50 border border-transparent hover:border-violet-200 transition-all duration-300">
-                <button class="absolute top-6 right-6 z-10 w-10 h-10 bg-white/80 text-gray-400 hover:text-rose-500 rounded-full flex items-center justify-center shadow-sm transition">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-                <div class="relative aspect-[4/5] rounded-[2rem] overflow-hidden bg-violet-50 mb-6">
-                    <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                </div>
-                <div class="px-2 pb-2">
-                    <h3 class="font-bold text-slate-800 text-lg leading-tight">Summer Shades Gold</h3>
-                    <p class="text-gray-400 text-xs font-medium mb-3 uppercase tracking-tighter">Eyewear</p>
-                    <div class="flex items-center gap-3 mb-5 text-2xl font-black text-slate-900">
-                        ₹1,899
-                    </div>
-                    <button class="w-full violet-gradient text-white py-4 rounded-2xl font-bold shadow-lg shadow-violet-200 hover:scale-[1.02] transition active:scale-95 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-cart-plus"></i> Add to Cart
-                    </button>
-                </div>
-            </div>
 
         </div>
 

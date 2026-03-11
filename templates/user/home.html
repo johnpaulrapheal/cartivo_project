@@ -234,6 +234,19 @@
                                 </a>
                             </div>
 
+                            <!-- Add to Wishlist Button -->
+
+                            <div class="relative group">
+                                <img src="{{ product.image.url }}" class="rounded-2xl">
+
+                                <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <a href="{% url 'wishlist_add' variant.id %}" 
+                                    class="flex items-center justify-center w-10 h-10 bg-white rounded-xl shadow-lg text-gray-400 hover:text-rose-500 transition-all">
+                                        <i class="fa-solid fa-heart"></i>
+                                    </a>
+                                </div>
+                            </div>
+
                             <!-- Product Info -->
                             <h3 class="font-bold text-lg text-slate-800 group-hover:text-violet-700 transition">
                                 {{ product.name }}
