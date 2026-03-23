@@ -42,7 +42,10 @@ static_root/
 # ===============================
 # Migrations (optional)
 # ===============================
+<<<<<<< HEAD
 Uncomment if you don't want migrations tracked
+=======
+>>>>>>> user_branch_2
 */migrations/*
 !*/migrations/__init__.py
 
