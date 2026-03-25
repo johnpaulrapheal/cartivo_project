@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<title>Product Offer Bridge</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+body{
+background:#f4f6fb;
+font-family:'Segoe UI',sans-serif;
+}
+
+.main-card{
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 4px 20px rgba(0,0,0,0.08);
+margin-top:40px;
+}
+
+.page-title{
+font-weight:600;
+margin-bottom:20px;
+}
+
+.btn-primary{
+background:#0d6efd;
+border:none;
+}
+
+.table{
+margin-top:30px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="main-card">
+
+<h4 class="page-title">Link Product With Offer</h4>
+
+<!-- Django Messages -->
+
+{% if messages %}
+{% for message in messages %}
+
+<div class="alert alert-success alert-dismissible fade show">
+{{message}}
+<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+
+{% endfor %}
+{% endif %}
+
+<!-- FORM START -->
+
+<form method="POST" action="">
+
+{% csrf_token %}
+
+<div class="row">
+
+<div class="col-md-5">
+
+<label class="form-label">Select Product</label>
+
+<select name="product" class="form-control" required>
+
+<option value="">Choose Product</option>
+
+{% for product in products %}
+
+<option value="{{product.id}}">
+{{product.name}}
+</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+
+<div class="col-md-5">
+
+<label class="form-label">Select Offer</label>
+
+<select name="offer" class="form-control" required>
+
+<option value="">Choose Offer</option>
+
+{% for offer in offers %}
+
+<option value="{{offer.id}}">
+{{offer.title}}
+</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+
+<div class="col-md-2 d-flex align-items-end">
+
+<button type="submit" class="btn btn-primary w-100">
+Add
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+<!-- FORM END -->
+
+
+<hr>
+
+<h5 class="mt-4">Product Offer List</h5>
+
+<table class="table table-bordered table-hover">
+
+<thead class="table-dark">
+
+<tr>
+<th>ID</th>
+<th>Product</th>
+<th>Offer</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for bridge in bridges %}
+
+<tr>
+
+<td>{{bridge.id}}</td>
+<td>{{bridge.product.name}}</td>
+<td>{{bridge.offer.title}}</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+<td colspan="3" class="text-center">No Data Found</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+document.querySelector("form").addEventListener("submit",function(){
+console.log("Product Offer Linked");
+});
+
+</script>
+
+</body>
+</html>

@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Category | Cartivo</title>
+<title>Add Category</title>
 
 <!-- Bootstrap -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,7 +14,7 @@
 
 body{
     background-color:#f4f6fb;
-    font-family:'Segoe UI',sans-serif;
+    font-family:Segoe UI;
 }
 
 /* Sidebar */
@@ -52,17 +51,14 @@ body{
 
 .main-content{
     margin-left:270px;
-    padding:30px;
+    padding:40px;
 }
 
-/* Table Card */
+/* Card */
 
-.table-container{
-    background:white;
-    padding:20px;
-    border-radius:15px;
+.card{
+    border-radius:12px;
     box-shadow:0 4px 15px rgba(0,0,0,0.05);
-    margin-top:25px;
 }
 
 /* Button */
@@ -74,13 +70,6 @@ body{
 
 .btn-primary:hover{
     background:#1f36a8;
-}
-
-/* Badge */
-
-.badge{
-    padding:6px 10px;
-    font-size:13px;
 }
 
 </style>
@@ -125,105 +114,60 @@ body{
 
 <div class="main-content">
 
-<h2 class="fw-bold">Category Management</h2>
-<p class="text-muted">Manage platform product categories.</p>
+<div class="container-fluid">
 
+<div class="card p-4">
 
-<div class="table-container">
+<h3 class="mb-4">Add New Category</h3>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-
-<h5 class="fw-bold mb-0">Category List</h5>
-
-<a href="{% url 'add_category' %}" class="btn btn-primary">
-<i class="bi bi-plus-circle me-2"></i> Add Category
-</a>
-
+{% if error %}
+<div class="alert alert-danger">
+{{ error }}
 </div>
-
-
-<div class="table-responsive">
-
-<table class="table align-middle table-hover">
-
-<thead class="table-light">
-
-<tr>
-<th>#</th>
-<th>Category Name</th>
-<th>Description</th>
-<th>Status</th>
-<th>Action</th>
-</tr>
-
-</thead>
-
-
-<tbody>
-
-{% for category in categories %}
-
-<tr>
-
-<td>{{ forloop.counter }}</td>
-
-<td class="fw-semibold">
-{{ category.name }}
-</td>
-
-<td>
-{{ category.description }}
-</td>
-
-<td>
-
-{% if category.is_active %}
-<span class="badge bg-success">Active</span>
-{% else %}
-<span class="badge bg-danger">Disabled</span>
 {% endif %}
 
-</td>
+<form method="post">
 
-<td>
+{% csrf_token %}
 
-<a href="{% url 'category_toggle' category.id %}" class="btn btn-sm btn-warning">
+<div class="mb-3">
+<label class="form-label">Category Name</label>
 
-{% if category.is_active %}
-Disable
-{% else %}
-Enable
-{% endif %}
+<input type="text"
+class="form-control"
+name="name"
+required>
 
+</div>
+
+<div class="mb-3">
+
+<label class="form-label">Description</label>
+
+<textarea
+class="form-control"
+name="description"
+required></textarea>
+
+</div>
+
+<button type="submit" class="btn btn-primary">
+Save Category
+</button>
+
+<a href="{% url 'category' %}" class="btn btn-secondary">
+Cancel
 </a>
 
-</td>
-
-</tr>
-
-{% empty %}
-
-<tr>
-<td colspan="5" class="text-center text-muted">
-No categories found.
-</td>
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
+</form>
 
 </div>
 
 </div>
 
 </div>
-
 
 <!-- Bootstrap JS -->
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
