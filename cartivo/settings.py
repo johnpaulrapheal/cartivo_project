@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-if@huss_y2s0tzljhp@!re**3mm+e-ro@jexk(bb8ms4)(_n7*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -85,8 +85,6 @@ AUTHENTICATION_BACKENDS = [
     
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
-
-    
     
 ]
 
@@ -138,7 +136,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-
 AUTH_USER_MODEL = 'core.User'
 AUTH_USER_MODEL="Core_app.User"
 
@@ -164,4 +161,3 @@ LOGOUT_REDIRECT_URL = 'login'
 
 RAZORPAY_KEY_ID = "rzp_test_SUO3WrAkaqQAXM"
 RAZORPAY_KEY_SECRET = "lvOAAXzmGxrfMfFnqC83D2ma"
-
