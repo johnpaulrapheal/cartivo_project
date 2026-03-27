@@ -63,7 +63,7 @@
             </div>
 
             <div class="w-full lg:w-3/4 space-y-6 min-w-0">
-                
+                {% for items in orders %}
                 <div class="bg-white rounded-[2.5rem] border border-violet-100 shadow-sm overflow-hidden order-card">
                     <div class="p-6 md:p-8 flex flex-col md:flex-row gap-8">
                         <div class="w-32 h-32 bg-violet-50 rounded-[2rem] overflow-hidden flex-shrink-0 p-2">
@@ -72,17 +72,17 @@
                         <div class="flex-1">
                             <div class="flex justify-between items-start mb-2">
                                 <span class="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">Arriving Wednesday</span>
-                                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">ID: #CRT-99201</span>
+                                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">ID: {{items.order_number}}</span>
                             </div>
-                            <h3 class="text-xl font-bold text-slate-800 mb-1">Crimson Runner 2.0 Premium</h3>
-                            <p class="text-sm text-gray-500 mb-4 font-medium">Size: 10 | Color: Racing Red</p>
+                            <h3 class="text-xl font-bold text-slate-800 mb-1">ORDER STATUS:{{items.order_status}}</h3>
+                            <p class="text-sm text-gray-500 mb-4 font-medium">Payment:{{items.payment_status}} | Order at: {{items.ordered_at}}</p>
                             <div class="flex items-center gap-2 bg-slate-50 p-3 rounded-2xl inline-flex">
                                 <div class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
                                 <span class="text-xs font-bold text-slate-700">In Transit - Out for delivery in Bangalore Hub</span>
                             </div>
                         </div>
                         <div class="flex md:flex-col justify-between items-end gap-4 min-w-[120px]">
-                            <span class="text-2xl font-black text-slate-900">₹3,499</span>
+                            <span class="text-2xl font-black text-slate-900">₹{{items.total_amount}}</span>
                             <button class="w-full bg-slate-900 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-violet-700 transition shadow-lg shadow-violet-100">
                                 Track Order
                             </button>
@@ -95,6 +95,7 @@
                         </div>
                     </div>
                 </div>
+                {% endfor %}
 
                 <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden order-card opacity-90">
                     <div class="p-6 md:p-8 flex flex-col md:flex-row gap-8">

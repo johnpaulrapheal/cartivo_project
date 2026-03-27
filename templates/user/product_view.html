@@ -212,6 +212,7 @@
                         </div>
                     </div>
 
+
                    <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white">
     <h3 class="text-xl font-bold mb-6">Technical Specifications</h3>
 
@@ -231,6 +232,134 @@
 
     </div>
 </div>
+
+                    <!-- NEW REVIEWS SECTION -->
+                    <div class="mt-20">
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-10 gap-6">
+                            <h2 class="text-2xl lg:text-3xl font-black text-slate-900 flex items-center gap-4">
+                                <span class="w-2 h-10 violet-gradient rounded-full"></span>
+                                Customer Reviews
+                            </h2>
+                            <div class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-lg border border-violet-100 min-w-fit shrink-0">
+                                <div class="flex text-2xl text-amber-400">
+                                    ★★★★☆ <!-- 4.2 average -->
+                                </div>
+                                <div>
+                                    <div class="text-xl font-bold text-slate-900">4.2</div>
+                                    <div class="text-xs text-gray-500 uppercase tracking-wider font-bold">126 Reviews</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reviews List - Responsive Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-12">
+                            <!-- Sample Review 1 -->
+                            <div class="group bg-white rounded-[2rem] p-6 border border-violet-50 hover:shadow-2xl hover:shadow-violet-100/50 hover:-translate-y-2 transition-all duration-300 overflow-hidden">
+                                <div class="flex items-start gap-4 mb-4">
+                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                                        AS
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="font-bold text-slate-900 text-sm truncate">Amit Sharma</h4>
+                                        <div class="flex text-amber-400 text-sm mb-1">
+                                            ★★★★☆
+                                        </div>
+                                        <p class="text-xs text-gray-500 uppercase tracking-widest">2 days ago</p>
+                                    </div>
+                                </div>
+                                <p class="text-gray-700 leading-relaxed text-sm">"Premium build quality and accurate health tracking. Battery life exceeds expectations. Highly recommend for fitness enthusiasts!"</p>
+                            </div>
+
+                            <!-- Sample Review 2 -->
+                            <div class="group bg-white rounded-[2rem] p-6 border border-violet-50 hover:shadow-2xl hover:shadow-violet-100/50 hover:-translate-y-2 transition-all duration-300 overflow-hidden">
+                                <div class="flex items-start gap-4 mb-4">
+                                    <img src="/static/images/sample-avatar.jpg" class="w-12 h-12 rounded-2xl object-cover shadow-lg" alt="Priya">
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="font-bold text-slate-900 text-sm truncate">Priya R.</h4>
+                                        <div class="flex text-amber-400 text-sm mb-1">
+                                            ★★★★★
+                                        </div>
+                                        <p class="text-xs text-gray-500 uppercase tracking-widest">1 week ago</p>
+                                    </div>
+                                </div>
+                                <p class="text-gray-700 leading-relaxed text-sm">"Love the design and features! Perfect companion for my workouts. Elite quality at great price."</p>
+                            </div>
+
+                            <!-- Sample Review 3 -->
+                            <div class="group bg-gradient-to-br from-violet-50 to-indigo-50 p-6 rounded-[2rem] border border-violet-200 hover:shadow-2xl hover:shadow-violet-200/50 hover:-translate-y-2 transition-all duration-300">
+                                <div class="flex items-start gap-4 mb-4">
+                                    <div class="w-12 h-12 bg-white/50 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+                                        <i class="fa-solid fa-user text-violet-600 text-xl"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="font-bold text-slate-900 text-sm truncate">Raj K.</h4>
+                                        <div class="flex text-amber-400 text-sm mb-1">
+                                            ★★★★☆
+                                        </div>
+                                        <p class="text-xs text-gray-500 uppercase tracking-widest">3 days ago</p>
+                                    </div>
+                                </div>
+                                <p class="text-gray-800 leading-relaxed text-sm font-medium">"Great value for money. App integration is smooth. Minor sync issues fixed after update."</p>
+                            </div>
+
+                            <!-- Sample Review 4 -->
+                            <div class="group bg-white rounded-[2rem] p-6 border border-violet-50 hover:shadow-2xl hover:shadow-violet-100/50 hover:-translate-y-2 transition-all duration-300 overflow-hidden">
+                                <div class="flex items-start gap-4 mb-4">
+                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                                        SD
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="font-bold text-slate-900 text-sm truncate">Sneha D.</h4>
+                                        <div class="flex text-amber-400 text-sm mb-1">
+                                            ★★★★★
+                                        </div>
+                                        <p class="text-xs text-gray-500 uppercase tracking-widest">5 days ago</p>
+                                    </div>
+                                </div>
+                                <p class="text-gray-700 leading-relaxed text-sm">"Absolutely stunning! Comfortable for all-day wear. Best purchase this year."</p>
+                            </div>
+                        </div>
+
+                        <!-- Add Review - Toggle Form -->
+                        <div id="addReviewSection" class="bg-gradient-to-r from-violet-50 to-indigo-50 p-8 rounded-[3rem] border-2 border-violet-100 shadow-2xl shadow-violet-200/30 transition-all duration-300">
+                            <button onclick="toggleReviewForm()" class="mb-6 flex items-center gap-3 bg-white px-6 py-3 rounded-2xl font-bold text-slate-900 hover:bg-violet-50 hover:shadow-lg transition-all border border-violet-200 w-full lg:w-auto">
+                                <i class="fa-solid fa-star text-amber-400"></i>
+                                Write Your Review
+                            </button>
+                            <div id="reviewForm" class="space-y-6 hidden">
+                                <!-- Star Rating -->
+                                <div class="flex items-center gap-4">
+                                    <span class="font-bold text-slate-900 text-lg min-w-fit">Your Rating:</span>
+                                    <div class="flex text-2xl gap-1" id="ratingStars">
+                                        <i class="fa-solid fa-star cursor-pointer text-gray-300 hover:text-amber-400 transition-all rating-star" data-rating="1"></i>
+                                        <i class="fa-solid fa-star cursor-pointer text-gray-300 hover:text-amber-400 transition-all rating-star" data-rating="2"></i>
+                                        <i class="fa-solid fa-star cursor-pointer text-gray-300 hover:text-amber-400 transition-all rating-star" data-rating="3"></i>
+                                        <i class="fa-solid fa-star cursor-pointer text-gray-300 hover:text-amber-400 transition-all rating-star" data-rating="4"></i>
+                                        <i class="fa-solid fa-star cursor-pointer text-gray-300 hover:text-amber-400 transition-all rating-star" data-rating="5"></i>
+                                    </div>
+                                    <span id="selectedRating" class="font-bold text-violet-600 ml-4">0</span>
+                                </div>
+                                
+                                <!-- Comment -->
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">Your Review</label>
+                                    <textarea id="reviewComment" rows="4" class="w-full p-4 border-2 border-violet-200 rounded-2xl focus:border-violet-500 focus:outline-none focus:ring-4 focus:ring-violet-100/50 resize-vertical transition-all text-sm placeholder-gray-500" placeholder="Share your experience with fellow shoppers..."></textarea>
+                                </div>
+                                
+                                <!-- Submit -->
+                                <div class="flex flex-col sm:flex-row gap-4 pt-4 border-t border-violet-200">
+                                    <button onclick="submitReview()" class="flex-1 bg-gradient-to-r from-violet-600 to-purple-600 text-white py-4 px-8 rounded-2xl font-bold shadow-xl shadow-violet-200 hover:shadow-2xl hover:scale-[1.02] transition-all text-lg">
+                                        <i class="fa-solid fa-paper-plane mr-2"></i>Submit Review
+                                    </button>
+                                    <button onclick="toggleReviewForm()" class="px-8 py-4 border-2 border-gray-300 rounded-2xl font-bold text-slate-700 hover:bg-gray-50 transition-all">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END REVIEWS SECTION -->
+
                 </div>
 
                 <!-- <div class="lg:col-span-4">
@@ -305,6 +434,66 @@
             const text = btn.querySelector('span');
             if (!text) return;
             text.innerText = btn.classList.contains('active') ? 'Saved to Wishlist' : 'Add to Wishlist';
+        }
+
+        // NEW REVIEW JS
+        let currentRating = 0;
+
+        function toggleReviewForm() {
+            const form = document.getElementById('reviewForm');
+            form.classList.toggle('hidden');
+        }
+
+        function setRating(rating) {
+            currentRating = rating;
+            const stars = document.querySelectorAll('.rating-star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('text-amber-400');
+                    star.classList.remove('text-gray-300');
+                } else {
+                    star.classList.add('text-gray-300');
+                    star.classList.remove('text-amber-400');
+                }
+            });
+            document.getElementById('selectedRating').textContent = rating;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.rating-star');
+            stars.forEach(star => {
+                star.addEventListener('mouseenter', () => {
+                    setRating(parseInt(star.dataset.rating));
+                });
+                star.addEventListener('mouseleave', () => {
+                    setRating(currentRating);
+                });
+                star.addEventListener('click', () => {
+                    setRating(parseInt(star.dataset.rating));
+                });
+            });
+        });
+
+        function submitReview() {
+            const rating = currentRating;
+            const comment = document.getElementById('reviewComment').value.trim();
+            
+            if (rating === 0) {
+                alert('Please select a rating!');
+                return;
+            }
+            if (comment.length < 10) {
+                alert('Review must be at least 10 characters long!');
+                return;
+            }
+            
+            // Demo alert (non-functional)
+            alert(`Thank you for your review!\n\nRating: ${rating} stars\nComment: ${comment.substring(0, 50)}${comment.length > 50 ? '...' : ''}\n\n(Review submitted successfully - demo mode)`);
+            
+            // Reset form
+            document.getElementById('reviewComment').value = '';
+            setRating(0);
+            toggleReviewForm();
         }
     </script>
 {% endblock %}

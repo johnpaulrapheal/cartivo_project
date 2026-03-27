@@ -141,23 +141,23 @@
                 Your order has been confirmed and is being prepared
             </p>
             <p class="text-slate-500 text-lg sm:text-xl max-w-xl mx-auto mb-12 leading-relaxed">
-                Thank you for shopping with Cartivo. Expect delivery within 2-3 business days.
+                Thank you for shopping with Cartivo. Expect delivery within 10-15 business days.
             </p>
 
             <!-- Order Summary Card -->
             <div class="bg-white/70 backdrop-blur-sm rounded-[3rem] border border-violet-100 shadow-2xl max-w-2xl mx-auto p-8 sm:p-12 mb-12">
                 <div class="text-center mb-8">
                     <h3 class="text-sm font-black text-slate-400 uppercase tracking-[0.3em] mb-2">Order Details</h3>
-                    <p class="text-3xl font-black text-violet-900 tracking-tight">#CRT-247891</p>
+                    <p class="text-3xl font-black text-violet-900 tracking-tight">{{order.order_number}}</p>
                 </div>
                 <div class="grid grid-cols-2 gap-6 text-sm sm:text-base">
                     <div>
                         <span class="text-slate-500 font-medium block mb-1">Items Ordered</span>
-                        <span class="font-bold text-slate-900">3 Items</span>
+                        <span class="font-bold text-slate-900">{{count}} Items</span>
                     </div>
                     <div>
                         <span class="text-slate-500 font-medium block mb-1">Total Amount</span>
-                        <span class="font-black text-2xl text-emerald-600">₹4,999</span>
+                        <span class="font-black text-2xl text-emerald-600">₹{{order.total_amount}}</span>
                     </div>
                     <div>
                         <span class="text-slate-500 font-medium block mb-1">Payment Method</span>
@@ -165,7 +165,7 @@
                     </div>
                     <div>
                         <span class="text-slate-500 font-medium block mb-1">Est. Delivery</span>
-                        <span class="font-bold text-emerald-600">Feb 15-17</span>
+                        <span class="font-bold text-emerald-600">{{delivery_datefrom}}-{{delivery_dateto}}</span>
                     </div>
                 </div>
                 <div class="mt-8 pt-8 border-t border-violet-100">
@@ -177,11 +177,11 @@
 
             <!-- Action Buttons -->
             <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-stretch sm:items-center max-w-md mx-auto">
-                <a href="#" class="group flex-1 bg-violet-600 text-white py-5 px-8 rounded-2xl font-black text-lg text-center shadow-xl shadow-violet-200 hover:scale-105 transition-all duration-200">
+                <a href="{% url 'myorders' %}" class="group flex-1 bg-violet-600 text-white py-5 px-8 rounded-2xl font-black text-lg text-center shadow-xl shadow-violet-200 hover:scale-105 transition-all duration-200">
                     <i class="fa-solid fa-box text-xl group-hover:translate-x-1 transition-transform mr-2"></i>
                     Track My Order
                 </a>
-                <a href="#" class="group flex-1 bg-white border-2 border-violet-200 text-violet-700 py-5 px-8 rounded-2xl font-black text-lg text-center shadow-lg hover:shadow-xl hover:bg-violet-50 transition-all duration-200">
+                <a href="{% url 'home' %}" class="group flex-1 bg-white border-2 border-violet-200 text-violet-700 py-5 px-8 rounded-2xl font-black text-lg text-center shadow-lg hover:shadow-xl hover:bg-violet-50 transition-all duration-200">
                     <i class="fa-solid fa-bolt text-xl group-hover:translate-x-1 transition-transform mr-2"></i>
                     Continue Shopping
                 </a>

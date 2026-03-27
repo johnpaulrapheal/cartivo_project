@@ -4,7 +4,8 @@ from .import views
 urlpatterns=[
     path('register/',views.user_register,name='register'),
     path('login/',views.user_login,name='login'),
-    path('verify-email/<uidb64>/<token>/',views.user_verify_email,name='user_verify_email'),
+    path('verify-otp/<uidb64>/',views.user_verify_otp,name='user_verify_otp'),
+    path('verify-otp/<uidb64>/resend/',views.user_resend_otp,name='user_resend_otp'),
     path('profile/',views.user_profile,name='profile'),
     path('logout/',views.user_logout,name='logout'),
     path('home/',views.user_home,name='home'),
@@ -21,9 +22,10 @@ urlpatterns=[
     path('default_address/<int:id>/',views.select_address_default,name='default_address'),
 
     path('payment_method/',views.user_payment_method,name='payment_method'),
-    path('payment_choice',views.user_payment_choice,name='payment_choice'),
+    path('payment_choice/<int:id>/',views.user_payment_choice,name='payment_choice'),
     path('create_payment/', views.create_payment, name='create_payment'),
-    path('razorpay_verify/', views.razorpay_verify, name='razorpay_verify'),
+    path('razorpay_verify/<int:id>/', views.razorpay_verify, name='razorpay_verify'),
+    path('payment_success/<int:id>/',views.payment_sucess,name='payment_success'),
 
     path('cart/',views.user_cart_display,name='cart'),
     path('add_cart/<int:id>/',views.user_cart,name='add_cart'),
@@ -32,7 +34,7 @@ urlpatterns=[
     path('delete_cart_item/<int:id>/',views.user_cart_item_delete,name='delete_cart_item'),
 
     path('myorders/',views.user_orders,name='myorders'),
-    path('user_order_confirm/<int:id>/',views.user_order_confirmation,name='user_order_confirm'),
+    path('user_order_confirm/<int:id>/',views.user_order_add,name='user_order_confirm'),
     path('user_order_cart_confirm/<int:id>/',views.user_order_cart_confirmation,name='user_order_cart_confirm'),
     path('user_order_display/',views.user_order_display,name='user_order_display'),
     path('apply_coupon/',views.user_apply_coupon,name='apply_coupon'),

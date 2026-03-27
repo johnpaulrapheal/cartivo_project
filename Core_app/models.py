@@ -14,6 +14,8 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='CUSTOMER')
     profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     gender = models.CharField(max_length=20,choices=(('male','male'),('female','female'),('other','other')),default='male')
+    email_otp = models.CharField(max_length=6, null=True, blank=True)
+    otp_created_at = models.DateTimeField(null=True, blank=True)
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
