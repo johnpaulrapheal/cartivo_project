@@ -4,58 +4,27 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils import timezone
 from django.conf import settings
 from decimal import Decimal
-from .models import User,Cart,CartItem,Order,OrderItem,Wishlist,WishlistItem,Review
+from .models import User,Cart,CartItem,Order,OrderItem,Wishlist,WishlistItem
 from User_app.decorators import customer_login_required,customer_required
 from Seller_app.models import Product,ProductImage,ProductVariant,VariantAttributeBridge,Attribute
 from Core_app.models import Address, Category, SubCategory
 from Admin_app.models import Coupon
 import razorpay
+from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect
 from django.http import JsonResponse
 import json
-import secrets
-from datetime import timedelta
 
 # Create your views here.
-
-OTP_EXPIRY_MINUTES = 10
-
-
-def _generate_email_otp():
-    return f"{secrets.randbelow(900000) + 100000:06d}"
-
-
-def _send_email_otp(user, otp):
-    subject = "Your Cartivo email verification OTP"
-    message = (
-        f"Hi {user.username},\n\n"
-        "Thanks for registering on Cartivo.\n"
-        f"Your OTP to verify your email is: {otp}\n\n"
-        f"This OTP is valid for {OTP_EXPIRY_MINUTES} minutes.\n"
-        "If you didn't create this account, you can ignore this email.\n"
-    )
-    send_mail(
-        subject,
-        message,
-        getattr(settings, "DEFAULT_FROM_EMAIL", None) or "no-reply@cartivo.local",
-        [user.email],
-        fail_silently=False,
-    )
-
-
-def _get_user_from_uidb64(uidb64):
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        return User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        return None
-
 
 def user_register(request):
     if request.method == "POST":
@@ -77,8 +46,6 @@ def user_register(request):
             messages.error(request, "Phone number already exists")
             return redirect("register")
         
-        otp = _generate_email_otp()
-
         data_user = User(
             username=username,
             email=email,
@@ -86,16 +53,32 @@ def user_register(request):
             password=make_password(password),
             profile_image=profile_image,
             is_active=False,
-            email_otp=otp,
-            otp_created_at=timezone.now(),
         )
         data_user.save()
-
-        _send_email_otp(data_user, otp)
-
+        
         uidb64 = urlsafe_base64_encode(force_bytes(data_user.pk))
-        messages.success(request, "Account created! Please check your email for the OTP to verify your account.")
-        return redirect("user_verify_otp", uidb64=uidb64)
+        token = default_token_generator.make_token(data_user)
+        verify_url = request.build_absolute_uri(
+            reverse('user_verify_email', kwargs={'uidb64': uidb64, 'token': token})
+        )
+        subject = "Verify your Cartivo account"
+        message = (
+            f"Hi {data_user.username},\n\n"
+            "Thanks for registering on Cartivo.\n"
+            "Please verify your email by clicking the link below:\n\n"
+            f"{verify_url}\n\n"
+            "If you didn't create this account, you can ignore this email.\n"
+        )
+        send_mail(
+            subject,
+            message,
+            getattr(settings, 'DEFAULT_FROM_EMAIL', None) or 'no-reply@cartivo.local',
+            [data_user.email],
+            fail_silently=False,
+        )
+
+        messages.success(request, "Account created! Please check your email to verify your account before logging in.")
+        return redirect("login")
     return render (request,"user/register_user.html")
 
 def user_login(request):
@@ -105,9 +88,8 @@ def user_login(request):
         user_obj = User.objects.filter(email=email).first()
         if user_obj:
             if not user_obj.is_active:
-                uidb64 = urlsafe_base64_encode(force_bytes(user_obj.pk))
-                messages.error(request, "Please verify your email with OTP before logging in.")
-                return redirect("user_verify_otp", uidb64=uidb64)
+                messages.error(request, "Please verify your email before logging in.")
+                return redirect('login')
             user = authenticate(request,username=user_obj.username,password=password)
             if user is not None:
                 if user_obj.role == 'CUSTOMER':
@@ -119,59 +101,22 @@ def user_login(request):
                 messages.error(request,"invalid username or password")
     return render(request,"user/user_login.html")
 
-def user_verify_otp(request, uidb64):
-    user = _get_user_from_uidb64(uidb64)
-    if user is None:
-        messages.error(request, "Invalid verification request.")
-        return redirect("register")
+def user_verify_email(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
 
-    if user.is_active:
-        messages.success(request, "Your email is already verified. Please log in.")
-        return redirect("login")
-
-    if request.method == "POST":
-        otp = (request.POST.get("otp") or "").strip()
-
-        if len(otp) != 6 or not otp.isdigit():
-            messages.error(request, "Please enter a valid 6-digit OTP.")
-        elif not user.email_otp or not user.otp_created_at:
-            messages.error(request, "OTP not found. Please request a new one.")
-        elif timezone.now() > user.otp_created_at + timedelta(minutes=OTP_EXPIRY_MINUTES):
-            messages.error(request, "OTP has expired. Please request a new OTP.")
-        elif otp != user.email_otp:
-            messages.error(request, "Invalid OTP. Please try again.")
-        else:
+    if user is not None and default_token_generator.check_token(user, token):
+        if not user.is_active:
             user.is_active = True
-            user.email_otp = None
-            user.otp_created_at = None
-            user.save(update_fields=["is_active", "email_otp", "otp_created_at"])
-            messages.success(request, "Email verified successfully. You can now log in.")
-            return redirect("login")
+            user.save()
+        messages.success(request, "Email verified successfully. You can now log in.")
+        return redirect('login')
 
-    return render(request, "user/verify_otp.html", {"uidb64": uidb64, "user_email": user.email})
-
-
-def user_resend_otp(request, uidb64):
-    if request.method != "POST":
-        return redirect("user_verify_otp", uidb64=uidb64)
-
-    user = _get_user_from_uidb64(uidb64)
-    if user is None:
-        messages.error(request, "Invalid verification request.")
-        return redirect("register")
-
-    if user.is_active:
-        messages.success(request, "Your email is already verified. Please log in.")
-        return redirect("login")
-
-    otp = _generate_email_otp()
-    user.email_otp = otp
-    user.otp_created_at = timezone.now()
-    user.save(update_fields=["email_otp", "otp_created_at"])
-    _send_email_otp(user, otp)
-
-    messages.success(request, "A new OTP has been sent to your email.")
-    return redirect("user_verify_otp", uidb64=uidb64)
+    messages.error(request, "Verification link is invalid or has expired.")
+    return redirect('register')
 
 @customer_login_required
 def user_profile(request):
@@ -393,9 +338,9 @@ def user_product_view(request, id):
                                                         })
 
 @customer_login_required
-def user_payment_choice(request,id):
+def user_payment_choice(request):
     user_name = request.user
-    order = Order.objects.get(id=id)
+    order = Order.objects.filter(user=user_name).first()
     order_item = OrderItem.objects.filter(order=order)
 
     if not order or not order_item.exists():
@@ -469,44 +414,61 @@ def user_payment_choice(request,id):
 
 @customer_login_required
 def user_orders(request):
-    user_name=request.user
-    orders=Order.objects.filter(user=user_name).exclude(order_status='pending')
-    count=orders.count()
+    orders=Order.objects.filter(order_status='Processing')
     return render(request,'user/myorders.html',{"orders":orders})
 
 @customer_login_required
-def user_order_add(request,id):
+def user_order_confirmation(request,id):
     user_name=request.user
     variant=ProductVariant.objects.get(id=id)
-    order=Order.objects.filter(user=user_name,order_status="Pending").first()
+    order=Order.objects.filter(user=user_name).first()
     product_price=variant.cost_price
     if order:
-        order_item=OrderItem.objects.filter(order=order).delete()
-        order.total_amount=0
-        order_item1=OrderItem(order=order,
-                                variant=variant,
-                                seller=variant.product.seller,
-                                discount_price=variant.mrp-variant.cost_price,
-                                price_at_purchase=product_price)
-        order_item1.save()
-        order.total_amount+=product_price
-        order.save()
+        order_item=OrderItem.objects.filter(order=order).first()
+        if order_item:
+            order_item.delete()
+            order.total_amount=0
+            # if order_item.quantity < variant.stock_quantity:
+            #     order_item.quantity += 1
+            #     order_item.seller=variant.product.seller
+            #     order_item.discount_price=variant.mrp-variant.cost_price
+            #     order_item.save() 
+            #     order.total_amount+=order_item.price_at_purchase
+            #     order.save() 
+            # else:     
+            #     messages.error(request,"item stock out")
+            order_item1=OrderItem(order=order,
+                                  variant=variant,
+                                  seller=variant.product.seller,
+                                  discount_price=variant.mrp-variant.cost_price,
+                                  price_at_purchase=product_price)
+            order_item1.save()
+            order.total_amount+=product_price
+            order.save()
+        else:
+            order_item1=OrderItem(order=order,
+                                  variant=variant,
+                                  seller=variant.product.seller,
+                                  discount_price=variant.mrp-variant.cost_price,
+                                  price_at_purchase=product_price)
+            order_item1.save()
+            order.total_amount+=product_price
+            order.save()
     else:
         order1=Order(user=user_name,total_amount=product_price)
         order1.save()
-        print('hi')
         order_item1=OrderItem(order=order1,
                               variant=variant,
                               seller=variant.product.seller,
                               discount_price=variant.mrp-variant.cost_price,
                               price_at_purchase=product_price)
         order_item1.save()
-    return redirect('user_order_display',)
+    return redirect('user_order_display')
 
 @customer_login_required
 def user_order_add_quantity(request,id):
     variant=ProductVariant.objects.get(id=id)
-    order=Order.objects.get(user=request.user,order_status="Pending")
+    order=Order.objects.get(user=request.user)
     order_item=OrderItem.objects.get(order=order,variant=variant)
     if order_item.quantity < variant.stock_quantity:
         order_item.quantity += 1
@@ -520,7 +482,7 @@ def user_order_add_quantity(request,id):
 @customer_login_required
 def user_order_substract_quantity(request,id):
     variant=ProductVariant.objects.get(id=id)
-    order=Order.objects.get(user=request.user,order_status="Pending")
+    order=Order.objects.get(user=request.user)
     order_item=OrderItem.objects.get(order=order,variant=variant)
     if order_item.quantity > 1:
         order_item.quantity -= 1
@@ -536,7 +498,7 @@ def user_order_substract_quantity(request,id):
 @customer_login_required
 def user_order_item_delete(request,id):
     variant=ProductVariant.objects.get(id=id)
-    order=Order.objects.get(user=request.user,order_status="Pending")
+    order=Order.objects.get(user=request.user)
     order_item=OrderItem.objects.get(order=order,variant=variant)
     order_item.delete()
     return redirect('user_order_display')
@@ -544,7 +506,7 @@ def user_order_item_delete(request,id):
 @customer_required
 def user_order_display(request):   
     user_name=request.user
-    order=Order.objects.filter(user=user_name,order_status='Pending').first()
+    order=Order.objects.filter(user=user_name).first()
     order_item=OrderItem.objects.filter(order=order)
     address=Address.objects.get(is_default=True)
     total_discount=0
@@ -665,23 +627,30 @@ def user_order_cart_confirmation(request,id):
     user_name=request.user
     cart=Cart.objects.get(id=id)
     cart_item=CartItem.objects.filter(cart=cart)
-    order=Order.objects.filter(user=user_name,order_status="Pending").first()
-    if order:
-        order_item=OrderItem.objects.filter(order=order).delete()
+    order=Order.objects.filter(user=user_name).first()     
     if cart_item:
         for i in cart_item:
             variant=i.variant
             product_price=variant.cost_price
             if order:
-                order.total_amount=0
-                order_item1=OrderItem(order=order,
-                                        variant=variant,
-                                        seller=variant.product.seller,
-                                        discount_price=variant.mrp-variant.cost_price,
-                                        price_at_purchase=product_price)
-                order_item1.save()
-                order.total_amount+=product_price
-                order.save()
+                order_item=OrderItem.objects.filter(order=order,variant=variant).first()
+                if order_item:
+                    if order_item.quantity < variant.stock_quantity:
+                        order_item.quantity += 1
+                        order_item.seller=variant.product.seller
+                        order_item.save() 
+                        order.total_amount+=order_item.price_at_purchase
+                        order.save() 
+                    else:     
+                        messages.error(request,"item stock out")
+                else:
+                    order_item1=OrderItem(order=order,
+                                          variant=variant,
+                                          seller=variant.product.seller,
+                                          price_at_purchase=product_price)
+                    order_item1.save()
+                    order.total_amount+=product_price
+                    order.save() 
             else:
                 order1=Order(user=user_name,total_amount=product_price)
                 order1.save()
@@ -800,7 +769,7 @@ def create_payment(request):
 
 
 @csrf_exempt
-def razorpay_verify(request,id):
+def razorpay_verify(request):
     if request.method == "POST":
         data = json.loads(request.body)
 
@@ -815,62 +784,9 @@ def razorpay_verify(request,id):
                 'razorpay_signature': data['razorpay_signature']
             })
 
-            order = Order.objects.get(id=id)
-            print(order)   
 
-            return JsonResponse({
-                "status": "success",
-                "redirect_url": f"/user/payment_success/{order.id}" 
-            })
+
+            return render(request,"user/payment_success.html")
 
         except:
             return JsonResponse({"status": "failed"})
-    
-def payment_sucess(request,id):
-    order=Order.objects.get(id=id)
-    orderitems=OrderItem.objects.filter(order=order)
-    order.order_status='Procesing'
-    order.payment_status='Success'
-    order.save()
-    count=orderitems.count()
-    delivery_datefrom=(order.ordered_at + timedelta(days=10)).date()
-    delivery_dateto=(order.ordered_at + timedelta(days=15)).date()
-    return render(request,'user/payment_success.html',{'order':order,'count':count,'delivery_datefrom':delivery_datefrom,'delivery_dateto':delivery_dateto})
-
-
-def review(request, id):
-    user = request.user
-    variant = get_object_or_404(ProductVariant, id=id)
-    product = variant.product
-    orders = Order.objects.filter(user=user)
-    purchased = False
-
-    for order in orders:
-        orderitems = OrderItem.objects.filter(order=order)
-        for item in orderitems:
-            if item.variant.product == product:
-                purchased = True
-                break
-        if purchased:
-            break
-
-    if not purchased:
-        messages.error(request, "You are not eligible to give a review")
-        return redirect("product_view", id=product.id)
-
-    if request.method == "POST":
-        rating = request.POST.get("rating")
-        comment = request.POST.get("comment")
-
-        Review.objects.create(
-            user=user,
-            product=product,
-            rating=rating,
-            comment=comment
-        )
-
-        messages.success(request, "Review added successfully!")
-        return redirect("product_view", id=product.id)
-
-    return redirect("product_view", id=product.id)
-

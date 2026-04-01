@@ -63,7 +63,7 @@
                     
                     <div class="p-1 sm:p-2">
                         <label class="block cursor-pointer">
-                            <input type="radio" name="pay_method" value="online" x-model="payMethod" class="hidden">
+                            <input type="radio" name="pay_method" value="upi" x-model="payMethod" class="hidden">
                             <div class="p-4 sm:p-8 border-b border-violet-50 flex items-start gap-4 sm:gap-6 transition-all"
                                  :class="payMethod === 'upi' ? 'bg-violet-50/50' : 'hover:bg-slate-50'">
                                 <div class="w-6 h-6 border-2 rounded-full flex items-center justify-center mt-1 transition-all"
@@ -72,8 +72,19 @@
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <div class="flex flex-wrap items-center justify-between gap-2 mb-4 sm:mb-6">
-                                        <span class="text-base sm:text-lg font-bold text-slate-800">Online</span>
+                                        <span class="text-base sm:text-lg font-bold text-slate-800">UPI (Instant Transfer)</span>
                                         <img src="https://www.vectorlogo.zone/logos/upi/upi-ar21.svg" class="h-6 shrink-0" alt="" :class="payMethod === 'upi' ? '' : 'grayscale opacity-50'">
+                                    </div>
+                                    <div class="space-y-4" x-show="payMethod === 'upi'" x-collapse>
+                                        <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Choose your UPI app:</p>
+                                        <div class="flex flex-wrap gap-3">
+                                            <template x-for="app in ['Google Pay', 'PhonePe', 'Paytm']">
+                                                <button @click="upiApp = app.toLowerCase()" 
+                                                        class="px-6 py-3 border-2 rounded-2xl text-xs font-black transition-all"
+                                                        :class="upiApp === app.toLowerCase() ? 'border-violet-600 text-violet-700 bg-violet-100 shadow-sm' : 'border-transparent bg-white text-slate-500 hover:border-violet-200'"
+                                                        x-text="app"></button>
+                                            </template>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -206,7 +217,7 @@ async function startPayment() {
         },
 
         "handler": async function (response){
-            let verify = await fetch("{% url 'razorpay_verify' order.id %}", {
+            let verify = await fetch("{% url 'razorpay_verify' %}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -218,7 +229,7 @@ async function startPayment() {
             let result = await verify.json();
 
             if(result.status === "success"){
-                window.location.href = result.redirect_url;
+                window.location.href = "/success/";
             } else {
                 alert("Payment Failed");
             }
