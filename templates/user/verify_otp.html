@@ -1,0 +1,62 @@
+{% extends "user/base.html" %}
+
+{% block title %}Verify OTP | Cartivo{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-320px)] flex items-center justify-center p-4 md:p-10">
+    <div class="max-w-xl w-full bg-white rounded-[2rem] shadow-2xl shadow-violet-200/50 p-8 md:p-12">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Verify Your Email</h1>
+            <p class="text-sm text-gray-500">
+                Enter the 6-digit OTP sent to <span class="font-semibold text-violet-700">{{ user_email }}</span>
+            </p>
+        </div>
+
+        {% if messages %}
+        <div class="space-y-3 mb-6">
+            {% for message in messages %}
+            <div class="{% if message.tags == 'error' %}bg-red-500{% else %}bg-green-500{% endif %} text-white px-5 py-3 rounded-xl shadow flex items-center gap-3">
+                <i class="fa-solid {% if message.tags == 'error' %}fa-circle-xmark{% else %}fa-check-circle{% endif %}"></i>
+                <span class="font-semibold text-sm">{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'user_verify_otp' uidb64=uidb64 %}" class="space-y-5">
+            {% csrf_token %}
+            <div>
+                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">One-Time Password</label>
+                <input
+                    type="text"
+                    name="otp"
+                    maxlength="6"
+                    pattern="[0-9]{6}"
+                    inputmode="numeric"
+                    placeholder="Enter 6-digit OTP"
+                    class="mt-2 w-full bg-gray-50 border border-gray-100 focus:border-violet-400 focus:bg-white rounded-2xl py-4 px-4 transition-all outline-none text-sm shadow-sm tracking-[0.25em] text-center"
+                    required
+                >
+            </div>
+
+            <button
+                type="submit"
+                class="w-full violet-gradient text-white py-4 rounded-2xl font-bold shadow-xl shadow-violet-200 hover:scale-[1.01] transition duration-300 active:scale-95"
+            >
+                Verify OTP
+            </button>
+        </form>
+
+        <form method="POST" action="{% url 'user_resend_otp' uidb64=uidb64 %}" class="mt-4">
+            {% csrf_token %}
+            <button type="submit" class="w-full border border-violet-200 text-violet-700 py-3 rounded-2xl text-sm font-bold hover:bg-violet-50 transition">
+                Resend OTP
+            </button>
+        </form>
+
+        <p class="text-center text-xs text-gray-500 mt-5">
+            OTP expires in 10 minutes.
+        </p>
+    </div>
+</div>
+{% endblock %}

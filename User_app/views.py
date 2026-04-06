@@ -4,9 +4,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
-from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils import timezone
@@ -17,14 +15,51 @@ from User_app.decorators import customer_login_required,customer_required
 from Seller_app.models import Product,ProductImage,ProductVariant,VariantAttributeBridge,Attribute
 from Core_app.models import Address, Category, SubCategory
 from Admin_app.models import Coupon
-import razorpay
+try:
+    import razorpay
+except ImportError:
+    razorpay = None
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import redirect
 from django.http import JsonResponse
 import json
+import secrets
+from datetime import timedelta
 
 # Create your views here.
+
+OTP_EXPIRY_MINUTES = 10
+
+
+def _generate_email_otp():
+    return f"{secrets.randbelow(900000) + 100000:06d}"
+
+
+def _send_email_otp(user, otp):
+    subject = "Your Cartivo email verification OTP"
+    message = (
+        f"Hi {user.username},\n\n"
+        "Thanks for registering on Cartivo.\n"
+        f"Your OTP to verify your email is: {otp}\n\n"
+        f"This OTP is valid for {OTP_EXPIRY_MINUTES} minutes.\n"
+        "If you didn't create this account, you can ignore this email.\n"
+    )
+    send_mail(
+        subject,
+        message,
+        getattr(settings, "DEFAULT_FROM_EMAIL", None) or "no-reply@cartivo.local",
+        [user.email],
+        fail_silently=False,
+    )
+
+
+def _get_user_from_uidb64(uidb64):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        return User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        return None
 
 def user_register(request):
     if request.method == "POST":
@@ -45,6 +80,8 @@ def user_register(request):
         if User.objects.filter(phone_number=phone_number).exists():
             messages.error(request, "Phone number already exists")
             return redirect("register")
+
+        otp = _generate_email_otp()
         
         data_user = User(
             username=username,
@@ -53,70 +90,106 @@ def user_register(request):
             password=make_password(password),
             profile_image=profile_image,
             is_active=False,
+            email_otp=otp,
+            otp_created_at=timezone.now(),
         )
         data_user.save()
-        
-        uidb64 = urlsafe_base64_encode(force_bytes(data_user.pk))
-        token = default_token_generator.make_token(data_user)
-        verify_url = request.build_absolute_uri(
-            reverse('user_verify_email', kwargs={'uidb64': uidb64, 'token': token})
-        )
-        subject = "Verify your Cartivo account"
-        message = (
-            f"Hi {data_user.username},\n\n"
-            "Thanks for registering on Cartivo.\n"
-            "Please verify your email by clicking the link below:\n\n"
-            f"{verify_url}\n\n"
-            "If you didn't create this account, you can ignore this email.\n"
-        )
-        send_mail(
-            subject,
-            message,
-            getattr(settings, 'DEFAULT_FROM_EMAIL', None) or 'no-reply@cartivo.local',
-            [data_user.email],
-            fail_silently=False,
-        )
 
-        messages.success(request, "Account created! Please check your email to verify your account before logging in.")
-        return redirect("login")
+        _send_email_otp(data_user, otp)
+
+        uidb64 = urlsafe_base64_encode(force_bytes(data_user.pk))
+        messages.success(request, "Account created! Please check your email for the OTP to verify your account.")
+        return redirect("user_verify_otp", uidb64=uidb64)
     return render (request,"user/register_user.html")
 
 def user_login(request):
     if request.method == "POST":
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        user_obj = User.objects.filter(email=email).first()
-        if user_obj:
-            if not user_obj.is_active:
-                messages.error(request, "Please verify your email before logging in.")
-                return redirect('login')
-            user = authenticate(request,username=user_obj.username,password=password)
-            if user is not None:
-                if user_obj.role == 'CUSTOMER':
-                    login(request,user)
-                    return redirect('home')
-                else:
-                    messages.error(request,"you are not allowed to login as user")
-            else:
-                messages.error(request,"invalid username or password")
+        identifier = (request.POST.get('email') or '').strip()
+        password = request.POST.get('password') or ''
+
+        if not identifier or not password:
+            messages.error(request, "Please enter both email/phone and password.")
+            return redirect('login')
+
+        user_obj = User.objects.filter(
+            Q(email__iexact=identifier) | Q(phone_number=identifier)
+        ).first()
+
+        if not user_obj:
+            messages.error(request, "No account found for this email or phone number.")
+            return redirect('login')
+
+        if not user_obj.is_active:
+            uidb64 = urlsafe_base64_encode(force_bytes(user_obj.pk))
+            messages.error(request, "Please verify your email with OTP before logging in.")
+            return redirect("user_verify_otp", uidb64=uidb64)
+
+        user = authenticate(request, username=user_obj.username, password=password)
+        if user is None:
+            messages.error(request, "Invalid username or password.")
+            return redirect('login')
+
+        if user_obj.role != 'CUSTOMER':
+            messages.error(request, "You are not allowed to login as user.")
+            return redirect('login')
+
+        login(request, user)
+        return redirect('home')
     return render(request,"user/user_login.html")
 
-def user_verify_email(request, uidb64, token):
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
+def user_verify_otp(request, uidb64):
+    user = _get_user_from_uidb64(uidb64)
+    if user is None:
+        messages.error(request, "Invalid verification request.")
+        return redirect("register")
 
-    if user is not None and default_token_generator.check_token(user, token):
-        if not user.is_active:
+    if user.is_active:
+        messages.success(request, "Your email is already verified. Please log in.")
+        return redirect("login")
+
+    if request.method == "POST":
+        otp = (request.POST.get("otp") or "").strip()
+
+        if len(otp) != 6 or not otp.isdigit():
+            messages.error(request, "Please enter a valid 6-digit OTP.")
+        elif not user.email_otp or not user.otp_created_at:
+            messages.error(request, "OTP not found. Please request a new one.")
+        elif timezone.now() > user.otp_created_at + timedelta(minutes=OTP_EXPIRY_MINUTES):
+            messages.error(request, "OTP has expired. Please request a new OTP.")
+        elif otp != user.email_otp:
+            messages.error(request, "Invalid OTP. Please try again.")
+        else:
             user.is_active = True
-            user.save()
-        messages.success(request, "Email verified successfully. You can now log in.")
-        return redirect('login')
+            user.email_otp = None
+            user.otp_created_at = None
+            user.save(update_fields=["is_active", "email_otp", "otp_created_at"])
+            messages.success(request, "Email verified successfully. You can now log in.")
+            return redirect("login")
 
-    messages.error(request, "Verification link is invalid or has expired.")
-    return redirect('register')
+    return render(request, "user/verify_otp.html", {"uidb64": uidb64, "user_email": user.email})
+
+
+def user_resend_otp(request, uidb64):
+    if request.method != "POST":
+        return redirect("user_verify_otp", uidb64=uidb64)
+
+    user = _get_user_from_uidb64(uidb64)
+    if user is None:
+        messages.error(request, "Invalid verification request.")
+        return redirect("register")
+
+    if user.is_active:
+        messages.success(request, "Your email is already verified. Please log in.")
+        return redirect("login")
+
+    otp = _generate_email_otp()
+    user.email_otp = otp
+    user.otp_created_at = timezone.now()
+    user.save(update_fields=["email_otp", "otp_created_at"])
+    _send_email_otp(user, otp)
+
+    messages.success(request, "A new OTP has been sent to your email.")
+    return redirect("user_verify_otp", uidb64=uidb64)
 
 @customer_login_required
 def user_profile(request):
@@ -163,7 +236,6 @@ def user_home(request):
     products = products = Product.objects.filter(is_active=True,approval_status='APPROVED').prefetch_related('variants__images')
     return render(request,'user/home.html',{'products':products})
 
-@customer_login_required
 def user_product_filter(request):
     q = (request.GET.get('q') or '').strip()
     brand = (request.GET.get('brand') or '').strip()
@@ -339,6 +411,10 @@ def user_product_view(request, id):
 
 @customer_login_required
 def user_payment_choice(request):
+    if razorpay is None:
+        messages.error(request, "Payment service is unavailable. Please try again later.")
+        return redirect('user_order_display')
+
     user_name = request.user
     order = Order.objects.filter(user=user_name).first()
     order_item = OrderItem.objects.filter(order=order)
@@ -439,7 +515,7 @@ def user_order_confirmation(request,id):
             #     messages.error(request,"item stock out")
             order_item1=OrderItem(order=order,
                                   variant=variant,
-                                  seller=variant.product.seller,
+                                  seller=variant.product.seller,\
                                   discount_price=variant.mrp-variant.cost_price,
                                   price_at_purchase=product_price)
             order_item1.save()
@@ -751,6 +827,10 @@ def select_address_default(request,id):
     return redirect('address')
 
 def create_payment(request):
+    if razorpay is None:
+        messages.error(request, "Payment service is unavailable. Please try again later.")
+        return redirect('user_order_display')
+
     client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
     amount = 50000
@@ -770,6 +850,9 @@ def create_payment(request):
 
 @csrf_exempt
 def razorpay_verify(request):
+    if razorpay is None:
+        return JsonResponse({"status": "failed", "reason": "Payment service unavailable"}, status=503)
+
     if request.method == "POST":
         data = json.loads(request.body)
 
@@ -788,5 +871,5 @@ def razorpay_verify(request):
 
             return render(request,"user/payment_success.html")
 
-        except:
+        except Exception:
             return JsonResponse({"status": "failed"})

@@ -41,7 +41,14 @@ INSTALLED_APPS = [
     'User_app',
     'Core_app',
     'Seller_app',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',  
 ]
+
+SITE_ID = 1
+
 MIDDLEWARE = [  
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -50,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'cartivo.urls'
@@ -73,11 +81,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'cartivo.wsgi.application'
 
 AUTHENTICATION_BACKENDS = [
-
-    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
-
-    # `allauth` specific authentication methods, such as login by email
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
@@ -145,11 +149,36 @@ EMAIL_HOST_PASSWORD = 'xgbczgxluzoiuccu'
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-AUTH_USER_MODEL = 'Core_app.User'
+# --- Allauth Configuration ---
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'profile'
-LOGOUT_REDIRECT_URL = 'login'
+# Custom Adapters
+ACCOUNT_ADAPTER = 'Core_app.adapter.MyLoginAdapter'
+SOCIALACCOUNT_ADAPTER = 'Core_app.adapter.MySocialAccountAdapter'
+
+# Auto-linking existing users (Fixes the "Final Step" issue)
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+
+# Redirects & UX
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_SESSION_REMEMBER = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}
 
 RAZORPAY_KEY_ID = "rzp_test_SUO3WrAkaqQAXM"
 RAZORPAY_KEY_SECRET = "lvOAAXzmGxrfMfFnqC83D2ma"

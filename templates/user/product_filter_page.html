@@ -33,7 +33,7 @@
           <select name="subcategory" class="mt-2 w-full bg-white border border-violet-100 rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-violet-200">
             <option value="">All subcategories</option>
             {% for s in subcategories %}
-              <option value="{{ s.id }}" {% if subcategory_id|add:'' == s.id|add:'' %}selected{% endif %}>{{ s.category.name }} • {{ s.name }}</option>
+              <option value="{{ s.id }}" {% if subcategory_id|add:'' == s.id|add:'' %}selected{% endif %}>{{ s.category.name }} &bull; {{ s.name }}</option>
             {% endfor %}
           </select>
         </div>
@@ -74,54 +74,57 @@
         <div>
           <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight break-words">Browse <span class="text-violet-600">Products</span></h1>
           <p class="text-sm text-slate-500 font-medium mt-1">
-            Showing {{ products|length }} result{{ products|length|pluralize }}{% if q %} for “{{ q }}”{% endif %}.
+            Showing {{ products|length }} result{{ products|length|pluralize }}{% if q %} for "{{ q }}"{% endif %}.
           </p>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
         {% for product in products %}
           {% with variant=product.variants.first %}
             {% if variant %}
-              <div class="bg-white border border-violet-100 rounded-[2rem] p-4 shadow-sm hover:shadow-xl hover:shadow-violet-100/50 transition">
+              <article class="group bg-white border border-violet-100 rounded-[2rem] p-4 shadow-sm hover:shadow-xl hover:shadow-violet-100/60 hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
                 <a href="{% url 'product_view' variant.id %}" class="block">
-                  <div class="relative bg-violet-50 rounded-[1.75rem] aspect-[4/5] overflow-hidden mb-4">
+                  <div class="relative bg-violet-50 rounded-[1.5rem] aspect-[4/5] overflow-hidden">
                     {% if variant.images.first %}
-                      <img src="{{ variant.images.first.product_images.url }}" class="w-full h-full object-cover">
+                      <img src="{{ variant.images.first.product_images.url }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     {% else %}
                       <img src="/media/default.jpg" class="w-full h-full object-cover">
                     {% endif %}
-                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-black text-slate-700 uppercase tracking-widest">
+                    {% if product.brand %}
+                    <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-black text-slate-700 uppercase tracking-widest max-w-[75%] truncate">
                       {{ product.brand }}
                     </div>
+                    {% endif %}
                   </div>
-                  <h3 class="font-extrabold text-slate-900 leading-tight">{{ product.name }}</h3>
+                </a>
+
+                <div class="pt-4 flex-1 flex flex-col">
+                  <h3 class="font-extrabold text-slate-900 leading-tight min-h-[3rem] group-hover:text-violet-700 transition">{{ product.name }}</h3>
                   <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">
-                    {{ product.subcategory.category.name }} • {{ product.subcategory.name }}
+                    {{ product.subcategory.category.name }} &bull; {{ product.subcategory.name }}
                   </p>
                   <p class="text-sm text-slate-500 mt-2">{{ product.description|truncatechars:70 }}</p>
 
                   <div class="mt-4 flex items-end justify-between">
-                    <div class="text-xl font-black text-violet-900">₹{{ variant.cost_price }}</div>
+                    <div class="text-2xl font-black text-violet-900">&#8377;{{ variant.cost_price }}</div>
                     <div class="text-xs font-bold text-slate-400">
-                      {% if variant.mrp %}<span class="line-through">₹{{ variant.mrp }}</span>{% endif %}
+                      {% if variant.mrp %}<span class="line-through">&#8377;{{ variant.mrp }}</span>{% endif %}
                     </div>
                   </div>
-                </a>
+                </div>
 
-                <div class="mt-4 flex gap-2">
-                  <a href="{% url 'add_cart' variant.id %}" class="flex-1">
-                    <button class="w-full bg-violet-600 text-white py-3 rounded-2xl font-extrabold hover:bg-violet-700 transition">
+                <div class="mt-4 grid grid-cols-[1fr_auto] gap-2">
+                  <a href="{% url 'add_cart' variant.id %}" class="block">
+                    <span class="block w-full text-center bg-violet-600 text-white py-3 rounded-2xl font-extrabold hover:bg-violet-700 transition">
                       Add to Cart
-                    </button>
+                    </span>
                   </a>
-                  <a href="{% url 'wishlist_add' variant.id %}">
-                    <button class="w-12 h-12 rounded-2xl bg-white border border-violet-100 text-rose-500 hover:bg-rose-50 transition flex items-center justify-center">
-                      <i class="fa-solid fa-heart"></i>
-                    </button>
+                  <a href="{% url 'wishlist_add' variant.id %}" class="w-12 h-12 rounded-2xl bg-white border border-violet-100 text-rose-500 hover:bg-rose-50 transition flex items-center justify-center">
+                    <i class="fa-solid fa-heart"></i>
                   </a>
                 </div>
-              </div>
+              </article>
             {% endif %}
           {% endwith %}
         {% empty %}

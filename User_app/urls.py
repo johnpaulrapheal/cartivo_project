@@ -4,7 +4,8 @@ from .import views
 urlpatterns=[
     path('register/',views.user_register,name='register'),
     path('login/',views.user_login,name='login'),
-    path('verify-email/<uidb64>/<token>/',views.user_verify_email,name='user_verify_email'),
+    path('verify-otp/<uidb64>/',views.user_verify_otp,name='user_verify_otp'),
+    path('verify-otp/<uidb64>/resend/',views.user_resend_otp,name='user_resend_otp'),
     path('profile/',views.user_profile,name='profile'),
     path('logout/',views.user_logout,name='logout'),
     path('home/',views.user_home,name='home'),
