@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Q, Min, Prefetch
 from django.core.mail import send_mail
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -195,34 +195,41 @@ def user_resend_otp(request, uidb64):
 def user_profile(request):
     user = request.user
     if request.method=='POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        phone_number = request.POST.get('phone_number')
-        gender=request.POST.get('gender')
+        username = (request.POST.get('username') or user.username).strip()
+        email = (request.POST.get('email') or user.email).strip()
+        phone_number = (request.POST.get('phone_number') or user.phone_number).strip()
+        gender = (request.POST.get('gender') or user.gender).strip()
+        updated_fields = []
 
-        if User.objects.filter(username=username).exclude(id=user.id).exists():
-            messages.error(request, "Username already exists")
-            return redirect("register")
-        else:
-            messages.success(request, "Username updated")
-        
-        if User.objects.filter(email=email).exclude(id=user.id).exists():
-            messages.error(request, "Email already exists")
-            return redirect("register")
-        else:
-            messages.success(request, "Email updated")
-    
-        if User.objects.filter(phone_number=phone_number).exclude(id=user.id).exists():
-            messages.error(request, "Phone number already exists")
-            return redirect("register")
-        else:
-            messages.success(request, "Phone Number updated")
+        if username != user.username:
+            if User.objects.filter(username=username).exclude(id=user.id).exists():
+                messages.error(request, "Username already exists")
+                return redirect("profile")
+            user.username = username
+            updated_fields.append('username')
 
-        user.username=username
-        user.email=email
-        user.phone_number=phone_number
-        user.gender=gender
-        user.save()
+        if email != user.email:
+            if User.objects.filter(email=email).exclude(id=user.id).exists():
+                messages.error(request, "Email already exists")
+                return redirect("profile")
+            user.email = email
+            updated_fields.append('email')
+
+        if phone_number != user.phone_number:
+            if User.objects.filter(phone_number=phone_number).exclude(id=user.id).exists():
+                messages.error(request, "Phone number already exists")
+                return redirect("profile")
+            user.phone_number = phone_number
+            updated_fields.append('phone_number')
+
+        if gender != user.gender:
+            user.gender = gender
+            updated_fields.append('gender')
+
+        if updated_fields:
+            user.save(update_fields=updated_fields)
+            messages.success(request, "Profile updated successfully")
+        return redirect("profile")
 
     return render(request,'user/user_profile.html')
 
@@ -243,9 +250,22 @@ def user_product_filter(request):
     subcategory_id = (request.GET.get('subcategory') or '').strip()
     sort = (request.GET.get('sort') or '').strip()
 
-    products = Product.objects.filter(is_active=True, approval_status='APPROVED').select_related(
-        'subcategory', 'subcategory__category'
-    ).prefetch_related('variants__images')
+    products = Product.objects.filter(
+        is_active=True,
+        approval_status='APPROVED',
+    ).select_related(
+        'subcategory',
+        'subcategory__category',
+    ).prefetch_related(
+        Prefetch(
+            'variants',
+            queryset=ProductVariant.objects.prefetch_related('images').order_by('cost_price', 'id'),
+        )
+    ).annotate(
+        min_variant_price=Min('variants__cost_price')
+    ).filter(
+        min_variant_price__isnull=False
+    )
 
     if q:
         products = products.filter(
@@ -264,11 +284,9 @@ def user_product_filter(request):
         products = products.filter(subcategory__category_id=int(category_id))
 
     if sort == 'price_low':
-        products = products.order_by('variants__cost_price')
+        products = products.order_by('min_variant_price', '-created_at')
     elif sort == 'price_high':
-        products = products.order_by('-variants__cost_price')
-    elif sort == 'new':
-        products = products.order_by('-created_at')
+        products = products.order_by('-min_variant_price', '-created_at')
     else:
         products = products.order_by('-created_at')
 
@@ -584,7 +602,11 @@ def user_order_display(request):
     user_name=request.user
     order=Order.objects.filter(user=user_name).first()
     order_item=OrderItem.objects.filter(order=order)
-    address=Address.objects.get(is_default=True)
+    user_addresses = Address.objects.filter(user=user_name)
+    address = user_addresses.filter(is_default=True).first() or user_addresses.first()
+    if not address:
+        messages.error(request, "Please add your delivery address in profile before placing an order.")
+        return redirect('profile')
     total_discount=0
     for items in order_item:
         total_discount+=items.discount_price*items.quantity
@@ -623,9 +645,7 @@ def user_order_display(request):
 
     amount_payable = (order.total_amount - coupon_discount + handling_fee) if order else handling_fee
 
-    return render(
-        request,
-        'user/order_confirmation.html',
+    return render(request,'user/order_confirmation.html',
         {
             'order_item': order_item,
             'total_discount': total_discount,
@@ -758,6 +778,7 @@ def user_address_add(request):
         country=request.POST.get('country')
         landmark=request.POST.get('landmark')
         address_type=request.POST.get('address_type')
+        is_first_address = not Address.objects.filter(user=request.user).exists()
         address_data=Address(user=request.user,
                              full_name=full_name,
                              phone_number=phone_number,
@@ -767,7 +788,8 @@ def user_address_add(request):
                              state=state,
                              country=country,
                              landmark=landmark,
-                             address_type=address_type,
+                              address_type=address_type,
+                             is_default=is_first_address,
                              )
         address_data.save()
     previous_url = request.META.get('HTTP_REFERER')
@@ -814,16 +836,16 @@ def user_address_edit(request,id):
 
 @customer_login_required
 def select_address_default(request,id):
-    user=request.user
-    address=Address.objects.filter(user=user)
-    print("hi")
-    for i in address:
-        if i.id==id:
-            i.is_default=True
-            i.save()
-        elif i.id!=id:
-            i.is_default=False
-            i.save()
+    user = request.user
+    selected_address = Address.objects.filter(user=user, id=id).first()
+    if not selected_address:
+        messages.error(request, "Address not found.")
+        return redirect('address')
+
+    Address.objects.filter(user=user, is_default=True).exclude(id=selected_address.id).update(is_default=False)
+    if not selected_address.is_default:
+        selected_address.is_default = True
+        selected_address.save(update_fields=['is_default'])
     return redirect('address')
 
 def create_payment(request):
@@ -873,3 +895,4 @@ def razorpay_verify(request):
 
         except Exception:
             return JsonResponse({"status": "failed"})
+  

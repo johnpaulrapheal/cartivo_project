@@ -107,7 +107,6 @@ class MySocialAccountAdapter(DefaultSocialAccountAdapter):
         try:
             return super().save_user(request, sociallogin, form=form, **kwargs)
         except IntegrityError as exc:
-            # Rare race condition fallback in case same username is created concurrently.
             if "username" not in str(exc).lower():
                 raise
             user.username = self._generate_unique_username(email=email, preferred_username="")
