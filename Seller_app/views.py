@@ -52,18 +52,18 @@ def sellerlogin(request):
         password=request.POST.get("password")
         data=authenticate(request,username=username,password=password)
         if data:
-            if data.role =="SELLER":
+            if data.role =="Seller":
                 login(request,data)
                 return redirect("/sellerhome/")
                 
             else:
                 messages.error(request,"invalid username or password")
         else:
-            return redirect("/regis/")    
+            return redirect("/seller/sellerhome/")     
     return render(request,"seller/sellerlogin.html")
 
 
-# @seller_required
+@seller_required
 def sellerhome(request):
     seller=SellerProfile.objects.get(user=request.user)
     products=(Product.objects.filter(seller=seller,is_active=True).prefetch_related("variants__images").order_by("-created_at"))
