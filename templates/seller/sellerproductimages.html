@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Assets | StudioPro Merchant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --brand-teal: #7c3aed;
+            --brand-bg: #F8FAFB;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--brand-bg); 
+            color: #2D3748;
+            overflow-x: hidden;
+        }
+
+        .card-container {
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-box { 
+            background: #FFFFFF; 
+            border: 1.5px solid #E2E8F0; 
+            border-radius: 0.75rem; 
+            padding: 0.8rem 1rem; 
+            font-size: 13px; 
+            font-weight: 600; 
+            width: 100%; 
+            transition: all 0.2s ease; 
+        }
+        
+        .input-box:focus { 
+            outline: none; 
+            border-color: var(--brand-teal); 
+            box-shadow: 0 0 0 4px rgba(79, 125, 136, 0.1);
+        }
+
+        .label-sm { 
+            font-size: 11px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+            color: #718096; 
+            margin-bottom: 8px; 
+            display: block; 
+        }
+
+        .asset-card {
+            transition: all 0.3s ease;
+        }
+
+        .asset-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Modern Custom Scrollbar */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 10px; }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        .float-icon { animation: float 3s infinite ease-in-out; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-gray-100">
+        <div class="flex items-center gap-6">
+            <a href="/sellerhome/" class="flex items-center gap-2 text-gray-400 hover:text-[#7c3aed] transition-colors group">
+                <div class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center group-hover:border-[#7c3aed]">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                </div>
+                <span class="text-xs font-bold uppercase tracking-widest">Back to Inventory</span>
+            </a>
+            <div class="h-6 w-px bg-gray-200 hidden sm:block"></div>
+            <div class="flex items-center gap-2">
+                <span class="font-extrabold tracking-tighter text-lg uppercase">Studio<span class="text-[#7c3aed]">Pro</span></span>
+            </div>
+        </div>
+        <div class="hidden sm:block">
+            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Merchant Control Panel</span>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-6 lg:p-12">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+            <div>
+                <nav class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">
+                    <span>Products</span>
+                    <i class="fa-solid fa-chevron-right text-[8px]"></i>
+                    <span class="text-[#7c3aed]">Media Assets</span>
+                </nav>
+                <h1 class="text-3xl font-black text-[#2D3748] tracking-tight">Gallery <span class="text-[#7c3aed]">Management.</span></h1>
+                <p class="text-sm font-medium text-gray-500 mt-1">Resource allocation for SKU: <span class="text-[#7c3aed] font-bold">{{ variant.sku_code }}</span></p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            
+            <div class="lg:col-span-4">
+                <div class="card-container p-8 sticky top-28 border-t-4 border-t-[#7c3aed]">
+                    <h3 class="text-xs font-black text-gray-800 uppercase tracking-widest mb-8 flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up text-[#7c3aed]"></i> Upload Asset
+                    </h3>
+                    
+                    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <div>
+                            <label class="label-sm">Media File</label>
+                            <div class="relative group">
+                                <div id="drop-zone" class="w-full h-64 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center gap-3 group-hover:border-[#7c3aed] group-hover:bg-[#e9d5ff] transition-all cursor-pointer overflow-hidden">
+                                    
+                                    <div id="upload-placeholder" class="flex flex-col items-center">
+                                        <div class="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-4 float-icon">
+                                            <i class="fa-solid fa-image text-[#7c3aed] text-xl"></i>
+                                        </div>
+                                        <span class="text-[11px] font-bold text-gray-600 uppercase tracking-widest">Click or Drag Image</span>
+                                        <span class="text-[9px] text-gray-400 mt-2 uppercase font-semibold">WebP, PNG, JPG (Max 10MB)</span>
+                                    </div>
+
+                                    <img id="preview-img" class="absolute inset-0 w-full h-full object-cover hidden z-10">
+                                    
+                                    <div id="change-overlay" class="absolute inset-0 bg-[#7c3aed]/80 opacity-0 group-hover:opacity-100 transition z-20 flex items-center justify-center hidden backdrop-blur-sm">
+                                        <span class="text-white text-[10px] font-bold uppercase tracking-widest border border-white/40 px-4 py-2 rounded-lg">Change File</span>
+                                    </div>
+                                </div>
+                                <input type="file" name="images" id="file-input" class="absolute inset-0 opacity-0 cursor-pointer z-30" accept="image/*" required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="label-sm">Alt Text (SEO Optimised)</label>
+                            <input type="text" name="alt_text" placeholder="Describe this image for search engines..." class="input-box">
+                        </div>
+
+                        <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <input type="checkbox" name="is_primary" id="is_primary" class="w-5 h-5 rounded border-gray-300 text-[#7c3aed] focus:ring-[#7c3aed] accent-[#7c3aed] cursor-pointer">
+                            <label for="is_primary" class="text-[11px] font-bold uppercase text-gray-600 cursor-pointer select-none">Set as Featured Image</label>
+                        </div>
+
+                        <button type="submit" class="w-full bg-[#7c3aed] text-white py-4 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-[#3D626B] transition-all shadow-lg shadow-[#7c3aed]/20 active:scale-[0.98]">
+                            Sync to Gallery
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {% for img in images %}
+                    <div class="card-container asset-card overflow-hidden group">
+                        <div class="aspect-[4/3] relative overflow-hidden bg-gray-50 border-b border-gray-100">
+                            <img src="{{ img.images.url }}" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                            
+                            <div class="absolute top-4 left-4 flex flex-col gap-2">
+                                {% if img.is_primary %}
+                                <span class="bg-[#7c3aed] text-white text-[9px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-widest flex items-center gap-1.5 shadow-lg">
+                                    <i class="fa-solid fa-crown text-[8px]"></i> Featured
+                                </span>
+                                {% endif %}
+                            </div>
+
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <form action="" method="POST" class="absolute bottom-4 right-4">
+                                    {% csrf_token %}
+                                    <button type="submit" class="w-10 h-10 bg-white text-red-500 rounded-xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-xl active:scale-90">
+                                        <i class="fa-solid fa-trash-can text-sm"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="flex justify-between items-center">
+                                <div class="overflow-hidden">
+                                    <span class="label-sm !mb-1 !text-[9px]">SEO Label</span>
+                                    <p class="text-sm font-bold text-gray-700 truncate pr-4">
+                                        {{ img.alt_text|default:"Product Visual" }}
+                                    </p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="label-sm !mb-1 !text-[9px]">Extension</span>
+                                    <p class="text-[10px] font-bold text-[#7c3aed] uppercase">Static/JPG</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-span-full py-24 text-center card-container border-dashed border-2 border-gray-200 bg-transparent flex flex-col items-center">
+                        <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+                            <i class="fa-solid fa-photo-film text-3xl text-gray-200"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-400">No media found</h4>
+                        <p class="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-widest">Add photos to improve product conversion</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-20 text-center py-12 border-t border-gray-100">
+        <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">StudioPro Asset Management &copy; 2026</p>
+    </footer>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const previewImg = document.getElementById('preview-img');
+        const placeholder = document.getElementById('upload-placeholder');
+        const changeOverlay = document.getElementById('change-overlay');
+
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewImg.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                    changeOverlay.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>

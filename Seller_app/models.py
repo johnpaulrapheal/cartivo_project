@@ -85,3 +85,10 @@ class InventoryLog(models.Model):
     reason = models.CharField(max_length=50)
     performed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+class ReturnRequest(models.Model):
+    order_item = models.ForeignKey('User_app.OrderItem', on_delete=models.CASCADE)
+    seller = models.ForeignKey(SellerProfile, on_delete=models.CASCADE)
+    reason = models.TextField()
+    status = models.CharField(max_length=20, choices=(('PENDING', 'Pending'), ('APPROVED', 'Approved'), ('REJECTED', 'Rejected')), default='PENDING')
+    created_at = models.DateTimeField(auto_now_add=True)

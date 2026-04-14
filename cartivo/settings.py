@@ -41,13 +41,7 @@ INSTALLED_APPS = [
     'User_app',
     'Core_app',
     'Seller_app',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',  
 ]
-
-SITE_ID = 1
 
 MIDDLEWARE = [  
     'django.middleware.security.SecurityMiddleware',
@@ -57,7 +51,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'cartivo.urls'
@@ -82,7 +75,6 @@ WSGI_APPLICATION = 'cartivo.wsgi.application'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 
@@ -148,22 +140,6 @@ EMAIL_HOST_USER = 'hhhgfdhs03@gmail.com'
 EMAIL_HOST_PASSWORD = 'xgbczgxluzoiuccu'
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
-# --- Allauth Configuration ---
-ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-
-# Custom Adapters
-ACCOUNT_ADAPTER = 'Core_app.adapter.MyLoginAdapter'
-SOCIALACCOUNT_ADAPTER = 'Core_app.adapter.MySocialAccountAdapter'
-
-# Auto-linking existing users (Fixes the "Final Step" issue)
-SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
-SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
-SOCIALACCOUNT_AUTO_SIGNUP = True
 
 # Redirects & UX
 LOGIN_REDIRECT_URL = '/'

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile | CART<span class="text-[#7c3aed]">IVO</span></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fdfaff; color: #4c1d95; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(62, 39, 35, 0.08); }
+        .input-field { background: rgba(62, 39, 35, 0.04); border: 1.5px solid rgba(62, 39, 35, 0.08); border-radius: 1.25rem; padding: 1rem; font-size: 11px; font-weight: 800; width: 100%; transition: all 0.2s ease; color: #4c1d95; }
+        .input-field:focus { outline: none; border-color: #7c3aed; background: white; box-shadow: 0 10px 15px -3px rgba(0, 121, 107, 0.1); }
+        .label-sm { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(62, 39, 35, 0.5); margin-bottom: 8px; display: block; }
+    </style>
+</head>
+<body class="bg-[#fdfaff] py-10">
+
+    <main class="container mx-auto px-4 max-w-3xl">
+        <header class="mb-12 flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-black italic uppercase tracking-tighter text-[#4c1d95]">Edit <span class="text-[#7c3aed]">Profile</span></h1>
+                <p class="text-[#4c1d95]/50 text-[9px] font-black uppercase tracking-widest mt-1">Update your merchant credentials</p>
+            </div>
+            <a href="sellerprofile.html" class="text-[9px] font-black uppercase tracking-widest text-[#4c1d95]/40 hover:text-red-500 transition">Discard Changes</a>
+        </header>
+
+        <section class="glass p-8 md:p-12 rounded-[3rem] shadow-2xl shadow-[#4c1d95]/5">
+            <form class="space-y-8">
+                <div class="flex items-center gap-6 pb-8 border-b border-[#4c1d95]/5">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200" class="w-20 h-20 rounded-2xl object-cover shadow-lg">
+                    <button type="button" class="bg-[#4c1d95] text-white px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-[#7c3aed] transition">Change Photo</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="label-sm">Display Store Name</label>
+                        <input type="text" value="Coastal Gear Co." class="input-field">
+                    </div>
+                    <div>
+                        <label class="label-sm">Contact Person</label>
+                        <input type="text" value="James Carter" class="input-field">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="label-sm">Business Biography</label>
+                        <textarea class="input-field min-h-[120px] py-4 uppercase">Premium supplier of high-performance coastal tech and elite footwear. Providing gear for the modern explorer since 2024.</textarea>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-[#4c1d95]/5 flex flex-col sm:flex-row gap-4">
+                    <button type="submit" class="flex-1 bg-[#7c3aed] text-white py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] shadow-xl shadow-[#7c3aed]/20 hover:scale-[1.02] transition">Confirm & Save Update</button>
+                    <a href="sellerprofile.html" class="sm:w-1/3">
+                        <button type="button" class="w-full bg-[#4c1d95]/5 text-[#4c1d95] py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] hover:bg-[#4c1d95]/10 transition">Cancel</button>
+                    </a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+</body>
+</html>

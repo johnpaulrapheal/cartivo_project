@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merchant Onboarding | StudioPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --brand-teal: #7c3aed;
+            --brand-dark: #1A202C;
+            --brand-soft: #F1F5F9;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #F8FAFB;
+            color: #2D3748; 
+        }
+
+        /* Reduced Border Radius and Padding */
+        .glass-panel { 
+            background: white; 
+            border: 1px solid #E2E8F0; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border-radius: 0.75rem; /* Sharper edges */
+        }
+
+        .input-field { 
+            background: #FFFFFF; 
+            border: 1.5px solid #E2E8F0; 
+            border-radius: 0.5rem; /* Sharper inputs */
+            padding: 0.6rem 0.9rem; /* Smaller padding */
+            font-size: 13px; 
+            font-weight: 500; 
+            width: 100%; 
+            transition: all 0.2s;
+        }
+
+        .input-field:focus { 
+            outline: none; 
+            border-color: var(--brand-teal); 
+            background: white; 
+        }
+        
+        .label-text { 
+            font-size: 11px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+            color: #64748B; 
+            margin-bottom: 0.4rem; 
+            display: block; 
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 1.5rem 0 1rem 0;
+        }
+        
+        .section-divider span {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--brand-teal);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            white-space: nowrap;
+        }
+
+        .section-divider div {
+            height: 1px;
+            background: #E2E8F0;
+            width: 100%;
+        }
+
+        .btn-compact {
+            background: var(--brand-teal);
+            transition: all 0.2s;
+            border-radius: 0.6rem;
+        }
+        .btn-compact:hover {
+            background: #3D626B;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="min-h-screen py-6 px-4">
+
+    <div class="max-w-5xl mx-auto">
+        <header class="flex justify-between items-center mb-8 border-b border-gray-100 pb-6">
+            <div>
+                <h1 class="text-2xl font-extrabold text-[#1A202C] tracking-tight">
+                    Partner <span class="text-[#7c3aed]">Registration</span>
+                </h1>
+                <p class="text-gray-400 text-xs font-medium">Create your commercial storefront profile.</p>
+            </div>
+            <div class="text-right hidden sm:block">
+                <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">System v4.0.2</span>
+            </div>
+        </header>
+
+        <form class="grid grid-cols-1 lg:grid-cols-12 gap-6" enctype="multipart/form-data" method="POST">
+            {% csrf_token %}
+            
+            <div class="lg:col-span-3 space-y-6">
+                <div class="glass-panel p-6 text-center">
+                    <label class="label-text mb-4">Store Logo</label>
+                    <div class="relative w-24 h-24 mx-auto group">
+                        <div class="w-full h-full rounded-xl bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden cursor-pointer group-hover:border-[#7c3aed]">
+                            <img id="profile-preview" src="#" alt="Preview" class="hidden w-full h-full object-cover">
+                            <i id="camera-icon" class="fa-solid fa-cloud-arrow-up text-xl text-gray-300 group-hover:text-[#7c3aed]"></i>
+                            <input type="file" name="profile_image" id="image-input" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
+                        </div>
+                    </div>
+                    <p class="text-[9px] text-gray-400 font-bold uppercase mt-4">JPG/PNG <br> Max 2MB</p>
+                </div>
+
+                <div class="glass-panel p-5 bg-[#7c3aed]/5 border-none">
+                    <h4 class="text-[10px] font-black text-[#7c3aed] uppercase mb-2">Requirements</h4>
+                    <ul class="text-[10px] text-gray-500 space-y-2 font-medium">
+                        <li class="flex gap-2"><i class="fa-solid fa-check text-[#7c3aed]"></i> Unique Store Slug</li>
+                        <li class="flex gap-2"><i class="fa-solid fa-check text-[#7c3aed]"></i> Valid GST/PAN</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="lg:col-span-9">
+                <div class="glass-panel p-6 md:p-8">
+                    
+                    <div class="section-divider">
+                        <span>Branding & URL</span>
+                        <div></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="label-text">Official Store Name</label>
+                            <input type="text" name="store_name" placeholder="Nexus Apparel" class="input-field" required>
+                        </div>
+                        <div>
+                            <label class="label-text">Store Slug</label>
+                            <input type="text" name="store_slug" placeholder="nexus-apparel" class="input-field" required>
+                        </div>
+                    </div>
+
+                    <div class="section-divider">
+                        <span>Personal Details</span>
+                        <div></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="label-text">First Name</label>
+                            <input type="text" name="first_name" placeholder="John" class="input-field" required>
+                        </div>
+                        <div>
+                            <label class="label-text">Last Name</label>
+                            <input type="text" name="last_name" placeholder="Doe" class="input-field" required>
+                        </div>
+                        <div>
+                            <label class="label-text">Username</label>
+                            <input type="text" name="username" placeholder="john_doe" class="input-field" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="label-text">Email</label>
+                            <input type="email" name="email" placeholder="john@business.com" class="input-field" required>
+                        </div>
+                        <div>
+                            <label class="label-text">Phone</label>
+                            <input type="tel" name="phone_number" placeholder="+1..." class="input-field" required>
+                        </div>
+                        <div>
+                            <label class="label-text">Password</label>
+                            <input type="password" name="password" class="input-field" required>
+                        </div>
+                        <div>
+                            <label class="label-text">Confirm Password</label>
+                            <input type="password" name="confirm_password" class="input-field" required>
+                        </div>
+                    </div>
+
+                    <div class="section-divider">
+                        <span>Financial Compliance</span>
+                        <div></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="label-text">GSTIN</label>
+                            <input type="text" name="gst_number" class="input-field" required>
+                        </div>
+                        <div>
+                            <label class="label-text">PAN</label>
+                            <input type="text" name="pan_number" class="input-field" required>
+                        </div>
+                        <div>
+                            <label class="label-text">Bank IFSC</label>
+                            <input type="text" name="ifsc_code" class="input-field" required>
+                        </div>
+                        <div>
+                            <label class="label-text">Account No.</label>
+                            <input type="text" name="bank_account_number" class="input-field" required>
+                        </div>
+                    </div>
+
+                    <div class="section-divider">
+                        <span>Office Address</span>
+                        <div></div>
+                    </div>
+                    <textarea name="business_address" rows="2" class="input-field min-h-[80px] resize-none" required></textarea>
+
+                    <div class="mt-8">
+                        <button type="submit" class="btn-compact w-full text-white py-3 font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2">
+                            Complete Registration
+                            <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('image-input');
+        const profilePreview = document.getElementById('profile-preview');
+        const cameraIcon = document.getElementById('camera-icon');
+
+        imageInput.onchange = evt => {
+            const [file] = imageInput.files;
+            if (file) {
+                profilePreview.src = URL.createObjectURL(file);
+                profilePreview.classList.remove('hidden');
+                cameraIcon.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
