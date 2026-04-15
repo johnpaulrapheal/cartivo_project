@@ -14,6 +14,8 @@ class SellerProfile(models.Model):
     business_address = models.TextField()
     rating = models.FloatField(default=0)
     is_verified = models.BooleanField(default=False)
+    # Used by Admin_app pending seller approval flow/templates.
+    approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -84,4 +86,19 @@ class InventoryLog(models.Model):
     change_amount = models.IntegerField()
     reason = models.CharField(max_length=50)
     performed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ReturnRequest(models.Model):
+    STATUS_CHOICES = [
+        ("PENDING", "Pending"),
+        ("APPROVED", "Approved"),
+        ("REJECTED", "Rejected"),
+        ("REFUNDED", "Refunded"),
+    ]
+
+    seller = models.ForeignKey(SellerProfile, on_delete=models.CASCADE, related_name="return_requests")
+    order_item = models.ForeignKey("User_app.OrderItem", on_delete=models.CASCADE, related_name="return_requests")
+    reason = models.TextField(blank=True, default="")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
     created_at = models.DateTimeField(auto_now_add=True)

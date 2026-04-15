@@ -25,10 +25,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('user/',include("User_app.urls")),
-<<<<<<< main
-=======
     path('seller/',include("Seller_app.urls")),
     path('admin_app/', include('Admin_app.urls')),
+    
     # Backward-compatible seller links used in templates (without /seller/ prefix)
     path('slogin/', RedirectView.as_view(url='/seller/slogin/', permanent=False)),
     path('regis/', RedirectView.as_view(url='/seller/regis/', permanent=False)),
@@ -40,7 +39,6 @@ urlpatterns = [
     path('sellerorder/', RedirectView.as_view(url='/seller/sellerorder/', permanent=False)),
     path('sellerinactive/', RedirectView.as_view(url='/seller/sellerinactive/', permanent=False)),
     path('sellerreturn/', RedirectView.as_view(url='/seller/sellerreturn/', permanent=False)),
->>>>>>> local
 ]
 
 if settings.DEBUG:

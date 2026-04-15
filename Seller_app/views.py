@@ -1,8 +1,6 @@
 from django.shortcuts import render
 
 # Create your views here.
-<<<<<<< main
-=======
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from Core_app.models import User,Category,SubCategory
@@ -348,4 +346,4 @@ def sellerdashboard(request):
             active_orders += 1    
 
     return render(request, "seller/sellerdashboard.html",{"total_revenue":total_revenue,"total_products":total_products,"total_returns":total_returns,"active_orders":active_orders,"activelisting":activelisting,"seller":seller})
->>>>>>> local
+

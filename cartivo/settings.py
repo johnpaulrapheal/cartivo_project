@@ -37,18 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     'Admin_app',
     'User_app',
     'Core_app',
     'Seller_app',
-<<<<<<< main
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',  
-=======
     'django.contrib.sites',
->>>>>>> local
 ]
 
 SITE_ID = 1
@@ -135,9 +132,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
-AUTH_USER_MODEL = 'Core_app.User'
+
+AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL="Core_app.User"
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'user_media'
@@ -171,7 +171,6 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 
 # Redirects & UX
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_SESSION_REMEMBER = True
 SOCIALACCOUNT_LOGIN_ON_GET = True

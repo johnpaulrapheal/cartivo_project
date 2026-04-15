@@ -16,6 +16,10 @@ from Seller_app.models import Product,ProductImage,ProductVariant,VariantAttribu
 from Core_app.models import Address, Category, SubCategory
 from Admin_app.models import Coupon
 try:
+    from allauth.socialaccount.models import SocialApp
+except Exception:
+    SocialApp = None
+try:
     import razorpay
 except ImportError:
     razorpay = None
@@ -103,6 +107,13 @@ def user_register(request):
     return render (request,"user/register_user.html")
 
 def user_login(request):
+    google_oauth_enabled = False
+    if SocialApp is not None:
+        try:
+            google_oauth_enabled = SocialApp.objects.filter(provider="google").exists()
+        except Exception:
+            google_oauth_enabled = False
+
     if request.method == "POST":
         identifier = (request.POST.get('email') or '').strip()
         password = request.POST.get('password') or ''
@@ -135,7 +146,7 @@ def user_login(request):
 
         login(request, user)
         return redirect('home')
-    return render(request,"user/user_login.html")
+    return render(request, "user/user_login.html", {"google_oauth_enabled": google_oauth_enabled})
 
 def user_verify_otp(request, uidb64):
     user = _get_user_from_uidb64(uidb64)

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SubCategory Management</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+background-color:#ffffff;
+font-family:'Segoe UI',sans-serif;
+}
+
+/* Sidebar */
+
+.sidebar{
+width:260px;
+height:100vh;
+position:fixed;
+background:#000000;
+color:white;
+padding:20px;
+}
+
+.sidebar h4{
+margin-bottom:5px;
+font-weight:600;
+color:#ff7a00;
+}
+
+.sidebar p{
+font-size:12px;
+color:#aaaaaa;
+}
+
+.sidebar a{
+display:block;
+padding:12px 15px;
+color:#dddddd;
+text-decoration:none;
+border-radius:8px;
+margin-bottom:10px;
+transition:0.3s;
+}
+
+.sidebar a i{
+width:20px;
+}
+
+.sidebar a:hover{
+background:#ff7a00;
+color:white;
+}
+
+.sidebar a.active{
+background:#ff7a00;
+color:white;
+}
+
+/* Main Content */
+
+.main-content{
+margin-left:270px;
+padding:40px;
+color:#000;
+}
+
+.small-btn{
+padding:6px 14px;
+font-size:14px;
+border-radius:6px;
+}
+
+/* Card */
+
+.card{
+background:#ffffff;
+border:none;
+border-radius:12px;
+box-shadow:0 4px 15px rgba(0,0,0,0.08);
+}
+
+/* Button */
+
+.btn-primary{
+background:#ff7a00;
+border:none;
+}
+
+.btn-primary:hover{
+background:#e66a00;
+}
+
+/* Action Button */
+
+.btn-warning{
+background:#000;
+color:#fff;
+border:none;
+}
+
+.btn-warning:hover{
+background:#333;
+}
+
+/* Table Header */
+
+.table-light{
+background:#f5f5f5 !important;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+
+<div class="sidebar">
+
+<h4>CARTIVO.</h4>
+<p>SYSTEM CONTROLLER</p>
+
+<nav class="nav flex-column mt-4">
+
+<a href="{% url 'admin_index' %}">
+<i class="fa fa-home me-2"></i> Infrastructure
+</a>
+
+<a href="{% url 'category' %}">
+<i class="fa-solid fa-layer-group me-2"></i> Categories
+</a>
+
+<a href="{% url 'subcategory' %}" class="active">
+<i class="fa-solid fa-sitemap me-2"></i> Sub Categories
+</a>
+
+<a href="{% url 'offer_view' %}">
+<i class="fa-solid fa-tags me-2"></i> Offer Management
+</a>
+
+<a href="{% url 'discount_view' %}">
+<i class="fa-solid fa-percent me-2"></i> Manage Discount
+</a>
+
+<a href="{% url 'coupon_view' %}">
+<i class="fa-solid fa-ticket me-2"></i> Manage Coupon
+</a>
+
+</nav>
+
+</div>
+
+<!-- Main Content -->
+
+<div class="main-content">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+<div>
+<h2 class="mb-1">SubCategory Management</h2>
+<p class="text-muted mb-0">Manage product subcategories</p>
+</div>
+
+<a href="{% url 'add_subcategory' %}" class="btn btn-primary small-btn">
++ Add SubCategory
+</a>
+
+</div>
+
+<div class="card p-4 shadow-sm">
+
+<table class="table align-middle">
+
+<thead class="table-light">
+
+<tr>
+<th>#</th>
+<th>Name</th>
+<th>Category</th>
+<th>Description</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for sub in subcategories %}
+
+<tr>
+
+<td>{{ forloop.counter }}</td>
+
+<td>{{ sub.name }}</td>
+
+<td>{{ sub.category.name }}</td>
+
+<td>{{ sub.description }}</td>
+
+<td>
+
+{% if sub.is_active %}
+<span class="badge bg-success">Active</span>
+{% else %}
+<span class="badge bg-danger">Disabled</span>
+{% endif %}
+
+</td>
+
+<td>
+
+<a href="{% url 'subcategory_toggle' sub.id %}" class="btn btn-warning btn-sm">
+
+{% if sub.is_active %}
+Disable
+{% else %}
+Enable
+{% endif %}
+
+</a>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+<td colspan="6" class="text-center text-muted">
+No SubCategories Found
+</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</body>
+</html>
