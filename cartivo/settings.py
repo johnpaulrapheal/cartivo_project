@@ -24,7 +24,13 @@ SECRET_KEY = 'django-insecure-if@huss_y2s0tzljhp@!re**3mm+e-ro@jexk(bb8ms4)(_n7*
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+
+
+ALLOWED_HOSTS=["*"]
+
+
+# Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -40,6 +46,10 @@ INSTALLED_APPS = [
     'User_app',
     'Core_app',
     'Seller_app',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 ]
 
 MIDDLEWARE = [  
@@ -58,7 +68,10 @@ ROOT_URLCONF = 'cartivo.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+
+
         'DIRS': [BASE_DIR / 'templates'],
+
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,7 +87,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'cartivo.wsgi.application'
 
 AUTHENTICATION_BACKENDS = [
+    
+    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
+    
+
 ]
 
 
@@ -125,7 +142,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-AUTH_USER_MODEL = 'Core_app.User'
+
+AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL="Core_app.User"
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'user_media'
