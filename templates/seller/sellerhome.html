@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merchant Inventory | Cartivo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --brand-primary: #7c3aed;
+            --brand-primary-light: #e9d5ff;
+            --brand-dark: #4c1d95;
+            --surface: #FFFFFF;
+            /* Sharp professional radius */
+            --radius-sm: 10px;
+            --radius-md: 4px;
+            --radius-lg: 8px;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #fdfaff; 
+            color: var(--brand-dark); 
+            scroll-behavior: smooth; 
+        }
+        
+        /* Sidebar Consistency */
+        .sidebar-bg { 
+            background-color: var(--surface); 
+            border-right: 1px solid #eef2f3;
+        }
+        
+        .nav-item {
+            color: #64748b;
+            transition: all 0.2s ease;
+            border-radius: var(--radius-sm);
+            margin: 0.15rem 1rem;
+        }
+
+        .nav-item:hover {
+            color: var(--brand-primary);
+            background: var(--brand-primary-light);
+        }
+
+        .nav-item.active {
+            background: var(--brand-primary);
+            color: #FFFFFF;
+            box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2);
+        }
+
+        /* Sharp E-com Card */
+        .ecom-card {
+            background: var(--surface);
+            border: 1px solid #eef2f3;
+            border-radius: var(--radius-sm);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+        }
+
+        .ecom-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            border-color: var(--brand-primary);
+        }
+
+        .image-container {
+            position: relative;
+            background: #f8fafb;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            aspect-ratio: 1/1.1;
+        }
+
+        .status-pill {
+            backdrop-filter: blur(4px);
+            border-radius: var(--radius-sm);
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .btn-action {
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen">
+
+    <aside class="w-full md:w-24 lg:w-64 sidebar-bg flex md:flex-col sticky top-0 z-50 h-auto md:h-screen">
+        <div class="p-6 flex items-center gap-3">
+            <div class="bg-violet-600 p-2 rounded-sm text-white">
+                <i class="fa-solid fa-bolt-lightning text-lg"></i>
+            </div>
+            <span class="font-extrabold tracking-tight text-xl hidden lg:block text-violet-900">CARTIVO<span class="text-violet-600">.</span></span>
+        </div>
+        
+        <nav class="flex-1 space-y-1 mt-4 overflow-y-auto custom-scroll">
+            <a href="/sellerdashboard/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-chart-pie text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Dashboard</span>
+            </a>
+
+            <a href="/sellerhome/" class="nav-item active flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-layer-group text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Inventory</span>
+            </a>
+
+            <a href="/sellerorder/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-receipt text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Orders</span>
+            </a>
+            
+            <a href="/sellerinactive/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-box-archive text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Vault</span>
+            </a>
+
+            <a href="/sellerreturn/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-truck-ramp-box text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Returns</span>
+            </a>
+        </nav>
+
+        <div class="p-4 mt-auto border-t border-gray-100">
+            <a href="/sellerprofile/" class="flex items-center gap-3 p-2 hover:bg-gray-50 transition-all rounded-sm">
+                {% if seller.user.profile_image %}
+                <img src="{{ seller.user.profile_image.url }}" class="w-8 h-8 rounded-sm object-cover grayscale-[0.5]">
+                {% else %}
+                <img src="/media/default.jpg" class="w-8 h-8 rounded-sm object-cover grayscale-[0.2]">
+                {% endif %}
+                <div class="hidden lg:block overflow-hidden">
+                    <p class="text-xs font-bold text-violet-900 truncate">{{seller.user.username}}</p>
+                    <p class="text-[10px] text-violet-600 font-semibold uppercase">Enterprise Tier</p>
+                </div>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-6 md:p-8 lg:px-10 overflow-y-auto">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-gray-100">
+            <div>
+                <h1 class="text-2xl font-bold text-violet-900 tracking-tight uppercase">
+                    Catalog <span class="text-violet-600">Manager</span>
+                </h1>
+                <p class="text-gray-400 text-[10px] font-semibold uppercase tracking-wider mt-1">Inventory Control • {{products|length}} Active SKU</p>
+            </div>
+            
+            <a href="/sellerproduct/" class="w-full sm:w-auto">
+                <button class="bg-[#4c1d95] text-white px-6 py-3 rounded-sm font-bold text-[11px] uppercase tracking-widest hover:bg-[#7c3aed] transition-all flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-plus"></i> New Product
+                </button>
+            </a>
+        </header>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="productGrid">
+            {% for i in products %}
+            <div class="ecom-card p-4 flex flex-col h-full opacity-0 translate-y-4 transition-all duration-700">
+                
+                <div class="image-container group mb-4">
+                    {% with i.variants.first as variant %}
+                        {% if variant %}
+                            {% for img in variant.images.all %}
+                                {% if img.is_primary %}
+                                    <img src="{{ img.images.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <div class="w-full h-full flex flex-col items-center justify-center text-gray-300">
+                                <i class="fa-solid fa-image text-2xl mb-2"></i>
+                                <span class="text-[9px] font-bold">MISSING MEDIA</span>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <div class="absolute inset-0 bg-[#4c1d95]/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-[2px]">
+                        <a href="/sellerproductview/{{i.slug}}" class="bg-white w-10 h-10 rounded-sm text-[#4c1d95] hover:bg-[#7c3aed] hover:text-white transition-all flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-eye text-xs"></i>
+                        </a>
+                    </div>
+
+                    <div class="absolute top-3 left-3">
+                        {% if i.is_active %}
+                            <div class="status-pill bg-emerald-500 text-white text-[9px] font-bold px-2 py-1 flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 bg-white rounded-full"></span> LIVE
+                            </div>
+                        {% else %}
+                            <div class="status-pill bg-[#4c1d95] text-white text-[9px] font-bold px-2 py-1 flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 bg-gray-400 rounded-full"></span> ARCHIVED
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex-1 space-y-2 px-1">
+                    <div class="flex justify-between items-center">
+                        <p class="text-[9px] font-bold text-[#7c3aed] uppercase">{{i.subcategory.name}}</p>
+                        <p class="text-[9px] font-semibold text-gray-400 tracking-tighter">SKU-{{i.model_number}}</p>
+                    </div>
+                    <h3 class="text-xs font-bold text-[#4c1d95] line-clamp-2 leading-snug hover:text-[#7c3aed] cursor-pointer">{{i.name}}</h3>
+                </div>
+
+                <div class="mt-5 pt-4 border-t border-gray-50 grid grid-cols-2 gap-2">
+                    <a href="/sellerproductupdate/{{i.id}}" class="btn-action flex items-center justify-center gap-2 py-3 bg-gray-50 hover:bg-[#4c1d95] hover:text-white text-gray-600">
+                        <i class="fa-solid fa-pen-nib text-[10px]"></i> UPDATE
+                    </a>
+                    <a href="/sellerimage/{{i.id}}" class="btn-action flex items-center justify-center gap-2 py-3 bg-gray-50 hover:bg-[#4c1d95] hover:text-white text-gray-600">
+                        <i class="fa-solid fa-photo-film text-[10px]"></i> MEDIA
+                    </a>
+                    
+                    <a href="/togglestatus/{{i.slug}}" class="btn-action col-span-2 py-3 text-center uppercase tracking-widest
+                        {% if i.is_active %} bg-[#e9d5ff] text-[#7c3aed] hover:bg-red-50 hover:text-red-500 {% else %} bg-[#7c3aed] text-white hover:bg-[#4c1d95] {% endif %}">
+                        {% if i.is_active %}
+                            <i class="fa-solid fa-power-off mr-2"></i> Take Offline
+                        {% else %}
+                            <i class="fa-solid fa-rocket mr-2"></i> Activate
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <footer class="mt-20 py-8 border-t border-gray-100">
+            <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-300 text-center">Cartivo INVENTORY TERMINAL &bull; 2026</p>
+        </footer>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.ecom-card');
+            const observerOptions = { threshold: 0.1 };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 50);
+                    }
+                });
+            }, observerOptions);
+            cards.forEach(card => observer.observe(card));
+        });
+    </script>
+</body>
+</html>

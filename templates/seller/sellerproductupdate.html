@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product | Cartivo Seller</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --brand-teal: #7c3aed;
+            --brand-teal-light: #e9d5ff;
+            --text-main: #4c1d95;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafb; 
+            color: var(--text-main); 
+        }
+
+        .card-container { 
+            background: white; 
+            border: 1px solid #eef2f3; 
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-box { 
+            background: #ffffff; 
+            border: 1.5px solid #e2e8f0; 
+            border-radius: 0.75rem; 
+            padding: 0.75rem 1rem; 
+            font-size: 13px; 
+            font-weight: 600; 
+            width: 100%; 
+            transition: all 0.2s ease; 
+            color: var(--text-main);
+        }
+
+        .input-box:focus { 
+            outline: none; 
+            border-color: var(--brand-teal); 
+            box-shadow: 0 0 0 3px rgba(79, 125, 136, 0.1);
+        }
+
+        .label-sm { 
+            font-size: 11px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+            color: #64748b; 
+            margin-bottom: 6px; 
+            display: block; 
+        }
+
+        .section-divider { 
+            font-size: 12px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 0.1em; 
+            color: var(--brand-teal); 
+            margin: 2.5rem 0 1.5rem 0; 
+            display: flex; 
+            align-items: center; 
+            gap: 1rem; 
+        }
+
+        .section-divider::after { 
+            content: ""; 
+            flex: 1; 
+            height: 1px; 
+            background: #eef2f3; 
+        }
+
+        .toggle-checkbox:checked + .toggle-label { background-color: var(--brand-teal); }
+        .toggle-checkbox:checked + .toggle-label .toggle-dot { transform: translateX(100%); }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-gray-100">
+        <div class="flex items-center gap-6">
+            <a href="/sellerhome/" class="flex items-center gap-2 text-gray-400 hover:text-[#7c3aed] transition-colors group">
+                <div class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center group-hover:border-[#7c3aed]">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                </div>
+                <span class="text-xs font-bold uppercase tracking-widest">Back to Inventory</span>
+            </a>
+            <div class="h-6 w-px bg-gray-100 hidden sm:block"></div>
+            <div class="flex items-center gap-2">
+                <span class="font-extrabold tracking-tighter text-lg">Studio<span class="text-[#7c3aed]">Pro</span></span>
+            </div>
+        </div>
+        <a href="" class="text-[10px] font-black uppercase text-red-400 hover:text-red-600 transition">
+            Discard Changes
+        </a>
+    </nav>
+
+    <main class="max-w-5xl mx-auto p-6 lg:p-12">
+        <header class="mb-10">
+            <h1 class="text-3xl font-black text-[#4c1d95] tracking-tight">
+                Update <span class="text-[#7c3aed]">Product</span>
+            </h1>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-2">
+                Modifying: {{ product.name }}
+            </p>
+        </header>
+
+        <form class="grid grid-cols-1 lg:grid-cols-12 gap-8" method="POST">
+            {% csrf_token %}
+            
+            <div class="lg:col-span-4 space-y-6">
+                <div class="card-container p-6 space-y-6">
+                    <h3 class="text-[11px] font-black text-[#4c1d95] uppercase tracking-widest border-b border-gray-50 pb-4">
+                        Status & visibility
+                    </h3>
+                    
+                    <div>
+                        <label class="label-sm">Approval Status</label>
+                        <div class="relative">
+                            <select name="approval_status" class="input-box appearance-none cursor-pointer">
+                                <option value="PENDING" {% if product.approval_status == "PENDING" %}selected{% endif %}>Pending Approval</option>
+                                <option value="APPROVED" {% if product.approval_status == "APPROVED" %}selected{% endif %}>Approved / Live</option>
+                                <option value="REJECTED" {% if product.approval_status == "REJECTED" %}selected{% endif %}>Rejected</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between py-2">
+                        <div>
+                            <p class="text-[12px] font-bold text-[#4c1d95]">Cancellable</p>
+                            <p class="text-[10px] font-medium text-gray-400">Order reversal allowed</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="is_cancellable" class="sr-only toggle-checkbox"
+                                   {% if product.is_cancellable %}checked{% endif %}>
+                            <div class="w-11 h-6 bg-gray-200 rounded-full toggle-label transition-colors">
+                                <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform toggle-dot"></div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between py-2 border-t border-gray-50 pt-4">
+                        <div>
+                            <p class="text-[12px] font-bold text-[#4c1d95]">Returnable</p>
+                            <p class="text-[10px] font-medium text-gray-400">Enable return logistics</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="is_returnable" class="sr-only toggle-checkbox"
+                                   {% if product.is_returnable %}checked{% endif %}>
+                            <div class="w-11 h-6 bg-gray-200 rounded-full toggle-label transition-colors">
+                                <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform toggle-dot"></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bg-[#7c3aed] rounded-[1.25rem] p-6 text-white shadow-lg">
+                    <i class="fa-solid fa-shield-halved mb-4 text-xl"></i>
+                    <h4 class="text-xs font-bold uppercase tracking-wider mb-2">Merchant Protection</h4>
+                    <p class="text-[11px] text-teal-50/80 leading-relaxed">Changes to pricing or stock will reflect across all customer-facing interfaces immediately after updating.</p>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 space-y-6">
+                <div class="card-container p-8 lg:p-10">
+                    
+                    <div class="section-divider">Primary Identification</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="label-sm">Product Title</label>
+                            <input type="text" name="name" value="{{ product.name }}" class="input-box" required>
+                        </div>
+                        <div>
+                            <label class="label-sm">URL Slug</label>
+                            <input type="text" name="slug" value="{{ product.slug }}" class="input-box">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="label-sm">Narrative Description</label>
+                            <textarea name="description" rows="4" class="input-box"
+                                placeholder="Describe the product...">{{ product.description }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="section-divider">Categorization & Brand</div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="label-sm">Subcategory</label>
+                            <div class="relative">
+                                <select name="subcategory" class="input-box appearance-none cursor-pointer">
+                                    {% for i in sub %}
+                                        <option value="{{ i.id }}"
+                                            {% if product.subcategory.id == i.id %}selected{% endif %}>
+                                            {{ i.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="label-sm">Manufacturer / Brand</label>
+                            <input type="text" name="brand" value="{{ product.brand }}" class="input-box">
+                        </div>
+                        <div>
+                            <label class="label-sm">Model Reference</label>
+                            <input type="text" name="model_number" value="{{ product.model_number }}" class="input-box">
+                        </div>
+                    </div>
+
+                    <div class="section-divider">Inventory & Financials</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="label-sm">SKU Identifier</label>
+                            <input type="text" name="sku_code" value="{{ variant.sku_code }}" class="input-box">
+                        </div>
+                        <div>
+                            <label class="label-sm">Current Stock Units</label>
+                            <input type="number" name="stock_quantity" value="{{ variant.stock_quantity }}" class="input-box">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div>
+                            <label class="label-sm">List Price (MRP)</label>
+                            <input type="number" step="0.01" name="mrp" value="{{ variant.mrp }}" class="input-box">
+                        </div>
+                        <div>
+                            <label class="label-sm">Selling Price</label>
+                            <input type="number" step="0.01" name="selling_price" value="{{ variant.selling_price }}" class="input-box">
+                        </div>
+                        <div>
+                            <label class="label-sm">Acquisition Cost</label>
+                            <input type="number" step="0.01" name="cost_price" value="{{ variant.cost_price }}" class="input-box">
+                        </div>
+                        <div>
+                            <label class="label-sm">Tax (%)</label>
+                            <input type="number" step="0.1" name="tax_percentage" value="{{ variant.tax_percentage }}" class="input-box">
+                        </div>
+                    </div>
+
+                    <div class="section-divider">Logistics & Service</div>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        <div>
+                            <label class="label-sm">Weight (kg)</label>
+                            <input type="number" step="0.01" name="weight" value="{{ variant.weight }}" class="input-box">
+                        </div>
+                        <div>
+                            <label class="label-sm">Length (cm)</label>
+                            <input type="number" step="0.01" name="length" value="{{ variant.length }}" class="input-box">
+                        </div>
+                        <div>
+                            <label class="label-sm">Width (cm)</label>
+                            <input type="number" step="0.01" name="width" value="{{ variant.width }}" class="input-box">
+                        </div>
+                        <div>
+                            <label class="label-sm">Height (cm)</label>
+                            <input type="number" step="0.01" name="height" value="{{ variant.height }}" class="input-box">
+                        </div>
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="label-sm">Returns (Days)</label>
+                            <input type="number" name="return_days" value="{{ product.return_days }}" class="input-box">
+                        </div>
+                    </div>
+
+                    <div class="mt-12 pt-8 border-t border-gray-100">
+                        <button type="submit"
+                            class="w-full bg-[#7c3aed] text-white py-4 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#3d626b] transition-all shadow-md active:scale-[0.99]">
+                            Update Database Listing
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="py-12 text-center">
+        <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-300">STUDIOPRO SECURE DATA NODE &copy; 2026</p>
+    </footer>
+
+</body>
+</html>

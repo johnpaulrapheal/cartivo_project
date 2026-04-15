@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product | Cartivo Seller</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --brand-teal: #7c3aed;
+            --brand-teal-light: #e9d5ff;
+            --text-main: #4c1d95;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafb; 
+            color: var(--text-main); 
+        }
+
+        .card-container { 
+            background: white; 
+            border: 1px solid #eef2f3; 
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-box { 
+            background: #ffffff; 
+            border: 1.5px solid #e2e8f0; 
+            border-radius: 0.75rem; 
+            padding: 0.75rem 1rem; 
+            font-size: 13px; 
+            font-weight: 600; 
+            width: 100%; 
+            transition: all 0.2s ease; 
+            color: var(--text-main);
+        }
+
+        .input-box:focus { 
+            outline: none; 
+            border-color: var(--brand-teal); 
+            box-shadow: 0 0 0 3px rgba(79, 125, 136, 0.1);
+        }
+
+        .label-sm { 
+            font-size: 11px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+            color: #64748b; 
+            margin-bottom: 6px; 
+            display: block; 
+        }
+
+        .section-divider { 
+            font-size: 12px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 0.1em; 
+            color: var(--brand-teal); 
+            margin: 2.5rem 0 1.5rem 0; 
+            display: flex; 
+            align-items: center; 
+            gap: 1rem; 
+        }
+
+        .section-divider::after { 
+            content: ""; 
+            flex: 1; 
+            height: 1px; 
+            background: #eef2f3; 
+        }
+
+        /* Toggle Switch Styling */
+        .toggle-checkbox:checked + .toggle-label { background-color: var(--brand-teal); }
+        .toggle-checkbox:checked + .toggle-label .toggle-dot { transform: translateX(100%); }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-gray-100">
+        <div class="flex items-center gap-6">
+            <a href="/sellerhome/" class="flex items-center gap-2 text-gray-400 hover:text-[#7c3aed] transition-colors group">
+                <div class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center group-hover:border-[#7c3aed]">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                </div>
+                <span class="text-xs font-bold uppercase tracking-widest">Inventory</span>
+            </a>
+            <div class="h-6 w-px bg-gray-100 hidden sm:block"></div>
+            <div class="flex items-center gap-2">
+                <span class="font-extrabold tracking-tighter text-lg">Studio<span class="text-[#7c3aed]">Pro</span></span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="hidden md:block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Draft Auto-saved</span>
+            <a href="/sellerhome/" class="text-[10px] font-black uppercase text-red-400 hover:text-red-600 transition">Discard</a>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto p-6 lg:p-12">
+        <header class="mb-10">
+            <h1 class="text-3xl font-black text-[#4c1d95] tracking-tight">Create <span class="text-[#7c3aed]">Product</span></h1>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-2">Inventory Management &bull; Asset Deployment</p>
+        </header>
+
+        <form class="grid grid-cols-1 lg:grid-cols-12 gap-8" method="POST">
+            {% csrf_token %}
+            
+            <div class="lg:col-span-4 space-y-6">
+                <div class="card-container p-6 space-y-6">
+                    <h3 class="text-[11px] font-black text-[#4c1d95] uppercase tracking-widest border-b border-gray-50 pb-4">Lifecycle Rules</h3>
+                    
+                    <div class="flex items-center justify-between py-2">
+                        <div>
+                            <p class="text-[12px] font-bold text-[#4c1d95]">Allow Cancellation</p>
+                            <p class="text-[10px] font-medium text-gray-400">Before fulfillment</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="is_cancellable" class="sr-only toggle-checkbox" checked>
+                            <div class="w-11 h-6 bg-gray-200 rounded-full toggle-label transition-colors">
+                                <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform toggle-dot"></div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between py-2">
+                        <div>
+                            <p class="text-[12px] font-bold text-[#4c1d95]">Allow Returns</p>
+                            <p class="text-[10px] font-medium text-gray-400">Policy-based logistics</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="is_returnable" class="sr-only toggle-checkbox" checked>
+                            <div class="w-11 h-6 bg-gray-200 rounded-full toggle-label transition-colors">
+                                <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform toggle-dot"></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bg-[#4c1d95] rounded-[1.25rem] p-6 text-white shadow-lg">
+                    <i class="fa-solid fa-circle-info text-[#7c3aed] mb-4 text-xl"></i>
+                    <h4 class="text-xs font-bold uppercase tracking-wider mb-2">Listing Quality</h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">Ensure SKU and Category data are accurate to prevent fulfillment delays.</p>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 space-y-6">
+                <div class="card-container p-8 lg:p-10">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2">
+                            <label class="label-sm">Official Product Name</label>
+                            <input type="text" name="name" class="input-box" placeholder="e.g. Professional Studio Monitor" required>
+                        </div>
+                        <div>
+                            <label class="label-sm">Brand Entity</label>
+                            <input type="text" name="brand" class="input-box" placeholder="Manufacturer name">
+                        </div>
+                        <div>
+                            <label class="label-sm">Model Number</label>
+                            <input type="text" name="model_number" class="input-box" placeholder="MN-00X">
+                        </div>
+                    </div>
+
+                    <div class="section-divider">Inventory Matrix</div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="label-sm">SKU Identifier</label>
+                            <input type="text" name="sku_code" placeholder="SKU-XXXX" class="input-box" required>
+                        </div>
+                        <div>
+                            <label class="label-sm">Stock Units</label>
+                            <input type="number" name="stock_quantity" class="input-box" placeholder="0" required>
+                        </div>
+                        <div>
+                            <label class="label-sm">Categorization</label>
+                            <div class="relative">
+                                <select name="subcategory" class="input-box appearance-none cursor-pointer">
+                                    {% for i in sub %}
+                                    <option value="{{i.id}}">{{i.name}}</option>
+                                    {% endfor %}
+                                </select>
+                                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-divider">Financial Architecture</div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div>
+                            <label class="label-sm">List Price (MRP)</label>
+                            <input type="number" step="0.01" name="mrp" class="input-box" placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="label-sm">Sale Price</label>
+                            <input type="number" step="0.01" name="selling_price" class="input-box" placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="label-sm">Base Cost</label>
+                            <input type="number" step="0.01" name="cost_price" class="input-box" placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="label-sm">GST / Tax (%)</label>
+                            <input type="number" step="0.1" name="tax_percentage" class="input-box" placeholder="18.0">
+                        </div>
+                    </div>
+
+                    <div class="section-divider">Logistics & Shipping</div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div>
+                            <label class="label-sm">Weight (kg)</label>
+                            <input type="number" step="0.01" name="weight" class="input-box" placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="label-sm">Length (cm)</label>
+                            <input type="number" step="0.01" name="length" class="input-box" placeholder="0">
+                        </div>
+                        <div>
+                            <label class="label-sm">Width (cm)</label>
+                            <input type="number" step="0.01" name="width" class="input-box" placeholder="0">
+                        </div>
+                        <div>
+                            <label class="label-sm">Height (cm)</label>
+                            <input type="number" step="0.01" name="height" class="input-box" placeholder="0">
+                        </div>
+                    </div>
+
+                    <div class="section-divider">Specifications</div>
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="md:w-1/3">
+                            <label class="label-sm">Return Window (Days)</label>
+                            <input type="number" name="return_days" value="7" class="input-box">
+                        </div>
+                        <div>
+                            <label class="label-sm">Product Narrative / Description</label>
+                            <textarea name="description" rows="5" class="input-box" placeholder="Detail the features and benefits..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-12 pt-8 border-t border-gray-100 flex flex-col sm:flex-row gap-4">
+                        <button type="submit" class="flex-1 bg-[#7c3aed] text-white py-4 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#3d626b] transition-all shadow-md active:scale-[0.98]">
+                            Publish Listing
+                        </button>
+                        <button type="button" class="px-10 py-4 bg-white border border-gray-200 text-gray-500 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-gray-50 transition-all">
+                            Save as Draft
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="py-12 text-center">
+        <p class="text-[9px] font-black uppercase tracking-[0.6em] text-gray-300">STUDIOPRO SECURED NODE &copy; 2026</p>
+    </footer>
+
+</body>
+</html>

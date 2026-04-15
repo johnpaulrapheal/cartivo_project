@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Returns Terminal | Cartivo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --brand-primary: #7c3aed;
+            --brand-primary-light: #e9d5ff;
+            --brand-dark: #4c1d95;
+            --surface: #FFFFFF;
+            /* Professional Radii */
+            --radius-sm: 10px;
+            --radius-md: 4px;
+            --radius-lg: 8px;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #fdfaff; 
+            color: var(--brand-dark);
+            overflow-x: hidden;
+        }
+
+        /* Consistent Sidebar Styling */
+        .sidebar-bg { 
+            background-color: var(--surface); 
+            border-right: 1px solid #eef2f3;
+        }
+        
+        .nav-item {
+            color: #64748b;
+            transition: all 0.2s ease;
+            border-radius: var(--radius-sm);
+            margin: 0.15rem 1rem;
+        }
+
+        .nav-item:hover {
+            color: var(--brand-primary);
+            background: var(--brand-primary-light);
+        }
+
+        .nav-item.active {
+            background: var(--brand-primary);
+            color: #FFFFFF;
+            box-shadow: 0 4px 6px -1px rgba(79, 125, 136, 0.2);
+        }
+
+        /* Returns Specific Styling */
+        .return-card {
+            background: white;
+            border: 1px solid #eef2f3;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+        }
+
+        .return-card:hover {
+            border-color: var(--brand-primary);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.04);
+        }
+
+        .status-pill {
+            padding: 4px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            color: #64748b;
+        }
+
+        .reason-box {
+            background: #f8fafc;
+            border-left: 3px solid var(--brand-primary);
+            border-radius: var(--radius-sm);
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen">
+
+    <aside class="w-full md:w-24 lg:w-64 sidebar-bg flex md:flex-col sticky top-0 z-50 h-auto md:h-screen">
+        <div class="p-6 flex items-center gap-3">
+            <div class="bg-[#7c3aed] p-2 rounded-sm text-white">
+                <i class="fa-solid fa-bolt-lightning text-lg"></i>
+            </div>
+            <span class="font-extrabold tracking-tight text-xl hidden lg:block text-[#4c1d95]">CARTIVO<span class="text-[#7c3aed]">.</span></span>
+        </div>
+        
+        <nav class="flex-1 space-y-1 mt-4 overflow-y-auto custom-scroll">
+            <a href="/sellerdashboard/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-chart-pie text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Dashboard</span>
+            </a>
+
+            <a href="/sellerhome/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-layer-group text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Inventory</span>
+            </a>
+
+            <a href="/sellerorder/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-receipt text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Orders</span>
+            </a>
+            
+            <a href="/sellerinactive/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-box-archive text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Vault</span>
+            </a>
+
+            <a href="/sellerreturn/" class="nav-item active flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-truck-ramp-box text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Returns</span>
+            </a>
+        </nav>
+
+        <div class="p-4 mt-auto border-t border-gray-100">
+            <a href="/sellerprofile/" class="flex items-center gap-3 p-2 hover:bg-gray-50 transition-all rounded-sm">
+                {% if seller.user.profile_image %}
+                <img src="{{ seller.user.profile_image.url }}" class="w-8 h-8 rounded-sm object-cover grayscale-[0.5]">
+                {% else %}
+                <img src="/media/default.jpg" class="w-8 h-8 rounded-sm object-cover grayscale-[0.2]">
+                {% endif %}
+                <div class="hidden lg:block overflow-hidden">
+                    <p class="text-xs font-bold text-[#4c1d95] truncate">{{seller.user.username}}</p>
+                    <p class="text-[10px] text-[#7c3aed] font-semibold uppercase">Returns Node</p>
+                </div>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-6 md:p-8 lg:px-10 overflow-y-auto custom-scroll">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-gray-100">
+            <div>
+                <h1 class="text-2xl font-bold text-[#4c1d95] tracking-tight uppercase">
+                    Reverse <span class="text-[#7c3aed]">Logistics</span>
+                </h1>
+                <p class="text-gray-400 text-[10px] font-semibold uppercase tracking-wider mt-1">Resolution Center &bull; Refund Management</p>
+            </div>
+            
+            <div class="bg-white px-5 py-2 border border-gray-100 rounded-sm flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">Open Claims</p>
+                    <p class="text-lg font-extrabold text-[#7c3aed]">{{returns|length}}</p>
+                </div>
+                <div class="h-6 w-[1px] bg-gray-100"></div>
+                <i class="fa-solid fa-rotate-left text-gray-200 text-lg"></i>
+            </div>
+        </header>
+
+        <div class="max-w-6xl space-y-4">
+            {% for r in returns %}
+            <div class="return-card p-6 lg:p-8">
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <div class="w-full lg:w-40 shrink-0">
+                        <div class="aspect-square rounded-sm bg-gray-50 border border-gray-100 overflow-hidden p-1">
+                            {% for img in r.order_item.variant.images.all %}
+                                {% if img.is_primary %}
+                                    <img src="{{ img.image.url }}" class="w-full h-full object-cover rounded-sm">
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="flex-1">
+                        <div class="flex flex-wrap justify-between items-start gap-4 mb-6">
+                            <div>
+                                <h3 class="text-lg font-bold text-[#4c1d95] tracking-tight">{{ r.order_item.variant.product.name }}</h3>
+                                <div class="flex items-center gap-3 mt-1">
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">ORDER #{{ r.order_item.order.order_number }}</span>
+                                    <span class="w-1 h-1 rounded-full bg-gray-200"></span>
+                                    <span class="text-[9px] font-bold text-[#7c3aed] uppercase tracking-widest">Verified Transaction</span>
+                                </div>
+                            </div>
+                            <span class="status-pill">
+                                {{ r.status }}
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6 border-y border-gray-50 py-4">
+                            <div>
+                                <p class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Quantity</p>
+                                <p class="text-xs font-bold text-[#4c1d95]">{{ r.order_item.quantity }} <span class="text-[9px] text-gray-300">UNITS</span></p>
+                            </div>
+                            <div>
+                                <p class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Value</p>
+                                <p class="text-xs font-bold text-[#7c3aed]">₹{{ r.order_item.price_at_purchase }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Logged Date</p>
+                                <p class="text-xs font-bold text-[#4c1d95]">{{ r.created_at|date:"M d, Y" }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Return SKU</p>
+                                <p class="text-xs font-bold text-[#4c1d95]">{{ r.order_item.variant.sku|default:"N/A" }}</p>
+                            </div>
+                        </div>
+
+                        <div class="reason-box p-4 mb-6">
+                            <p class="text-[8px] font-bold text-[#7c3aed] uppercase tracking-widest mb-1">
+                                Customer Reason
+                            </p>
+                            <p class="text-xs text-gray-500 italic leading-relaxed">
+                                "{{ r.reason }}"
+                            </p>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-3">
+                            <button class="bg-[#4c1d95] hover:bg-[#7c3aed] text-white px-6 py-3 rounded-sm text-[9px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 active:scale-95">
+                                <i class="fa-solid fa-check"></i> Authorize Refund
+                            </button>
+                            <button class="bg-white border border-gray-200 hover:border-red-400 hover:text-red-500 text-gray-400 px-6 py-3 rounded-sm text-[9px] font-bold uppercase tracking-widest transition-all">
+                                Decline Claim
+                            </button>
+                            <button class="ml-auto w-10 h-10 rounded-sm border border-gray-100 flex items-center justify-center text-gray-300 hover:text-[#7c3aed] hover:bg-gray-50 transition-all">
+                                <i class="fa-solid fa-message"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="bg-white py-24 text-center border border-dashed border-gray-200 rounded-sm">
+                <div class="w-16 h-16 bg-gray-50 rounded-sm flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-shield-check text-gray-200 text-xl"></i>
+                </div>
+                <h3 class="text-sm font-bold text-[#4c1d95] uppercase tracking-tight mb-1">Queue Clear</h3>
+                <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">No pending return requests found</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <footer class="mt-20 pb-10 text-center border-t border-gray-50 pt-10">
+            <p class="text-[9px] font-bold uppercase tracking-[0.4em] text-gray-300">CARTIVO LOGISTICS &bull; SECURE RETURNS TERMINAL</p>
+        </footer>
+    </main>
+</body>
+</html>

@@ -41,10 +41,14 @@ INSTALLED_APPS = [
     'User_app',
     'Core_app',
     'Seller_app',
+<<<<<<< main
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',  
+=======
+    'django.contrib.sites',
+>>>>>>> local
 ]
 
 SITE_ID = 1
