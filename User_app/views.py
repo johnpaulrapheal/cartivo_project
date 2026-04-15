@@ -10,7 +10,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils import timezone
 from django.conf import settings
 from decimal import Decimal
-from .models import User,Cart,CartItem,Order,OrderItem,Wishlist,WishlistItem
+from Core_app.models import User
+from .models import Cart,CartItem,Order,OrderItem,Wishlist,WishlistItem
 from User_app.decorators import customer_login_required,customer_required
 from Seller_app.models import Product,ProductImage,ProductVariant,VariantAttributeBridge,Attribute
 from Core_app.models import Address, Category, SubCategory
@@ -521,7 +522,7 @@ def user_payment_choice(request):
 def user_orders(request):
     orders=Order.objects.filter(order_status='Processing')
     return render(request,'user/myorders.html',{"orders":orders})
-
+                                                                                                                               
 @customer_login_required
 def user_order_confirmation(request,id):
     user_name=request.user

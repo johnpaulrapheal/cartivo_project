@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merchant Identity | CART<span class="text-[#7c3aed]">IVO</span></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fdfaff; color: #4c1d95; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(62, 39, 35, 0.08); }
+        .detail-label { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; color: #7c3aed; margin-bottom: 4px; display: block; }
+        .detail-value { font-size: 13px; font-weight: 800; color: #4c1d95; text-transform: uppercase; }
+    </style>
+</head>
+<body class="bg-[#fdfaff]">
+
+    <main class="container mx-auto px-4 py-10 max-w-4xl">
+        <a href="sellerhome.html" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#4c1d95]/40 hover:text-[#7c3aed] mb-8 transition">
+            <i class="fa-solid fa-arrow-left"></i> Back to Inventory
+        </a>
+
+        <header class="flex flex-col md:flex-row justify-between items-end gap-6 mb-10">
+            <div>
+                <h1 class="text-3xl font-black italic uppercase tracking-tighter text-[#4c1d95]">Merchant <span class="text-[#7c3aed]">Identity</span></h1>
+                <p class="text-[#4c1d95]/50 text-[9px] font-black uppercase tracking-widest mt-1">Verified CART<span class="text-[#7c3aed]">IVO</span> Partner Profile</p>
+            </div>
+            <a href="sellerprofileupdate.html" class="w-full md:w-auto">
+                <button class="w-full bg-[#4c1d95] text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] hover:bg-[#7c3aed] transition shadow-xl shadow-[#4c1d95]/10 flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-pen-to-square text-xs"></i> Modify Profile
+                </button>
+            </a>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+            <div class="md:col-span-4 space-y-6">
+                <div class="glass p-8 rounded-[2.5rem] text-center border-[#7c3aed]/20 shadow-xl">
+                    <div class="w-32 h-32 mx-auto mb-6 rounded-[2rem] overflow-hidden border-4 border-white shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-lg font-black uppercase tracking-tighter">Coastal Gear Co.</h3>
+                    <div class="flex items-center justify-center gap-2 mt-2">
+                        <span class="w-2 h-2 rounded-full bg-[#7c3aed] animate-pulse"></span>
+                        <p class="text-[9px] font-black text-[#7c3aed] uppercase tracking-widest">Active Merchant</p>
+                    </div>
+                </div>
+
+                <div class="glass p-6 rounded-[2rem] bg-[#4c1d95] text-white">
+                    <p class="text-[8px] font-black uppercase tracking-[0.2em] opacity-40 mb-4">Trust Score</p>
+                    <div class="flex items-end gap-2">
+                        <span class="text-3xl font-black">98</span>
+                        <span class="text-xs font-bold mb-1 opacity-60">/100</span>
+                    </div>
+                    <div class="w-full h-1 bg-white/10 rounded-full mt-4 overflow-hidden">
+                        <div class="h-full bg-[#7c3aed] w-[98%]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:col-span-8">
+                <div class="glass p-8 md:p-12 rounded-[3rem] space-y-10">
+                    <section class="grid grid-cols-1 sm:grid-cols-2 gap-10">
+                        <div>
+                            <span class="detail-label">Store Brand</span>
+                            <p class="detail-value text-xl">Coastal Gear Co.</p>
+                        </div>
+                        <div>
+                            <span class="detail-label">Merchant Representative</span>
+                            <p class="detail-value">James Carter</p>
+                        </div>
+                        <div>
+                            <span class="detail-label">Primary Category</span>
+                            <p class="detail-value">High-Performance Tech</p>
+                        </div>
+                        <div>
+                            <span class="detail-label">Account Level</span>
+                            <p class="detail-value text-[#7c3aed]">Elite Studio Partner</p>
+                        </div>
+                    </section>
+
+                    <section class="pt-10 border-t border-[#4c1d95]/5">
+                        <span class="detail-label">Brand Narrative</span>
+                        <p class="text-xs font-bold text-[#4c1d95]/60 leading-relaxed mt-2 uppercase italic">
+                            "Premium supplier of high-performance coastal tech and elite footwear. Providing gear for the modern explorer since 2024. We prioritize sustainable manufacturing and marine-grade materials."
+                        </p>
+                    </section>
+
+                    <section class="pt-10 border-t border-[#4c1d95]/5 grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div>
+                            <span class="detail-label">Contact Email</span>
+                            <p class="text-xs font-black text-[#4c1d95]">hello@coastalgear.com</p>
+                        </div>
+                        <div>
+                            <span class="detail-label">Registered Office</span>
+                            <p class="text-xs font-black text-[#4c1d95]">Malibu, California, USA</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

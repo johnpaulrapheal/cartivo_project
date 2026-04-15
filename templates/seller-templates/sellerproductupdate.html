@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product | CART<span class="text-[#7c3aed]">IVO</span> Merchant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fdfaff; color: #4c1d95; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(62, 39, 35, 0.08); }
+        .input-box { background: rgba(62, 39, 35, 0.04); border: 1.5px solid rgba(62, 39, 35, 0.08); border-radius: 1rem; padding: 0.75rem 1rem; font-size: 11px; font-weight: 800; width: 100%; transition: all 0.2s ease; }
+        .input-box:focus { outline: none; border-color: #7c3aed; background: white; }
+        .label-sm { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(62, 39, 35, 0.5); margin-bottom: 4px; display: block; }
+    </style>
+</head>
+<body class="min-h-screen bg-[#fdfaff]">
+
+    <nav class="sticky top-0 z-50 glass px-4 py-3 flex justify-between items-center border-b border-[#4c1d95]/5">
+        <div class="flex items-center gap-2">
+            <div class="bg-[#4c1d95] p-1.5 rounded-lg text-white text-[10px]"><i class="fa-solid fa-anchor"></i></div>
+            <span class="font-extrabold tracking-tighter text-sm uppercase">CART<span class="text-[#7c3aed]">IVO</span></span>
+        </div>
+        <button class="text-[10px] font-black uppercase text-[#4c1d95]/40 hover:text-red-500 transition">Discard Draft</button>
+    </nav>
+
+    <main class="max-w-5xl mx-auto p-4 lg:p-10">
+        <header class="mb-8">
+            <h1 class="text-2xl font-black italic uppercase tracking-tighter text-[#4c1d95]">New <span class="text-[#7c3aed]">Listing.</span></h1>
+            <p class="text-[10px] font-black text-[#4c1d95]/40 uppercase tracking-widest mt-1">Publish a new item to the CART<span class="text-[#7c3aed]">IVO</span> marketplace</p>
+        </header>
+
+        <form class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <div class="lg:col-span-4 space-y-6">
+                <div class="glass rounded-[2rem] p-6 shadow-sm border-[#4c1d95]/5">
+                    <label class="label-sm">Product Media</label>
+                    <div class="aspect-square rounded-2xl border-2 border-dashed border-[#4c1d95]/10 flex flex-col items-center justify-center gap-3 bg-[#4c1d95]/5 hover:border-[#7c3aed] transition cursor-pointer group">
+                        <i class="fa-solid fa-cloud-arrow-up text-xl text-[#4c1d95]/20 group-hover:text-[#7c3aed]"></i>
+                        <p class="text-[9px] font-black uppercase text-[#4c1d95]/30">Upload Hero Image</p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mt-2">
+                        <div class="aspect-square rounded-lg border border-[#4c1d95]/10 bg-white flex items-center justify-center text-[10px] text-[#4c1d95]/20"><i class="fa-solid fa-plus"></i></div>
+                        <div class="aspect-square rounded-lg border border-[#4c1d95]/10 bg-white flex items-center justify-center text-[10px] text-[#4c1d95]/20"><i class="fa-solid fa-plus"></i></div>
+                        <div class="aspect-square rounded-lg border border-[#4c1d95]/10 bg-white flex items-center justify-center text-[10px] text-[#4c1d95]/20"><i class="fa-solid fa-plus"></i></div>
+                    </div>
+                </div>
+
+                <div class="glass rounded-[2rem] p-6 bg-[#7c3aed]/5 border-[#7c3aed]/10">
+                    <p class="label-sm text-[#7c3aed]">Visibility</p>
+                    <div class="flex items-center justify-between mt-2">
+                        <span class="text-[11px] font-black text-[#4c1d95]">Public Listing</span>
+                        <div class="w-10 h-5 bg-[#7c3aed] rounded-full relative shadow-inner">
+                            <div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 space-y-6">
+                <div class="glass rounded-[2.5rem] p-6 lg:p-8 shadow-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <div class="md:col-span-2">
+                            <label class="label-sm">Product Title</label>
+                            <input type="text" placeholder="e.g. Carbon Fiber Surfboard" class="input-box">
+                        </div>
+
+                        <div>
+                            <label class="label-sm">Category</label>
+                            <select class="input-box appearance-none">
+                                <option>Equipment</option>
+                                <option>Apparel</option>
+                                <option>Accessories</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="label-sm">Price ($)</label>
+                            <input type="number" placeholder="0.00" class="input-box">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="label-sm">Description</label>
+                            <textarea rows="4" placeholder="Describe the craftmanship..." class="input-box"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="label-sm">SKU / ID</label>
+                            <input type="text" placeholder="SKU-0000" class="input-box">
+                        </div>
+
+                        <div>
+                            <label class="label-sm">Stock Quantity</label>
+                            <input type="number" placeholder="100" class="input-box">
+                        </div>
+                    </div>
+
+                    <div class="mt-10 pt-6 border-t border-[#4c1d95]/5 flex gap-4">
+                        <button type="submit" class="flex-1 bg-[#4c1d95] text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#7c3aed] transition shadow-lg">
+                            update Product
+                        </button>
+                        <button type="button" class="px-6 py-4 bg-white border border-[#4c1d95]/10 text-[#4c1d95]/60 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#4c1d95]/5 transition">
+                            Save as Draft
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </main>
+
+</body>
+</html>

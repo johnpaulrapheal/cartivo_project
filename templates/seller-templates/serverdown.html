@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Pulse | CART<span class="text-[#7c3aed]">IVO</span></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fdfaff; color: #4c1d95; overflow: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(62, 39, 35, 0.08); }
+        
+        .pulse-container {
+            animation: breathe 4s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-6">
+
+    <div class="max-w-xl w-full text-center relative">
+        <div class="absolute inset-0 -z-10 flex items-center justify-center">
+            <div class="w-64 h-64 bg-[#7c3aed]/5 rounded-full blur-3xl pulse-container"></div>
+        </div>
+
+        <div class="mb-8 floating">
+            <div class="w-24 h-24 bg-white rounded-[2.5rem] shadow-2xl shadow-[#4c1d95]/5 mx-auto flex items-center justify-center border border-[#4c1d95]/5">
+                <i class="fa-solid fa-cloud-bolt text-4xl text-[#7c3aed]"></i>
+            </div>
+        </div>
+
+        <header class="space-y-4">
+            <h1 class="text-5xl font-black italic uppercase tracking-tighter text-[#4c1d95]">
+                Taking A <span class="text-[#7c3aed]">Breather</span>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-[#4c1d95]/40">Error 503 • Service Temporarily Unavailable</p>
+            
+            <div class="glass p-8 rounded-[2.5rem] mt-10 space-y-4">
+                <p class="text-xs font-bold leading-relaxed text-[#4c1d95]/60 uppercase italic">
+                    Our servers are currently undergoing a scheduled maintenance tide. We're polishing the driftwood and clearing the shore to bring you a better experience.
+                </p>
+                
+                <div class="pt-6 border-t border-[#4c1d95]/5 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button onclick="window.location.reload()" class="w-full sm:w-auto bg-[#4c1d95] text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] hover:bg-[#7c3aed] transition shadow-xl shadow-[#4c1d95]/10 flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-rotate-right text-xs"></i> Check Pulse
+                    </button>
+                    <a href="mailto:support@corestore.com" class="w-full sm:w-auto px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] text-[#4c1d95]/40 hover:text-[#4c1d95] transition">
+                        Contact Support
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <footer class="mt-16">
+            <div class="inline-flex items-center gap-3 px-4 py-2 glass rounded-full">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                <span class="text-[8px] font-black uppercase tracking-widest text-[#4c1d95]/60">Estimated uptime: <span class="text-[#4c1d95]">15 Minutes</span></span>
+            </div>
+        </footer>
+    </div>
+
+    <div class="absolute bottom-10 left-0 right-0 text-center">
+        <div class="text-sm font-extrabold tracking-tighter uppercase opacity-10">
+            Core<span class="text-[#7c3aed]">Store</span>
+        </div>
+    </div>
+
+</body>
+</html>
