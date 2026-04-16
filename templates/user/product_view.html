@@ -28,39 +28,6 @@
             box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.1);
         }
 
-        .wishlist-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: white;
-            border: 2px solid #e2e8f0;
-            padding: 10px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-family: sans-serif;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            color: #4a5568;
-        }
-        .heart-icon {
-            fill: none;
-            stroke: #4a5568;
-            stroke-width: 2;
-            transition: all 0.3s ease;
-        }
-        .wishlist-btn:hover {
-            border-color: #ff4d4d;
-            background-color: #fff5f5;
-        }
-        .wishlist-btn.active {
-            background-color: #ff4d4d;
-            border-color: #ff4d4d;
-            color: white;
-        }
-        .wishlist-btn.active .heart-icon {
-            fill: white;
-            stroke: white;
-        }
     </style>
 {% endblock %}
 
@@ -108,7 +75,7 @@
                     <div class="flex flex-wrap items-baseline gap-2 sm:gap-3 mb-2">
                         <span class="text-3xl sm:text-4xl font-black text-violet-900">₹{{variant.cost_price}}</span>
                         <span class="text-base sm:text-lg text-gray-400 line-through">₹{{ variant.mrp }}</span>
-                        <span class="text-rose-500 font-bold text-sm">{{discount}}% OFF</span>
+                        <span class="text-rose-500 font-bold text-sm">{{ discount|floatformat:0 }}% OFF</span>
                     </div>
                     <div class="inline-block bg-rose-50 text-rose-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">Limited Time Deal</div>
                 </div>
@@ -127,7 +94,6 @@
                 </div>
                 
                 <div class="space-y-4">
-                    <!-- <h4 class="font-bold text-sm uppercase tracking-widest text-gray-400">Select Colour: <span id="colorName" class="text-slate-900">Midnight Black</span></h4> -->
                     <div class="flex flex-wrap items-center gap-2 sm:gap-3">
                         <p class="w-full sm:w-auto text-sm text-slate-600">Total variants: {{ variants|length }}</p>
                         {% for v in variants %}
@@ -232,38 +198,6 @@
     </div>
 </div>
                 </div>
-
-                <!-- <div class="lg:col-span-4">
-                    <div class="bg-violet-50/50 border border-violet-100 rounded-[2.5rem] p-8">
-                        <h3 class="font-black text-slate-900 uppercase text-xs tracking-[0.2em] mb-6">What's in the Box</h3>
-                        <ul class="space-y-4">
-                            <li class="flex items-center gap-4 text-slate-600 text-sm">
-                                <div class="w-2 h-2 rounded-full bg-violet-600"></div>
-                                Elite Smart Watch v4
-                            </li>
-                            <li class="flex items-center gap-4 text-slate-600 text-sm">
-                                <div class="w-2 h-2 rounded-full bg-violet-600"></div>
-                                Milanese Loop Strap (Premium)
-                            </li>
-                            <li class="flex items-center gap-4 text-slate-600 text-sm">
-                                <div class="w-2 h-2 rounded-full bg-violet-600"></div>
-                                Magnetic Super-Fast Charger
-                            </li>
-                            <li class="flex items-center gap-4 text-slate-600 text-sm">
-                                <div class="w-2 h-2 rounded-full bg-violet-600"></div>
-                                Cartivo Elite Warranty Card
-                            </li>
-                        </ul>
-                        
-                        <div class="mt-8 p-4 bg-white rounded-2xl border border-violet-100 flex items-center gap-4">
-                            <i class="fa-solid fa-certificate text-violet-600 text-2xl"></i>
-                            <div>
-                                <p class="text-xs font-bold text-slate-900">Authentic Product</p>
-                                <p class="text-[10px] text-slate-500 uppercase tracking-tighter">Verified Cartivo Seller</p>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
             </div>
         </section>
     </main>
@@ -287,24 +221,5 @@
             element.classList.add('active');
         }
 
-        function updateVariant(btn, name) {
-            const label = document.getElementById('colorName');
-            if (label) label.innerText = name;
-
-            document.querySelectorAll('.variant-btn').forEach(b => {
-                b.classList.remove('border-violet-600', 'bg-violet-50', 'text-violet-700');
-                b.classList.add('border-transparent', 'bg-white', 'text-slate-600');
-            });
-
-            btn.classList.add('border-violet-600', 'bg-violet-50', 'text-violet-700');
-            btn.classList.remove('border-transparent', 'bg-white', 'text-slate-600');
-        }
-
-        function toggleWishlist(btn) {
-            btn.classList.toggle('active');
-            const text = btn.querySelector('span');
-            if (!text) return;
-            text.innerText = btn.classList.contains('active') ? 'Saved to Wishlist' : 'Add to Wishlist';
-        }
     </script>
 {% endblock %}

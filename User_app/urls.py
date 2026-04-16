@@ -4,7 +4,8 @@ from .import views
 urlpatterns=[
     path('register/',views.user_register,name='register'),
     path('login/',views.user_login,name='login'),
-    path('verify-email/<uidb64>/<token>/',views.user_verify_email,name='user_verify_email'),
+    path('verify-otp/<uidb64>/',views.user_verify_otp,name='user_verify_otp'),
+    path('verify-otp/<uidb64>/resend/',views.user_resend_otp,name='user_resend_otp'),
     path('profile/',views.user_profile,name='profile'),
     path('logout/',views.user_logout,name='logout'),
     path('home/',views.user_home,name='home'),
@@ -12,7 +13,7 @@ urlpatterns=[
     path('products/',views.user_product_filter,name='product_filter'),
 
     path('wishlist/',views.user_wishlist_display,name='wishlist'),
-    path('wishlist_add/<int:id>/    ',views.user_wishlist,name='wishlist_add'),
+    path('wishlist_add/<int:id>/',views.user_wishlist,name='wishlist_add'),
     path('wishlist_item_delete/<int:id>/',views.user_wishlist_item_delete,name='wishlist_item_delete'),
     
     path('address/',views.user_address_display,name='address'),

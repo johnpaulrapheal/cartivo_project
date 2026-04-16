@@ -14,12 +14,15 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='CUSTOMER')
     profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     gender = models.CharField(max_length=20,choices=(('male','male'),('female','female'),('other','other')),default='male')
+    email_otp = models.CharField(max_length=6, null=True, blank=True)
+    otp_created_at = models.DateTimeField(null=True, blank=True)
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     description = models.TextField(max_length=200)
     is_active = models.BooleanField(default=True)
+
 class SubCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="subcategories")
     name = models.CharField(max_length=100)

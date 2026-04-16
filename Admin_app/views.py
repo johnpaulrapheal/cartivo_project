@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
@@ -39,11 +40,27 @@ def admin_login(request):
         else:
             return HttpResponse("Invalid Username or Password")
 
-    return render(request, "adminlogin.html")
+    return render(request, "admin/adminlogin.html")
 
 @admin_required
 def admin_index(request):
-    return render(request, "admin_index.html")
+    categories = Category.objects.all()
+    subcategories = SubCategory.objects.all()
+    offers = Offer.objects.all()
+    discounts = Discount.objects.all()
+    coupons = Coupon.objects.all()
+
+    return render(
+        request,
+        "admin/admin_index.html",
+        {
+            "categories": categories,
+            "subcategories": subcategories,
+            "offers": offers,
+            "discounts": discounts,
+            "coupons": coupons,
+        },
+    )
 
 
 @admin_required
@@ -55,7 +72,7 @@ def add_category(request):
         slug = slugify(name)
 
         if Category.objects.filter(slug=slug).exists():
-            return render(request, "add_category.html", {
+            return render(request, "admin/add_category.html", {
                 "error": "Category already exists!"
             })
 
@@ -67,12 +84,12 @@ def add_category(request):
 
         return redirect("category")
 
-    return render(request, "add_category.html")
+    return render(request, "admin/add_category.html")
 
 
 def category(request):
     categories = Category.objects.all()
-    return render(request, "category.html", {"categories": categories})
+    return render(request, "admin/category.html", {"categories": categories})
 
 def category_toggle(request, id):
     category = Category.objects.get(id=id)
@@ -111,11 +128,11 @@ def add_subcategory(request):
         return redirect("add_subcategory")   
 
     
-    return render(request, "add-sub_category.html", {"categories": categories,"subcategories": subcategories})
+    return render(request, "admin/add-sub_category.html", {"categories": categories,"subcategories": subcategories})
     
 def subcategory(request):
     subcategories = SubCategory.objects.all()
-    return render(request, "sub_category.html", {"subcategories": subcategories})
+    return render(request, "admin/sub_category.html", {"subcategories": subcategories})
 
 def subcategory_toggle(request, id):
     subcategory = SubCategory.objects.get(id=id)
@@ -151,11 +168,11 @@ def add_offer(request):
             )
             return redirect("offer_view")
 
-    return render(request, "create_offer.html", {"offers": offers})
+    return render(request, "admin/create_offer.html", {"offers": offers})
 
 def view_offer(request):
     offers = Offer.objects.all()
-    return render(request,"offer.html",{"offers":offers})
+    return render(request,"admin/offer.html",{"offers":offers})
 
 def offer_delete(request, id):
     offer = Offer.objects.get(id=id)
@@ -180,12 +197,12 @@ def add_discount(request):
             )
             return redirect("discount_view")
 
-    return render(request, "add_discount.html", {"discounts": discounts})
+    return render(request, "admin/add_discount.html", {"discounts": discounts})
 
 
 def discount_view(request):
     discounts = Discount.objects.all().order_by("-id")
-    return render(request, "discount.html", {"discounts": discounts})
+    return render(request, "admin/discount.html", {"discounts": discounts})
 
 
 def discount_delete(request, id):
@@ -215,11 +232,11 @@ def add_coupon(request):
             )
             return redirect("coupon_view")
 
-    return render(request, "add_coupon.html", {"coupons": coupons})
+    return render(request, "admin/add_coupon.html", {"coupons": coupons})
 
 def view_coupon(request):
     coupons = Coupon.objects.all()
-    return render(request,"coupon.html",{"coupons": coupons})
+    return render(request,"admin/coupon.html",{"coupons": coupons})
 
 def coupon_delete(request, id):
     coupon = Coupon.objects.get(id=id)
@@ -244,7 +261,7 @@ def offer_discount_bridge(request):
         messages.success(request, "Offer Discount Linked")
         return redirect("offer_discount_bridge")
 
-    return render(request, "offer_discount_bridge.html", {
+    return render(request, "admin/offer_discount_bridge.html", {
         "offers": offers,
         "discounts": discounts,
         "bridges": bridges
@@ -268,7 +285,7 @@ def product_offer_bridge(request):
         messages.success(request, "Product Offer Linked")
         return redirect("product_offer_bridge")
 
-    return render(request, "product_offer_bridge.html", {
+    return render(request, "admin/product_offer_bridge.html", {
         "products": products,
         "offers": offers,
         "bridges": bridges
@@ -291,7 +308,7 @@ def category_offer_bridge(request):
         messages.success(request,"category offer linked")
         return redirect("category_offer_bridge")
         
-    return render(request,"category_offer_bridge.html",{
+    return render(request,"admin/category_offer_bridge.html",{
         "category" : category,
         "offer" : offer,
         "bridges" : bridges,
@@ -319,31 +336,29 @@ def Product_Discount_Bridge(request):
 
             return redirect("ProductDiscountBridge")
 
-    return render(request, "ProductDiscountBridge.html", {
+    return render(request, "admin/ProductDiscountBridge.html", {
         "product": product,
         "discount": discount,
         "bridge": bridge
     })
         
 
-
-
-
 def pending_seller(request):
     sellers = SellerProfile.objects.all()
-    return render(request, 'pending_seller.html', {'sellers': sellers})
+    return render(request, 'admin/pending_seller.html', {'sellers': sellers})
 
 
 def approve_seller(request, id):
     seller = SellerProfile.objects.get(id=id)
     seller.approved = True
     seller.save()
-    return redirect('pending_seller')
+    return redirect('pending-sellers')
 
 
 def reject_seller(request, id):
     seller = SellerProfile.objects.get(id=id)
     seller.delete()
+
     return redirect('pending_seller')
 
 def approve_seller(request,id):
@@ -351,4 +366,6 @@ def approve_seller(request,id):
     sellers.approved = True
     sellers.save()
     return redirect('pending_seller') 
+
+    return redirect('pending-sellers')
 

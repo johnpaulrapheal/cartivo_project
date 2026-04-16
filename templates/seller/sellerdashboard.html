@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Dashboard | Cartivo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --brand-primary: #7c3aed;
+            --brand-primary-light: #e9d5ff;
+            --brand-dark: #4c1d95;
+            --surface: #FFFFFF;
+            /* Reduced border radius for professional look */
+            --radius-sm: 10px;
+            --radius-md: 4px;
+            --radius-lg: 8px;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #fdfaff; 
+            color: var(--brand-dark);
+            overflow-x: hidden;
+        }
+
+        /* Professional Sidebar */
+        .sidebar-bg { 
+            background-color: var(--surface); 
+            border-right: 1px solid #eef2f3;
+        }
+        
+        .nav-item {
+            color: #64748b;
+            transition: all 0.2s ease;
+            border-radius: var(--radius-sm);
+            margin: 0.15rem 1rem;
+        }
+
+        .nav-item:hover {
+            color: var(--brand-primary);
+            background: var(--brand-primary-light);
+        }
+
+        .nav-item.active {
+            background: var(--brand-primary);
+            color: #FFFFFF;
+            box-shadow: 0 4px 6px -1px rgba(79, 125, 136, 0.2);
+        }
+
+        /* Clean E-commerce Cards */
+        .dashboard-card {
+            background: var(--surface);
+            border: 1px solid #eef2f3;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            border-color: var(--brand-primary);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .chart-bar {
+            transition: height 1s ease-in-out;
+            border-radius: 1px 1px 0 0;
+        }
+
+        .btn-primary {
+            background-color: var(--brand-primary);
+            border-radius: var(--radius-sm);
+            transition: opacity 0.2s;
+        }
+        
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen">
+
+    <aside class="w-full md:w-24 lg:w-64 sidebar-bg flex md:flex-col sticky top-0 z-50 h-auto md:h-screen">
+        <div class="p-6 flex items-center gap-3">
+            <div class="bg-[#7c3aed] p-2 rounded-sm text-white">
+                <i class="fa-solid fa-bolt-lightning text-lg"></i>
+            </div>
+            <span class="font-extrabold tracking-tight text-xl hidden lg:block text-[#4c1d95]">CARTIVO<span class="text-[#7c3aed]">.</span></span>
+        </div>
+        
+        <nav class="flex-1 space-y-1 mt-4 overflow-y-auto custom-scroll">
+            <a href="/sellerdashboard/" class="nav-item active flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-chart-pie text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Dashboard</span>
+            </a>
+
+            <a href="/sellerhome/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-layer-group text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Inventory</span>
+            </a>
+
+            <a href="/sellerorder/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-receipt text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Orders</span>
+            </a>
+            
+            <a href="/sellerinactive/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-box-archive text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Vault</span>
+            </a>
+
+            <a href="/sellerreturn/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-truck-ramp-box text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Returns</span>
+            </a>
+        </nav>
+
+        <div class="p-4 mt-auto border-t border-gray-100">
+            <a href="/sellerprofile/" class="flex items-center gap-3 p-2 hover:bg-gray-50 transition-all rounded-sm">
+                {% if seller.user.profile_image %}
+                <img src="{{ seller.user.profile_image.url }}" class="w-8 h-8 rounded-sm object-cover grayscale-[0.5]">
+                {% else %}
+                <img src="/media/default.jpg" class="w-8 h-8 rounded-sm object-cover grayscale-[0.2]">
+                {% endif %}
+                <div class="hidden lg:block overflow-hidden">
+                    <p class="text-xs font-bold text-[#4c1d95] truncate">{{seller.user.username}}</p>
+                    <p class="text-[10px] text-[#7c3aed] font-semibold uppercase">Enterprise Tier</p>
+                </div>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto custom-scroll">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-gray-100">
+            <div>
+                <h1 class="text-2xl font-bold text-[#4c1d95] tracking-tight">
+                    Executive <span class="text-[#7c3aed]">Insights</span>
+                </h1>
+                <p class="text-gray-400 text-[10px] font-semibold uppercase tracking-wider mt-1">Management Console / Statistics</p>
+            </div>
+            
+            <button class="btn-primary text-white px-6 py-2.5 font-bold text-xs uppercase tracking-wide flex items-center gap-2">
+                <i class="fa-solid fa-download text-[10px]"></i> Export Data
+            </button>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="dashboard-card p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-[#7c3aed]"><i class="fa-solid fa-indian-rupee-sign text-lg"></i></div>
+                    <span class="text-[10px] font-bold text-emerald-600">+12% growth</span>
+                </div>
+                <h4 class="text-xs font-semibold text-gray-400 uppercase mb-1">Total Revenue</h4>
+                <span class="text-3xl font-bold tracking-tight counter" data-target="{{total_revenue}}">₹0</span>
+            </div>
+
+            <div class="dashboard-card p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-[#7c3aed]"><i class="fa-solid fa-box text-lg"></i></div>
+                    <span class="text-[10px] font-bold text-gray-400">Volume</span>
+                </div>
+                <h4 class="text-xs font-semibold text-gray-400 uppercase mb-1">Orders Processed</h4>
+                <span class="text-3xl font-bold tracking-tight counter" data-target="{{total_products}}">0</span>
+            </div>
+
+            <div class="dashboard-card p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-[#7c3aed]"><i class="fa-solid fa-rotate-left text-lg"></i></div>
+                    <span class="text-[10px] font-bold text-red-500">Return Rate</span>
+                </div>
+                <h4 class="text-xs font-semibold text-gray-400 uppercase mb-1">Reverse Logistics</h4>
+                <span class="text-3xl font-bold tracking-tight counter" data-target="{{total_returns}}">0</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 dashboard-card p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h3 class="font-bold text-sm text-[#4c1d95] uppercase tracking-wide">Sales Performance</h3>
+                        <p class="text-[10px] text-gray-400 font-medium">Weekly analysis of revenue flow</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-end justify-between gap-4 h-48 px-2">
+                    <div class="w-full bg-gray-50 h-1/3 hover:bg-[#e9d5ff] transition-all relative group"></div>
+                    <div class="w-full bg-[#e9d5ff] h-2/3"></div>
+                    <div class="w-full bg-gray-50 h-1/2"></div>
+                    <div class="w-full bg-[#7c3aed] h-5/6 relative">
+                        <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#4c1d95] text-white text-[9px] px-2 py-1 rounded-sm">PEAK</div>
+                    </div>
+                    <div class="w-full bg-[#e9d5ff] h-3/4"></div>
+                    <div class="w-full bg-gray-50 h-2/3"></div>
+                </div>
+                
+                <div class="mt-6 flex justify-between text-[10px] font-bold text-gray-300 uppercase px-2">
+                    <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="dashboard-card p-8">
+                    <h3 class="font-bold text-xs uppercase tracking-wider mb-6 text-gray-400">Inventory Health</h3>
+                    <div class="space-y-5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-gray-500">Live Listings</span>
+                            <span class="text-sm font-bold">{{activelisting}}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-gray-500">Open Orders</span>
+                            <span class="text-sm font-bold text-[#7c3aed]">{{active_orders}}</span>
+                        </div>
+                        <div class="pt-4 border-t border-gray-50">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase">Fulfillment</span>
+                                <span class="text-[10px] font-bold text-emerald-500">94%</span>
+                            </div>
+                            <div class="w-full bg-gray-100 h-1 rounded-none overflow-hidden">
+                                <div class="bg-emerald-500 h-full w-[94%]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[#4c1d95] p-8 text-white rounded-none relative">
+                    <div class="relative z-10">
+                        <p class="text-[10px] font-bold text-[#7c3aed] uppercase mb-2 tracking-widest">Efficiency Tip</p>
+                        <p class="text-xs leading-relaxed text-gray-300">
+                            Inventory optimization suggested for SKU-{{activelisting}}. Increasing stock levels could yield a 15% revenue lift.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-16 py-6 border-t border-gray-100">
+            <p class="text-[10px] font-medium text-gray-400 uppercase tracking-widest text-center md:text-left">
+                Cartivo Management Terminal &bull; 2026 &bull; Secure Session Active
+            </p>
+        </footer>
+    </main>
+
+    <script>
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const updateCount = () => {
+                const targetText = counter.getAttribute('data-target') || "0";
+                const target = +targetText.replace(/[₹,]/g, '');
+                const count = +counter.innerText.replace(/[₹,]/g, '');
+                const speed = 200;
+                const inc = target / speed;
+
+                if (count < target) {
+                    const nextVal = Math.ceil(count + inc);
+                    counter.innerText = targetText.startsWith('₹') ? '₹' + nextVal.toLocaleString() : nextVal.toLocaleString();
+                    setTimeout(updateCount, 1);
+                } else {
+                    counter.innerText = targetText;
+                }
+            };
+            updateCount();
+        });
+    </script>
+</body>
+</html>

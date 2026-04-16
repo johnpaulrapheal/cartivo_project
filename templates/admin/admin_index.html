@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard | Cartivo Central</title>
+
+
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:#f4f1ff;
+    color:#1a1a1a;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar-admin{
+    background:linear-gradient(180deg,#1a0033,#3b0a75);
+    border-right:1px solid #4c1d95;
+}
+
+/* Sidebar text */
+.sidebar-admin,
+.sidebar-admin a,
+.sidebar-admin p,
+.sidebar-admin i,
+.sidebar-admin h1,
+.sidebar-admin span {
+    color:#ffffff !important;
+}
+
+/* Sidebar inactive */
+.sidebar-admin .text-slate-300{
+    color:#c4b5fd !important;
+}
+
+/* Sidebar hover */
+.sidebar-admin a:hover{
+    background:rgba(255,255,255,0.08) !important;
+}
+
+/* ================= CARDS ================= */
+
+.glass-card{
+    background:rgba(255,255,255,0.7);
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(139,92,246,0.2);
+    border-radius:16px;
+    transition:0.3s;
+}
+
+.glass-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 10px 30px rgba(139,92,246,0.3);
+}
+
+/* ================= TEXT ================= */
+
+.text-blue-900{
+    color:#4c1d95 !important;
+}
+
+.text-slate-500{
+    color:#6b7280 !important;
+}
+
+/* ================= PURPLE THEME ================= */
+
+/* Buttons */
+.bg-blue-800{
+    background:linear-gradient(135deg,#7c3aed,#a855f7) !important;
+}
+
+.bg-blue-700{
+    background:linear-gradient(135deg,#6d28d9,#9333ea) !important;
+}
+
+.bg-blue-900{
+    background:#4c1d95 !important;
+}
+
+/* Light backgrounds */
+.bg-blue-50{
+    background:#f3e8ff !important;
+}
+
+/* Borders */
+.border-blue-200{
+    border-color:#d8b4fe !important;
+}
+
+/* ================= HOVER ================= */
+
+.hover\:bg-blue-900:hover{
+    background:#6d28d9 !important;
+}
+
+.hover\:bg-blue-700:hover{
+    background:#9333ea !important;
+}
+
+/* Table hover */
+tr:hover{
+    background:#f3e8ff !important;
+}
+
+/* ================= HEADER PROFILE ================= */
+
+header .bg-blue-50{
+    background:linear-gradient(135deg,#ede9fe,#f3e8ff) !important;
+}
+
+/* Avatar */
+header .bg-blue-800{
+    background:linear-gradient(135deg,#7c3aed,#c084fc) !important;
+}
+
+/* ================= EXTRA GLOW ================= */
+
+button{
+    box-shadow:0 4px 15px rgba(139,92,246,0.2);
+}
+
+button:hover{
+    box-shadow:0 6px 20px rgba(139,92,246,0.35);
+}
+</style>
+</head>
+
+<body class="flex min-h-screen">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<form method="post" class="flex flex-1">
+{% csrf_token %}
+
+<!-- Sidebar -->
+
+<aside class="w-72 sidebar-admin hidden lg:flex flex-col sticky top-0 h-screen text-white">
+
+<div class="p-8">
+
+<h1 class="text-2xl font-black tracking-tighter italic">
+CARTIVO<span class="text-blue-400">.</span>
+</h1>
+
+<p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
+System Controller
+</p>
+
+</div>
+
+
+<nav class="flex-1 px-4 space-y-2">
+
+<a href="{% url 'admin_index' %}"
+class="flex items-center gap-4 bg-blue-800 text-white p-4 rounded-2xl font-bold text-sm">
+
+<i class="fa-solid fa-grid-2"></i>
+Infrastructure
+
+</a>
+
+
+
+
+<a href="{% url 'category' %}"
+class="flex items-center gap-4 hover:bg-blue-900 p-4 rounded-2xl font-bold text-sm text-slate-300 transition">
+
+<i class="fa-solid fa-layer-group"></i>
+ManageCategories
+
+</a>
+
+
+<a href="{% url 'subcategory' %}"
+class="flex items-center gap-4 hover:bg-blue-900 p-4 rounded-2xl font-bold text-sm text-slate-300 transition">
+
+<i class="fa-solid fa-sitemap"></i>
+Manage Sub Categories
+
+</a>
+
+
+<a href="{% url 'offer_view' %}"
+class="flex items-center gap-4 hover:bg-blue-900 p-4 rounded-2xl font-bold text-sm text-slate-300 transition">
+
+<i class="fa-solid fa-tags"></i>
+Manage Discount
+
+</a>
+
+
+<a href="{% url 'discount_view' %}"
+class="flex items-center gap-4 hover:bg-blue-900 p-4 rounded-2xl font-bold text-sm text-slate-300 transition">
+
+<i class="fa-solid fa-percent"></i>
+Manage coupon
+
+</a>
+
+
+<a href="{% url 'coupon_view' %}"
+class="flex items-center gap-4 hover:bg-blue-900 p-4 rounded-2xl font-bold text-sm text-slate-300 transition">
+
+<i class="fa-solid fa-ticket"></i>
+Manage Offer
+
+</a>
+
+<a href="{% url 'coupon_view' %}"
+class="flex items-center gap-4 hover:bg-blue-900 p-4 rounded-2xl font-bold text-sm text-slate-300 transition">
+
+<i class="fa-solid fa-ticket"></i>
+Offer Discount
+
+</a>
+
+<a href="{% url 'coupon_view' %}"
+class="flex items-center gap-4 hover:bg-blue-900 p-4 rounded-2xl font-bold text-sm text-slate-300 transition">
+<i class="fa-solid fa-ticket"></i>
+Product Offer
+
+</a>
+
+<a href="{% url 'coupon_view' %}"
+class="flex items-center gap-4 hover:bg-blue-900 p-4 rounded-2xl font-bold text-sm text-slate-300 transition">
+
+<i class="fa-solid fa-ticket"></i>
+CategoryOffer
+
+</a>
+
+<a href="{% url 'coupon_view' %}"
+class="flex items-center gap-4 hover:bg-blue-900 p-4 rounded-2xl font-bold text-sm text-slate-300 transition">
+
+<i class="fa-solid fa-ticket"></i>
+Product Discount
+
+</a>
+
+<a href="{% url 'coupon_view' %}"
+class="flex items-center gap-4 hover:bg-blue-900 p-4 rounded-2xl font-bold text-sm text-slate-300 transition">
+
+<i class="fa-solid fa-ticket"></i>
+Seller Management
+
+</a>
+
+
+
+
+</nav>
+
+</aside>
+
+
+<!-- Main Content -->
+
+<main class="flex-1 p-8">
+
+<!-- Header -->
+
+<header class="flex justify-between items-center mb-10">
+
+<div>
+
+<h2 class="text-3xl font-black text-blue-900 tracking-tight">
+System Overview
+</h2>
+
+<p class="text-slate-500 text-sm font-bold">
+Platform performance and merchant metrics.
+</p>
+
+</div>
+
+
+<div class="flex items-center gap-4 bg-blue-50 p-2 pl-6 rounded-2xl border border-blue-200">
+
+<span class="text-[10px] font-black text-blue-800 uppercase tracking-widest">
+Master Admin
+</span>
+
+<div class="w-10 h-10 rounded-xl bg-blue-800 flex items-center justify-center text-white font-black text-sm">
+AD
+</div>
+
+</div>
+
+</header>
+
+
+
+
+<!-- Top Stats -->
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Total Platform GMV
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+₹1.42 Cr
+</h3>
+
+</div>
+
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Active Merchants
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+1,204
+</h3>
+
+</div>
+
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Platform Fees (Net)
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+₹8.42 L
+</h3>
+
+</div>
+
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Support Tickets
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+18
+</h3>
+
+</div>
+
+</div>
+
+
+
+
+<!-- Management Cards -->
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Total Categories
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+{{ categories.count }}
+</h3>
+
+<a href="{% url 'category' %}">
+<button type="button"
+class="mt-4 bg-blue-800 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition">
+Manage Categories
+</button>
+</a>
+
+</div>
+
+
+
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Total Sub Categories
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+{{ subcategories.count }}
+</h3>
+
+<a href="{% url 'subcategory' %}">
+<button type="button"
+class="mt-4 bg-blue-800 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition">
+Manage Sub Categories
+</button>
+</a>
+
+</div>
+
+
+
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Discount
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+{{ discounts.count }}
+</h3>
+
+<a href="{% url 'discount_view' %}">
+<button type="button"
+class="mt-4 bg-blue-800 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition">
+Manage Discount
+</button>
+</a>
+
+</div>
+
+
+
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Coupon
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+{{ coupons.count }}
+</h3>
+
+<a href="{% url 'coupon_view' %}">
+<button type="button"
+class="mt-4 bg-blue-800 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition">
+Manage Coupon
+</button>
+</a>
+
+</div>
+
+
+
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Offer Management
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+{{ offers.count }}
+</h3>
+
+<a href="{% url 'offer_view' %}">
+<button type="button"
+class="mt-4 bg-blue-800 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition">
+Offer Management
+</button>
+</a>
+
+</div>
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Offer Discount
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+{{ discounts.count }}
+</h3>
+
+<a href="{% url 'offer_discount_bridge' %}">
+<button type="button"
+class="mt-4 bg-blue-800 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition">
+Offer Discount
+</button>
+</a>
+
+</div>  
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Product Offer
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+{{ discounts.count }}
+</h3>
+
+<a href="{% url 'product_offer_bridge' %}">
+<button type="button"
+class="mt-4 bg-blue-800 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition">
+Product Offer
+</button>
+</a>
+
+</div>
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Category Offer
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+{{ discounts.count }}
+</h3>
+
+<a href="{% url 'category_offer_bridge' %}">
+<button type="button"
+class="mt-4 bg-blue-800 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition">
+Category Offer
+</button>
+</a>
+
+</div>
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Product Discount
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+{{ discounts.count }}
+</h3>
+
+<a href="{% url 'Product_Discount_Bridge' %}">
+<button type="button"
+class="mt-4 bg-blue-800 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition">
+Product Discount
+</button>
+</a>
+
+</div>
+
+<div class="glass-card p-6 rounded-3xl">
+
+<p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+Seller 
+</p>
+
+<h3 class="text-2xl font-black mt-2 text-blue-900">
+{{ discounts.count }}
+</h3>
+
+<a href="{% url 'pending-sellers' %}">
+<button type="button"
+class="mt-4 bg-blue-800 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition">
+Seller Management
+</button>
+</a>
+
+</div>
+
+
+
+
+
+</div>
+
+
+<tbody class="divide-y divide-gray-200">
+
+{% for category in categories %}
+
+<tr class="hover:bg-blue-50 transition">
+
+<td class="p-4 font-bold">
+{{ category.name }}
+</td>
+
+<td class="p-4 text-sm">
+{{ category.subcategories.count }}
+</td>
+
+<td class="p-4 text-right">
+
+<a href="{% url 'category' %}">
+
+<button class="bg-blue-800 text-white px-3 py-1 rounded-lg text-xs font-bold">
+Edit
+</button>
+
+</a>
+
+</td>
+
+</tr>
+
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</main>
+
+</form>
+
+
+</body>
+</html>
+

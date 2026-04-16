@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management | Cartivo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --brand-primary: #7c3aed;
+            --brand-primary-light: #e9d5ff;
+            --brand-dark: #4c1d95;
+            --surface: #FFFFFF;
+            /* Precise Professional Radii */
+            --radius-sm: 10px;
+            --radius-md: 4px;
+            --radius-lg: 8px;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #fdfaff; 
+            color: var(--brand-dark);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Consistency */
+        .sidebar-bg { 
+            background-color: var(--surface); 
+            border-right: 1px solid #eef2f3;
+        }
+        
+        .nav-item {
+            color: #64748b;
+            transition: all 0.2s ease;
+            border-radius: var(--radius-sm);
+            margin: 0.15rem 1rem;
+        }
+
+        .nav-item:hover {
+            color: var(--brand-primary);
+            background: var(--brand-primary-light);
+        }
+
+        .nav-item.active {
+            background: var(--brand-primary);
+            color: #FFFFFF;
+            box-shadow: 0 4px 6px -1px rgba(79, 125, 136, 0.2);
+        }
+
+        /* Order Table Styling */
+        .order-row {
+            transition: all 0.2s ease;
+        }
+
+        .order-row:hover {
+            background-color: #f8fafb;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Dynamic Status Coloring */
+        .status-processing { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+        .status-shipped { background: #f0f9ff; color: #0369a1; border: 1px solid #e0f2fe; }
+        .status-delivered { background: #f0fdf4; color: #15803d; border: 1px solid #dcfce7; }
+
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid #eef2f3;
+            border-radius: var(--radius-sm);
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen">
+
+    <aside class="w-full md:w-24 lg:w-64 sidebar-bg flex md:flex-col sticky top-0 z-50 h-auto md:h-screen">
+        <div class="p-6 flex items-center gap-3">
+            <div class="bg-[#7c3aed] p-2 rounded-sm text-white">
+                <i class="fa-solid fa-bolt-lightning text-lg"></i>
+            </div>
+            <span class="font-extrabold tracking-tight text-xl hidden lg:block text-[#4c1d95]">CARTIVO<span class="text-[#7c3aed]">.</span></span>
+        </div>
+        
+        <nav class="flex-1 space-y-1 mt-4 overflow-y-auto custom-scroll">
+            <a href="/sellerdashboard/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-chart-pie text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Dashboard</span>
+            </a>
+
+            <a href="/sellerhome/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-layer-group text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Inventory</span>
+            </a>
+
+            <a href="/sellerorder/" class="nav-item active flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-receipt text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Orders</span>
+            </a>
+            
+            <a href="/sellerinactive/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-box-archive text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Vault</span>
+            </a>
+
+            <a href="/sellerreturn/" class="nav-item flex items-center gap-4 px-4 py-3">
+                <i class="fa-solid fa-truck-ramp-box text-lg"></i>
+                <span class="text-sm font-semibold hidden lg:block">Returns</span>
+            </a>
+        </nav>
+
+        <div class="p-4 mt-auto border-t border-gray-100">
+            <a href="/sellerprofile/" class="flex items-center gap-3 p-2 hover:bg-gray-50 transition-all rounded-sm">
+                {% if seller.user.profile_image %}
+                <img src="{{ seller.user.profile_image.url }}" class="w-8 h-8 rounded-sm object-cover grayscale-[0.5]">
+                {% else %}
+                <img src="/media/default.jpg" class="w-8 h-8 rounded-sm object-cover grayscale-[0.2]">
+                {% endif %}
+                <div class="hidden lg:block overflow-hidden">
+                    <p class="text-xs font-bold text-[#4c1d95] truncate">{{seller.user.username}}</p>
+                    <p class="text-[10px] text-[#7c3aed] font-semibold uppercase">Enterprise Tier</p>
+                </div>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-6 md:p-8 lg:px-10 overflow-y-auto custom-scroll">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-6 border-b border-gray-100">
+            <div>
+                <h1 class="text-2xl font-bold text-[#4c1d95] tracking-tight uppercase">
+                    Order <span class="text-[#7c3aed]">Fulfillment</span>
+                </h1>
+                <p class="text-gray-400 text-[10px] font-semibold uppercase tracking-wider mt-1">Operational Queue • Real-time Terminal</p>
+            </div>
+            
+            <button class="bg-[#4c1d95] text-white px-6 py-3 rounded-sm font-bold text-[11px] uppercase tracking-widest hover:bg-[#7c3aed] transition-all flex items-center justify-center gap-3">
+                <i class="fa-solid fa-cloud-arrow-down"></i> Export Report
+            </button>
+        </header>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="stat-card p-6">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">In Queue</p>
+                <div class="flex items-baseline gap-2">
+                    <h3 class="text-2xl font-extrabold text-[#4c1d95]">{{active_orders}}</h3>
+                    <span class="text-[9px] font-bold text-[#7c3aed]">Active</span>
+                </div>
+            </div>
+            <div class="stat-card p-6 border-l-4 border-l-[#7c3aed]">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Gross Revenue</p>
+                <div class="flex items-baseline gap-2">
+                    <h3 class="text-2xl font-extrabold text-[#4c1d95]">${{revenue}}</h3>
+                    <span class="text-[9px] font-bold text-emerald-600">MTD</span>
+                </div>
+            </div>
+            <div class="stat-card p-6">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Dispatched</p>
+                <div class="flex items-baseline gap-2">
+                    <h3 class="text-2xl font-extrabold text-[#4c1d95]">{{shipments_out}}</h3>
+                    <span class="text-[9px] font-bold text-blue-500">Units</span>
+                </div>
+            </div>
+            <div class="stat-card p-6">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Rating</p>
+                <div class="flex items-baseline gap-2">
+                    <h3 class="text-2xl font-extrabold text-[#4c1d95]">4.9</h3>
+                    <i class="fa-solid fa-star text-[#7c3aed] text-[10px]"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-gray-100 rounded-sm shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50/50">
+                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#7c3aed] border-b border-gray-100">ID & Product</th>
+                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#7c3aed] border-b border-gray-100">Client</th>
+                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#7c3aed] border-b border-gray-100">Timeline</th>
+                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#7c3aed] border-b border-gray-100">Value</th>
+                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#7c3aed] border-b border-gray-100">Logistics</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        {% for i in order %}
+                        <tr class="order-row group">
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 shrink-0 bg-gray-50 border border-gray-100 p-0.5 rounded-sm overflow-hidden">
+                                        {% for img in i.variant.images.all %}
+                                            {% if img.is_primary %}
+                                                <img src="{{ img.images.url }}" class="w-full h-full object-cover">
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-xs font-bold text-[#4c1d95] group-hover:text-[#7c3aed] transition-colors">#{{i.order.order_number}}</p>
+                                        <p class="text-[10px] text-gray-400 font-semibold truncate max-w-[150px] uppercase tracking-tighter">{{i.variant.product.name}}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5">
+                                <div class="flex flex-col">
+                                    <span class="text-xs font-bold text-[#4c1d95]">{{i.order.user.username}}</span>
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase mt-0.5">Standard Delivery</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5">
+                                <span class="text-[10px] font-bold text-gray-500">{{i.order.ordered_at}}</span>
+                            </td>
+                            <td class="px-6 py-5">
+                                <span class="text-xs font-bold text-[#4c1d95] tracking-tight">${{i.order.total_amount}}</span>
+                            </td>
+                            <td class="px-6 py-5">
+                                <span class="status-badge status-processing">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#7c3aed]"></span>
+                                    {{i.order.order_status}}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="px-6 py-4 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-gray-100">
+                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Network Status: Optimized</span>
+                <div class="flex items-center gap-1">
+                    <button class="h-8 px-4 border border-gray-200 text-[10px] font-bold uppercase hover:bg-white transition-all rounded-sm">Prev</button>
+                    <button class="h-8 w-8 bg-[#7c3aed] text-white text-[10px] font-bold rounded-sm">1</button>
+                    <button class="h-8 px-4 border border-gray-200 text-[10px] font-bold uppercase hover:bg-white transition-all rounded-sm">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-12 py-8 border-t border-gray-50">
+            <p class="text-[9px] font-bold uppercase tracking-[0.4em] text-gray-300 text-center">Cartivo LOGISTICS TERMINAL &bull; 2026</p>
+        </footer>
+    </main>
+</body>
+</html>

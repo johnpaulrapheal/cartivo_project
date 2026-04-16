@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-if@huss_y2s0tzljhp@!re**3mm+e-ro@jexk(bb8ms4)(_n7*
 DEBUG = True
 
 
-ALLOWED_HOSTS=["*"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -38,15 +38,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django.contrib.sites',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
     'Admin_app',
     'User_app',
     'Core_app',
     'Seller_app',
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [  
     'django.middleware.security.SecurityMiddleware',
@@ -64,10 +70,7 @@ ROOT_URLCONF = 'cartivo.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-
-
         'DIRS': [BASE_DIR / 'templates'],
-
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,10 +86,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'cartivo.wsgi.application'
 
 AUTHENTICATION_BACKENDS = [
-    
-    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
-    
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 
@@ -135,10 +136,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
-AUTH_USER_MODEL = 'core.User'
 AUTH_USER_MODEL="Core_app.User"
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'user_media'
@@ -154,11 +155,38 @@ EMAIL_HOST_PASSWORD = 'xgbczgxluzoiuccu'
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-AUTH_USER_MODEL = 'Core_app.User'
+# --- Allauth Configuration ---
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'profile'
-LOGOUT_REDIRECT_URL = 'login'
+# Custom Adapters
+ACCOUNT_ADAPTER = 'Core_app.adapter.MyLoginAdapter'
+SOCIALACCOUNT_ADAPTER = 'Core_app.adapter.MySocialAccountAdapter'
+
+# Auto-linking existing users (Fixes the "Final Step" issue)
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+
+# Redirects & UX
+LOGIN_REDIRECT_URL = '/'
+SOCIALACCOUNT_LOGIN_REDIRECT_URL = "/"
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_SESSION_REMEMBER = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}
 
 RAZORPAY_KEY_ID = "rzp_test_SUO3WrAkaqQAXM"
 RAZORPAY_KEY_SECRET = "lvOAAXzmGxrfMfFnqC83D2ma"

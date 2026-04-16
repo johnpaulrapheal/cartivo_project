@@ -2,11 +2,25 @@
 
 {% block title %}Browse Products | Cartivo{% endblock %}
 
+{% block extra_head %}
+<style>
+  .product-card-enter {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .product-grid-loading {
+    opacity: 0.6;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 py-10 w-full min-w-0">
   <div class="flex flex-col lg:flex-row gap-6 min-w-0">
     <aside class="w-full lg:w-72 lg:max-w-[18rem] bg-white border border-violet-100 rounded-[2rem] p-4 sm:p-6 h-fit shrink-0">
-      <form method="GET" class="space-y-6">
+      <form method="GET" class="space-y-6" id="product-filter-form">
         <div>
           <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Search</label>
           <div class="mt-2 flex gap-2">
@@ -30,10 +44,10 @@
 
         <div>
           <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Subcategory</label>
-          <select name="subcategory" class="mt-2 w-full bg-white border border-violet-100 rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-violet-200">
+          <select name="subcategory" class="mt-2 w-full bg-white border border-violet-100 rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-violet-200" id="subcategory-select">
             <option value="">All subcategories</option>
             {% for s in subcategories %}
-              <option value="{{ s.id }}" {% if subcategory_id|add:'' == s.id|add:'' %}selected{% endif %}>{{ s.category.name }} • {{ s.name }}</option>
+              <option value="{{ s.id }}" data-category="{{ s.category_id }}" {% if subcategory_id|add:'' == s.id|add:'' %}selected{% endif %}>{{ s.category.name }} &bull; {{ s.name }}</option>
             {% endfor %}
           </select>
         </div>
@@ -51,10 +65,9 @@
         <div>
           <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Sort</label>
           <select name="sort" class="mt-2 w-full bg-white border border-violet-100 rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-violet-200">
-            <option value="" {% if not sort %}selected{% endif %}>Newest</option>
+            <option value="" {% if not sort %}selected{% endif %}>Newest First</option>
             <option value="price_low" {% if sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
             <option value="price_high" {% if sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
-            <option value="new" {% if sort == 'new' %}selected{% endif %}>Newest</option>
           </select>
         </div>
 
@@ -74,54 +87,57 @@
         <div>
           <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight break-words">Browse <span class="text-violet-600">Products</span></h1>
           <p class="text-sm text-slate-500 font-medium mt-1">
-            Showing {{ products|length }} result{{ products|length|pluralize }}{% if q %} for “{{ q }}”{% endif %}.
+            Showing {{ products|length }} result{{ products|length|pluralize }}{% if q %} for "{{ q }}"{% endif %}.
           </p>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6" id="product-grid">
         {% for product in products %}
           {% with variant=product.variants.first %}
             {% if variant %}
-              <div class="bg-white border border-violet-100 rounded-[2rem] p-4 shadow-sm hover:shadow-xl hover:shadow-violet-100/50 transition">
+              <article class="product-card group bg-white border border-violet-100 rounded-[2rem] p-4 shadow-sm hover:shadow-xl hover:shadow-violet-100/60 hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
                 <a href="{% url 'product_view' variant.id %}" class="block">
-                  <div class="relative bg-violet-50 rounded-[1.75rem] aspect-[4/5] overflow-hidden mb-4">
+                  <div class="relative bg-violet-50 rounded-[1.5rem] aspect-[4/5] overflow-hidden">
                     {% if variant.images.first %}
-                      <img src="{{ variant.images.first.product_images.url }}" class="w-full h-full object-cover">
+                      <img src="{{ variant.images.first.product_images.url }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     {% else %}
                       <img src="/media/default.jpg" class="w-full h-full object-cover">
                     {% endif %}
-                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-black text-slate-700 uppercase tracking-widest">
+                    {% if product.brand %}
+                    <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-black text-slate-700 uppercase tracking-widest max-w-[75%] truncate">
                       {{ product.brand }}
                     </div>
+                    {% endif %}
                   </div>
-                  <h3 class="font-extrabold text-slate-900 leading-tight">{{ product.name }}</h3>
+                </a>
+
+                <div class="pt-4 flex-1 flex flex-col">
+                  <h3 class="font-extrabold text-slate-900 leading-tight min-h-[3rem] group-hover:text-violet-700 transition">{{ product.name }}</h3>
                   <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">
-                    {{ product.subcategory.category.name }} • {{ product.subcategory.name }}
+                    {{ product.subcategory.category.name }} &bull; {{ product.subcategory.name }}
                   </p>
                   <p class="text-sm text-slate-500 mt-2">{{ product.description|truncatechars:70 }}</p>
 
                   <div class="mt-4 flex items-end justify-between">
-                    <div class="text-xl font-black text-violet-900">₹{{ variant.cost_price }}</div>
+                    <div class="text-2xl font-black text-violet-900">&#8377;{{ product.min_variant_price|default:variant.cost_price }}</div>
                     <div class="text-xs font-bold text-slate-400">
-                      {% if variant.mrp %}<span class="line-through">₹{{ variant.mrp }}</span>{% endif %}
+                      {% if variant.mrp %}<span class="line-through">&#8377;{{ variant.mrp }}</span>{% endif %}
                     </div>
                   </div>
-                </a>
+                </div>
 
-                <div class="mt-4 flex gap-2">
-                  <a href="{% url 'add_cart' variant.id %}" class="flex-1">
-                    <button class="w-full bg-violet-600 text-white py-3 rounded-2xl font-extrabold hover:bg-violet-700 transition">
+                <div class="mt-4 grid grid-cols-[1fr_auto] gap-2">
+                  <a href="{% url 'add_cart' variant.id %}" class="block">
+                    <span class="block w-full text-center bg-violet-600 text-white py-3 rounded-2xl font-extrabold hover:bg-violet-700 transition">
                       Add to Cart
-                    </button>
+                    </span>
                   </a>
-                  <a href="{% url 'wishlist_add' variant.id %}">
-                    <button class="w-12 h-12 rounded-2xl bg-white border border-violet-100 text-rose-500 hover:bg-rose-50 transition flex items-center justify-center">
-                      <i class="fa-solid fa-heart"></i>
-                    </button>
+                  <a href="{% url 'wishlist_add' variant.id %}" class="w-12 h-12 rounded-2xl bg-white border border-violet-100 text-rose-500 hover:bg-rose-50 transition flex items-center justify-center">
+                    <i class="fa-solid fa-heart"></i>
                   </a>
                 </div>
-              </div>
+              </article>
             {% endif %}
           {% endwith %}
         {% empty %}
@@ -140,5 +156,77 @@
 {% endblock %}
 
 {% block extra_scripts %}
-{# No JS required #}
+<script>
+  (function () {
+    const form = document.getElementById('product-filter-form');
+    const grid = document.getElementById('product-grid');
+    if (!form) return;
+
+    const qInput = form.querySelector('input[name="q"]');
+    const categorySelect = form.querySelector('select[name="category"]');
+    const subcategorySelect = document.getElementById('subcategory-select');
+    const selectInputs = Array.from(form.querySelectorAll('select'));
+    const subcategoryOptions = subcategorySelect ? Array.from(subcategorySelect.querySelectorAll('option')).map((option) => option.cloneNode(true)) : [];
+    let searchDebounce = null;
+
+    function setLoadingState() {
+      if (grid) grid.classList.add('product-grid-loading');
+    }
+
+    function submitFilters() {
+      setLoadingState();
+      form.submit();
+    }
+
+    function filterSubcategoriesByCategory() {
+      if (!categorySelect || !subcategorySelect) return;
+
+      const selectedCategory = categorySelect.value;
+      const selectedSubcategory = subcategorySelect.value;
+
+      subcategorySelect.innerHTML = '';
+      subcategoryOptions.forEach((rawOption) => {
+        const option = rawOption.cloneNode(true);
+        const isAllOption = !option.value;
+        const belongsToCategory = option.dataset.category === selectedCategory;
+        if (isAllOption || !selectedCategory || belongsToCategory) {
+          subcategorySelect.appendChild(option);
+        }
+      });
+
+      const stillExists = Array.from(subcategorySelect.options).some((opt) => opt.value === selectedSubcategory);
+      subcategorySelect.value = stillExists ? selectedSubcategory : '';
+    }
+
+    if (categorySelect && subcategorySelect) {
+      filterSubcategoriesByCategory();
+    }
+
+    selectInputs.forEach((selectEl) => {
+      selectEl.addEventListener('change', () => {
+        if (selectEl === categorySelect) {
+          filterSubcategoriesByCategory();
+        }
+        submitFilters();
+      });
+    });
+
+    if (qInput) {
+      qInput.addEventListener('input', () => {
+        clearTimeout(searchDebounce);
+        searchDebounce = setTimeout(submitFilters, 350);
+      });
+    }
+
+    const cards = document.querySelectorAll('.product-card');
+    cards.forEach((card, index) => {
+      card.classList.add('product-card-enter');
+      setTimeout(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+        card.style.transition = 'opacity 240ms ease, transform 240ms ease';
+      }, Math.min(index * 45, 300));
+    });
+  })();
+</script>
 {% endblock %}

@@ -1,5 +1,7 @@
 asgiref==3.11.1
-Django==6.0.2
-pillow==12.1.1
+Django==6.0.3
+django-allauth==65.15.1
+Pillow==12.2.0
+razorpay==2.0.1
 sqlparse==0.5.5
-tzdata==2025.3
+tzdata==2026.1

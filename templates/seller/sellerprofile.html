@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merchant Identity | Cartivo Seller</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --brand-teal: #7c3aed;
+            --brand-teal-light: #e9d5ff;
+            --text-main: #4c1d95;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafb; 
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Consistent Sidebar Styling */
+        .sidebar-bg { 
+            background-color: #FFFFFF; 
+            border-right: 1px solid #eef2f3;
+        }
+        
+        .nav-item {
+            color: #64748b;
+            transition: all 0.2s ease;
+            border-radius: 0.5rem;
+            margin: 0.25rem 1rem;
+        }
+
+        .nav-item:hover {
+            color: var(--brand-teal);
+            background: var(--brand-teal-light);
+        }
+
+        .nav-item.active {
+            background: var(--brand-teal);
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px -2px rgba(79, 125, 136, 0.25);
+        }
+
+        /* Profile UI Components */
+        .profile-card {
+            background: white;
+            border: 1px solid #eef2f3;
+            border-radius: 1rem;
+        }
+
+        .detail-label {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .stat-badge {
+            background: var(--brand-teal-light);
+            color: var(--brand-teal);
+            border: 1px solid rgba(79, 125, 136, 0.1);
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen">
+
+    <aside class="w-full md:w-24 lg:w-72 sidebar-bg flex md:flex-col sticky top-0 z-50 h-auto md:h-screen shadow-sm">
+        <div class="p-8 flex items-center gap-3">
+            <div class="bg-[#7c3aed] p-2 rounded-xl text-white">
+                <i class="fa-solid fa-address-card text-lg"></i>
+            </div>
+            <span class="font-extrabold tracking-tight text-2xl hidden lg:block text-[#4c1d95]">Studio<span class="text-[#7c3aed]">Pro</span></span>
+        </div>
+        
+        <nav class="flex-1 space-y-1 mt-2 overflow-y-auto custom-scroll">
+            <a href="/sellerdashboard/" class="nav-item flex items-center gap-4 px-5 py-3.5">
+                <i class="fa-solid fa-chart-pie text-lg opacity-60"></i>
+                <span class="text-sm font-bold hidden lg:block">Dashboard</span>
+            </a>
+
+            <a href="/sellerhome/" class="nav-item flex items-center gap-4 px-5 py-3.5">
+                <i class="fa-solid fa-layer-group text-lg opacity-60"></i>
+                <span class="text-sm font-bold hidden lg:block">Inventory</span>
+            </a>
+
+            <a href="/sellerorder/" class="nav-item flex items-center gap-4 px-5 py-3.5">
+                <i class="fa-solid fa-receipt text-lg opacity-60"></i>
+                <span class="text-sm font-bold hidden lg:block">Orders</span>
+            </a>
+            
+            <a href="/sellerinactive/" class="nav-item flex items-center gap-4 px-5 py-3.5">
+                <i class="fa-solid fa-box-archive text-lg opacity-60"></i>
+                <span class="text-sm font-bold hidden lg:block">Vault</span>
+            </a>
+
+            <a href="/sellerreturn/" class="nav-item flex items-center gap-4 px-5 py-3.5">
+                <i class="fa-solid fa-truck-ramp-box text-lg opacity-60"></i>
+                <span class="text-sm font-bold hidden lg:block">Returns</span>
+            </a>
+        </nav>
+
+        <div class="p-6 mt-auto border-t border-gray-50">
+            <a href="/sellerprofile/" class="nav-item active flex items-center gap-4 p-3 !mx-0">
+                {% if datas.user.profile_image %}
+                <img src="{{ datas.user.profile_image.url }}" class="w-10 h-10 rounded-lg object-cover ring-2 ring-white">
+                {% else %}
+                <img src="/media/default.jpg" class="w-10 h-10 rounded-lg object-cover ring-2 ring-white">
+                {% endif %}
+                <div class="hidden lg:block overflow-hidden">
+                    <p class="text-[11px] font-bold text-white truncate">{{datas.user.username}}</p>
+                    <p class="text-[9px] text-white/70 font-medium uppercase tracking-wider">Merchant Node</p>
+                </div>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-6 md:p-10 lg:px-12 overflow-y-auto custom-scroll">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-12">
+            <div>
+                <h1 class="text-3xl font-black text-[#4c1d95] tracking-tight">Merchant <span class="text-[#7c3aed]">Identity</span></h1>
+                <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">Verification Level 4 &bull; Global Seller</p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button class="bg-white border border-gray-200 text-[#4c1d95] px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-gray-50 transition-all flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-pen"></i> Edit Profile
+                </button>
+                <a href="/logout/" class="bg-red-50 text-red-600 px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-100 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-power-off"></i> Logout
+                </a>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            <div class="xl:col-span-4 space-y-6">
+                <div class="profile-card p-8 text-center shadow-sm">
+                    <div class="w-28 h-28 mx-auto mb-6 rounded-2xl overflow-hidden shadow-inner border-4 border-white bg-gray-50">
+                        {% if datas.user.profile_image %}
+                        <img src="{{ datas.user.profile_image.url }}" class="w-full h-full object-cover">
+                        {% else %}
+                        <img src="/media/default.jpg" class="w-full h-full object-cover">
+                        {% endif %}
+                    </div>
+                    <h3 class="text-xl font-bold text-[#4c1d95]">{{datas.user.username}}</h3>
+                    <p class="text-sm font-medium text-[#7c3aed] mt-1">@{{datas.store_slug}}</p>
+                    
+                    <div class="mt-6 pt-6 border-t border-gray-50 flex justify-center">
+                        <span class="stat-badge px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check"></i> Verified Partner
+                        </span>
+                    </div>
+                </div>
+
+                <div class="profile-card p-6 bg-[#4c1d95] text-white">
+                    <div class="flex justify-between items-center mb-6">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-white/40">Trust Score</p>
+                        <i class="fa-solid fa-chart-line text-[#7c3aed]"></i>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-4xl font-black">4.8</span>
+                        <div class="flex text-[#7c3aed] text-[10px] mb-1">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star-half-stroke"></i>
+                        </div>
+                    </div>
+                    <p class="text-[9px] text-white/30 font-bold uppercase tracking-[0.2em] mt-4">Partner since {{datas.created_at}}</p>
+                </div>
+            </div>
+
+            <div class="xl:col-span-8">
+                <div class="profile-card p-8 md:p-10 space-y-10 shadow-sm">
+                    
+                    <section>
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="h-1 w-8 bg-[#7c3aed] rounded-full"></div>
+                            <h4 class="text-[11px] font-black uppercase tracking-widest text-[#4c1d95]">Entity Information</h4>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                            <div>
+                                <p class="detail-label">Legal Trading Name</p>
+                                <p class="detail-value">{{datas.store_name}}</p>
+                            </div>
+                            <div>
+                                <p class="detail-label">Storefront Path</p>
+                                <p class="detail-value text-[#7c3aed] italic">/store/{{datas.store_slug}}</p>
+                            </div>
+                            <div>
+                                <p class="detail-label">Signatory Representative</p>
+                                <p class="detail-value">{{datas.user.first_name}}</p>
+                            </div>
+                            <div>
+                                <p class="detail-label">Primary Correspondence</p>
+                                <p class="detail-value lowercase">{{datas.user.email}}</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="bg-gray-50 p-6 rounded-xl border border-gray-100">
+                        <div class="flex items-center gap-3 mb-6">
+                            <i class="fa-solid fa-shield-halved text-[#7c3aed]"></i>
+                            <h4 class="text-[11px] font-black uppercase tracking-widest text-[#4c1d95]">Tax & Regulatory</h4>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
+                                <p class="detail-label">GST Identification</p>
+                                <p class="detail-value font-mono tracking-wider text-sm">{{datas.gst_number}}</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
+                                <p class="detail-label">PAN Identifier</p>
+                                <p class="detail-value font-mono tracking-wider text-sm">{{datas.pan_number}}</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="h-1 w-8 bg-[#7c3aed] rounded-full"></div>
+                            <h4 class="text-[11px] font-black uppercase tracking-widest text-[#4c1d95]">Settlement Protocol</h4>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <p class="detail-label">Remittance Account</p>
+                                <p class="detail-value tracking-widest">•••• •••• {{ datas.bank_account_number|slice:"-4:" }}</p>
+                            </div>
+                            <div>
+                                <p class="detail-label">Clearing Code (IFSC)</p>
+                                <p class="detail-value">{{datas.ifsc_code}}</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="pt-8 border-t border-gray-50">
+                        <p class="detail-label">Registered Headquarters</p>
+                        <p class="text-sm font-medium text-gray-500 leading-relaxed mt-2 uppercase tracking-tight">
+                            {{datas.business_address}}
+                        </p>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-20 text-center py-10">
+            <p class="text-[9px] font-black uppercase tracking-[0.6em] text-gray-300">STUDIOPRO SECURED ECOSYSTEM &copy; 2026</p>
+        </footer>
+    </main>
+
+</body>
+</html>

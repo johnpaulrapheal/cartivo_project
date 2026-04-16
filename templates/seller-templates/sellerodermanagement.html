@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Control | CART<span class="text-[#7c3aed]">IVO</span></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fdfaff; color: #4c1d95; }
+        .glass { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(62, 39, 35, 0.08); }
+        .status-select { background: rgba(62, 39, 35, 0.05); border: 1px solid rgba(62, 39, 35, 0.1); border-radius: 0.75rem; padding: 0.4rem 0.6rem; font-size: 10px; font-weight: 800; text-transform: uppercase; cursor: pointer; outline: none; transition: all 0.2s; }
+        .status-select:focus { border-color: #7c3aed; color: #7c3aed; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(62, 39, 35, 0.05); }
+    </style>
+</head>
+<body class="bg-[#fdfaff] pb-20">
+
+    <nav class="glass sticky top-0 z-[100] px-4 md:px-8 py-4 mb-8">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <div class="text-xl font-extrabold tracking-tighter flex items-center gap-2">
+                    <div class="bg-[#4c1d95] p-1.5 rounded-lg text-white"><i class="fa-solid fa-gauge-high text-xs"></i></div>
+                    <span>SELLER<span class="text-[#7c3aed]">HUB</span></span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden md:block text-right">
+                    <p class="text-[9px] font-black uppercase tracking-widest text-[#4c1d95]">Elite Merchant</p>
+                    <p class="text-[10px] font-bold text-[#7c3aed]">Coastal Gear Co.</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-[#EFEBE9] border-2 border-[#7c3aed] flex items-center justify-center overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 lg:px-10">
+        
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            <div class="glass p-6 rounded-[2rem] card-hover transition-all">
+                <p class="text-[9px] font-black uppercase tracking-widest text-[#4c1d95]/40 mb-1">Active Orders</p>
+                <h3 class="text-2xl font-black text-[#4c1d95]">24</h3>
+            </div>
+            <div class="glass p-6 rounded-[2rem] card-hover transition-all">
+                <p class="text-[9px] font-black uppercase tracking-widest text-[#4c1d95]/40 mb-1">Revenue (Feb)</p>
+                <h3 class="text-2xl font-black text-[#7c3aed]">$12,450</h3>
+            </div>
+            <div class="glass p-6 rounded-[2rem] card-hover transition-all">
+                <p class="text-[9px] font-black uppercase tracking-widest text-[#4c1d95]/40 mb-1">Shipments Out</p>
+                <h3 class="text-2xl font-black text-[#4c1d95]">18</h3>
+            </div>
+            <div class="glass p-6 rounded-[2rem] card-hover transition-all">
+                <p class="text-[9px] font-black uppercase tracking-widest text-[#4c1d95]/40 mb-1">Store Rating</p>
+                <h3 class="text-2xl font-black text-[#7c3aed]">4.9 <span class="text-xs">★</span></h3>
+            </div>
+        </div>
+
+        <section class="glass rounded-[2.5rem] overflow-hidden shadow-sm">
+            <div class="p-6 md:p-8 border-b border-[#4c1d95]/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <h2 class="text-xl font-black italic uppercase tracking-tighter">Order <span class="text-[#7c3aed]">Control</span></h2>
+                <div class="flex gap-2">
+                    <button class="bg-[#4c1d95] text-white px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest">Download CSV</button>
+                    <button class="bg-[#4c1d95]/5 text-[#4c1d95] px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border border-[#4c1d95]/10">History</button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto no-scrollbar">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-[#4c1d95]/5">
+                            <th class="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-[#4c1d95]/50">Order ID</th>
+                            <th class="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-[#4c1d95]/50">Product</th>
+                            <th class="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-[#4c1d95]/50">Customer</th>
+                            <th class="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-[#4c1d95]/50">Date</th>
+                            <th class="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-[#4c1d95]/50">Total</th>
+                            <th class="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-[#4c1d95]/50">Status Update</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#4c1d95]/5">
+                        <tr class="hover:bg-white/40 transition">
+                            <td class="px-6 py-6 text-[11px] font-black text-[#4c1d95]">#CS-9921</td>
+                            <td class="px-6 py-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-[#EFEBE9] rounded-lg overflow-hidden shrink-0">
+                                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100" class="w-full h-full object-cover">
+                                    </div>
+                                    <span class="text-[10px] font-bold uppercase truncate max-w-[120px]">Vortex Racer X1</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-6 text-[10px] font-bold">James Carter</td>
+                            <td class="px-6 py-6 text-[10px] font-bold text-gray-400">Feb 15, 2026</td>
+                            <td class="px-6 py-6 text-[11px] font-black text-[#7c3aed]">$149.00</td>
+                            <td class="px-6 py-6">
+                                <select class="status-select text-orange-600">
+                                    <option>Processing</option>
+                                    <option class="text-blue-600">Shipped</option>
+                                    <option class="text-green-600">Delivered</option>
+                                    <option class="text-red-600">Cancelled</option>
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-white/40 transition">
+                            <td class="px-6 py-6 text-[11px] font-black text-[#4c1d95]">#CS-9918</td>
+                            <td class="px-6 py-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-[#EFEBE9] rounded-lg overflow-hidden shrink-0">
+                                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=100" class="w-full h-full object-cover">
+                                    </div>
+                                    <span class="text-[10px] font-bold uppercase truncate max-w-[120px]">Onyx Stealth</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-6 text-[10px] font-bold">Sarah Jenkins</td>
+                            <td class="px-6 py-6 text-[10px] font-bold text-gray-400">Feb 14, 2026</td>
+                            <td class="px-6 py-6 text-[11px] font-black text-[#7c3aed]">$450.00</td>
+                            <td class="px-6 py-6">
+                                <select class="status-select text-blue-600">
+                                    <option>Shipped</option>
+                                    <option>Processing</option>
+                                    <option class="text-green-600">Delivered</option>
+                                    <option class="text-red-600">Cancelled</option>
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-white/40 transition">
+                            <td class="px-6 py-6 text-[11px] font-black text-[#4c1d95]">#CS-9915</td>
+                            <td class="px-6 py-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-[#EFEBE9] rounded-lg overflow-hidden shrink-0">
+                                        <img src="https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=100" class="w-full h-full object-cover">
+                                    </div>
+                                    <span class="text-[10px] font-bold uppercase truncate max-w-[120px]">Ghost RGB</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-6 text-[10px] font-bold">Marcus Vane</td>
+                            <td class="px-6 py-6 text-[10px] font-bold text-gray-400">Feb 12, 2026</td>
+                            <td class="px-6 py-6 text-[11px] font-black text-[#7c3aed]">$129.00</td>
+                            <td class="px-6 py-6">
+                                <select class="status-select text-green-600">
+                                    <option>Delivered</option>
+                                    <option>Processing</option>
+                                    <option>Shipped</option>
+                                    <option class="text-red-600">Cancelled</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="p-6 flex items-center justify-between border-t border-[#4c1d95]/5">
+                <p class="text-[9px] font-black uppercase text-[#4c1d95]/40">Showing 3 of 24 Results</p>
+                <div class="flex gap-2">
+                    <button class="w-8 h-8 rounded-lg border border-[#4c1d95]/10 flex items-center justify-center text-xs hover:bg-[#4c1d95] hover:text-white transition"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="w-8 h-8 rounded-lg border border-[#4c1d95]/10 flex items-center justify-center text-xs bg-[#4c1d95] text-white">1</button>
+                    <button class="w-8 h-8 rounded-lg border border-[#4c1d95]/10 flex items-center justify-center text-xs hover:bg-[#4c1d95] hover:text-white transition">2</button>
+                    <button class="w-8 h-8 rounded-lg border border-[#4c1d95]/10 flex items-center justify-center text-xs hover:bg-[#4c1d95] hover:text-white transition"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-20 text-center py-10 opacity-30">
+        <p class="text-[9px] font-black uppercase tracking-[0.3em]">CART<span class="text-[#7c3aed]">IVO</span> • Merchant Terminal • 2026</p>
+    </footer>
+
+</body>
+</html>
