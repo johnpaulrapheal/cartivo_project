@@ -27,7 +27,7 @@ def seller_required(view_func):
         def wrapper(request, *args, **kwargs):
             if not request.user.is_authenticated:
                 return redirect('sellerlogin')
-            if getattr(request.user, "role", None) != 'SELLER':
+            if str(getattr(request.user, "role", "")).upper() != 'SELLER':
                 return HttpResponseForbidden("You are not authorized to view this page.", status=401)
             return view_func(request, *args, **kwargs)
         return wrapper
