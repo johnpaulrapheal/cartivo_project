@@ -165,7 +165,7 @@
                         <div class="aspect-square rounded-sm bg-gray-50 border border-gray-100 overflow-hidden p-1">
                             {% for img in r.order_item.variant.images.all %}
                                 {% if img.is_primary %}
-                                    <img src="{{ img.image.url }}" class="w-full h-full object-cover rounded-sm">
+                                    <img src="{{ img.product_images.url }}" class="w-full h-full object-cover rounded-sm">
                                 {% endif %}
                             {% endfor %}
                         </div>

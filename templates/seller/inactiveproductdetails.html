@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        
+
         :root {
             --brand-primary: #7c3aed;
             --brand-primary-light: #e9d5ff;
@@ -20,19 +21,19 @@
             --radius-lg: 8px;
         }
 
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #fdfaff; 
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fdfaff;
             color: var(--brand-dark);
             overflow-x: hidden;
         }
 
         /* Consistent Sidebar Styling */
-        .sidebar-bg { 
-            background-color: var(--surface); 
+        .sidebar-bg {
+            background-color: var(--surface);
             border-right: 1px solid #eef2f3;
         }
-        
+
         .nav-item {
             color: #64748b;
             transition: all 0.2s ease;
@@ -62,7 +63,7 @@
 
         .vault-card:hover {
             border-color: var(--brand-primary);
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
         }
 
         .image-overlay {
@@ -86,10 +87,17 @@
             opacity: 1;
         }
 
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
     </style>
 </head>
+
 <body class="flex flex-col md:flex-row min-h-screen">
 
     <aside class="w-full md:w-24 lg:w-64 sidebar-bg flex md:flex-col sticky top-0 z-50 h-auto md:h-screen">
@@ -97,9 +105,10 @@
             <div class="bg-[#7c3aed] p-2 rounded-sm text-white">
                 <i class="fa-solid fa-bolt-lightning text-lg"></i>
             </div>
-            <span class="font-extrabold tracking-tight text-xl hidden lg:block text-[#4c1d95]">CARTIVO<span class="text-[#7c3aed]">.</span></span>
+            <span class="font-extrabold tracking-tight text-xl hidden lg:block text-[#4c1d95]">CARTIVO<span
+                    class="text-[#7c3aed]">.</span></span>
         </div>
-        
+
         <nav class="flex-1 space-y-1 mt-4 overflow-y-auto custom-scroll">
             <a href="/sellerdashboard/" class="nav-item flex items-center gap-4 px-4 py-3">
                 <i class="fa-solid fa-chart-pie text-lg"></i>
@@ -115,7 +124,7 @@
                 <i class="fa-solid fa-receipt text-lg"></i>
                 <span class="text-sm font-semibold hidden lg:block">Orders</span>
             </a>
-            
+
             <a href="/sellerinactive/" class="nav-item active flex items-center gap-4 px-4 py-3">
                 <i class="fa-solid fa-box-archive text-lg"></i>
                 <span class="text-sm font-semibold hidden lg:block">Vault</span>
@@ -143,17 +152,20 @@
     </aside>
 
     <main class="flex-1 p-6 md:p-8 lg:px-10 overflow-y-auto custom-scroll">
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-gray-100">
+        <header
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-gray-100">
             <div>
                 <h1 class="text-2xl font-bold text-[#4c1d95] tracking-tight uppercase">
                     Archived <span class="text-[#7c3aed]">Vault</span>
                 </h1>
-                <p class="text-gray-400 text-[10px] font-semibold uppercase tracking-wider mt-1">Status: Offline &bull; Hidden from Storefront</p>
+                <p class="text-gray-400 text-[10px] font-semibold uppercase tracking-wider mt-1">Status: Offline &bull;
+                    Hidden from Storefront</p>
             </div>
-            
+
             <div class="bg-white px-5 py-2 border border-gray-100 rounded-sm flex items-center gap-4">
                 <div class="text-right">
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">Archived Items</p>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">Archived Items
+                    </p>
                     <p class="text-lg font-extrabold text-[#7c3aed]">{{products|length}}</p>
                 </div>
                 <div class="h-6 w-[1px] bg-gray-100"></div>
@@ -164,21 +176,22 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {% for i in products %}
             <div class="vault-card p-4 flex flex-col">
-                <div class="relative rounded-sm overflow-hidden bg-gray-50 aspect-square mb-4 border border-gray-50 p-1">
+                <div
+                    class="relative rounded-sm overflow-hidden bg-gray-50 aspect-square mb-4 border border-gray-50 p-1">
                     {% with i.variants.first as variant %}
-                        {% if variant %}
-                            {% for img in variant.images.all %}
-                                {% if img.is_primary %}
-                                    <img src="{{ img.images.url }}" class="grayscale-img w-full h-full object-cover rounded-sm">
-                                {% endif %}
-                            {% endfor %}
-                        {% else %}
-                            <div class="w-full h-full flex items-center justify-center text-gray-300">
-                                <i class="fa-solid fa-box-open text-3xl"></i>
-                            </div>
-                        {% endif %}
+                    {% if variant %}
+                    {% for img in variant.images.all %}
+                    {% if img.is_primary %}
+                    <img src="{{ img.product_images.url }}" class="grayscale-img w-full h-full object-cover rounded-sm">
+                    {% endif %}
+                    {% endfor %}
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-gray-300">
+                        <i class="fa-solid fa-box-open text-3xl"></i>
+                    </div>
+                    {% endif %}
                     {% endwith %}
-                    
+
                     <div class="image-overlay absolute inset-0 rounded-sm flex items-end p-3">
                         <span class="text-[9px] font-bold text-white uppercase tracking-widest flex items-center gap-2">
                             <i class="fa-solid fa-lock text-[8px]"></i> Vaulted SKU
@@ -186,7 +199,8 @@
                     </div>
 
                     <div class="absolute top-3 left-3">
-                        <span class="bg-white/95 text-[#4c1d95] text-[9px] font-bold px-2 py-1 rounded-sm border border-gray-100 shadow-sm uppercase">
+                        <span
+                            class="bg-white/95 text-[#4c1d95] text-[9px] font-bold px-2 py-1 rounded-sm border border-gray-100 shadow-sm uppercase">
                             Inactive
                         </span>
                     </div>
@@ -195,23 +209,26 @@
                 <div class="px-1 flex-1">
                     <h3 class="text-xs font-bold text-[#4c1d95] line-clamp-1 leading-tight mb-1">{{i.name}}</h3>
                     <div class="flex items-center justify-between mt-2">
-                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-tight">Model: {{i.model_number}}</p>
+                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-tight">Model: {{i.model_number}}
+                        </p>
                         <p class="text-xs font-extrabold text-[#7c3aed]">${{i.variants.first.price}}</p>
                     </div>
                 </div>
 
                 <div class="mt-6 space-y-1.5">
-                    <a href="/togglestatus/{{i.slug}}" 
-                       class="w-full py-3 bg-[#4c1d95] hover:bg-[#7c3aed] text-white rounded-sm text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-3 transition-all active:scale-[0.98]">
+                    <a href="/togglestatus/{{i.slug}}"
+                        class="w-full py-3 bg-[#4c1d95] hover:bg-[#7c3aed] text-white rounded-sm text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-3 transition-all active:scale-[0.98]">
                         <i class="fa-solid fa-rotate-left"></i>
                         Restore Item
                     </a>
-                    
+
                     <div class="grid grid-cols-2 gap-1.5">
-                        <a href="/sellerproductupdate/{{i.id}}" class="py-2.5 border border-gray-100 hover:bg-[#e9d5ff] rounded-sm text-center text-[9px] font-bold uppercase text-gray-500 hover:text-[#7c3aed] transition-all">
+                        <a href="/sellerproductupdate/{{i.id}}"
+                            class="py-2.5 border border-gray-100 hover:bg-[#e9d5ff] rounded-sm text-center text-[9px] font-bold uppercase text-gray-500 hover:text-[#7c3aed] transition-all">
                             Edit Data
                         </a>
-                        <a href="/sellerimage/{{i.id}}" class="py-2.5 border border-gray-100 hover:bg-[#e9d5ff] rounded-sm text-center text-[9px] font-bold uppercase text-gray-500 hover:text-[#7c3aed] transition-all">
+                        <a href="/sellerimage/{{i.id}}"
+                            class="py-2.5 border border-gray-100 hover:bg-[#e9d5ff] rounded-sm text-center text-[9px] font-bold uppercase text-gray-500 hover:text-[#7c3aed] transition-all">
                             Media
                         </a>
                     </div>
@@ -226,8 +243,10 @@
         </div>
 
         <footer class="mt-20 pb-10 text-center border-t border-gray-50 pt-10">
-            <p class="text-[9px] font-bold uppercase tracking-[0.4em] text-gray-300">CARTIVO VAULT TERMINAL &bull; SECURE STORAGE</p>
+            <p class="text-[9px] font-bold uppercase tracking-[0.4em] text-gray-300">CARTIVO VAULT TERMINAL &bull;
+                SECURE STORAGE</p>
         </footer>
     </main>
 </body>
+
 </html>

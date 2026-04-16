@@ -20,8 +20,8 @@
         </div>
     </section>
 
-    <section class="max-w-7xl mx-auto px-4 py-12">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+    <!-- <section class="max-w-7xl mx-auto px-4 py-12"> -->
+        <!-- <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Today's <span class="text-violet-600 underline decoration-rose-400 decoration-4 underline-offset-8">Epic Deals</span></h2>
             <div class="flex items-center gap-2 text-rose-500 font-bold bg-rose-50 px-4 py-2 rounded-xl border border-rose-100 self-start sm:self-auto">
                 <i class="fa-solid fa-clock"></i>
@@ -75,7 +75,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <section class="max-w-7xl mx-auto px-4 py-16">
         <h2 class="text-3xl font-extrabold text-slate-900 mb-10 text-center">Featured Essentials</h2>
@@ -131,6 +131,18 @@
                         </article>
                     {% endif %}
                 {% endwith %}
+            {% empty %}
+                <div class="col-span-full">
+                    <div class="bg-white border border-violet-100 rounded-[2rem] p-10 text-center shadow-sm">
+                        <div class="w-20 h-20 rounded-2xl bg-violet-50 mx-auto flex items-center justify-center text-violet-300 mb-5">
+                            <i class="fa-solid fa-box-open text-3xl"></i>
+                        </div>
+                        <h3 class="text-lg font-extrabold text-slate-900">No products available</h3>
+                        <p class="text-sm text-slate-500 mt-2">
+                            If you’re a seller, add products and upload images. If you’re an admin, approve products to make them visible here.
+                        </p>
+                    </div>
+                </div>
             {% endfor %}
         </div>
     </section>

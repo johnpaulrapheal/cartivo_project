@@ -3,6 +3,7 @@
 
 {% block title %}Login | Cartivo India{% endblock %}
 
+{% block header %}{% endblock header %}
 {% block extra_head %}
 <style>
     .glass { 
@@ -63,13 +64,6 @@
                     </a>
                 </p>
             </div>
-
-            <!-- GOOGLE LOGIN -->
-            <a href="{% provider_login_url 'google' %}"
-                class="w-full mb-5 inline-flex items-center justify-center gap-3 bg-white border border-gray-200 hover:border-violet-200 hover:bg-violet-50 text-slate-900 py-4 rounded-2xl font-bold shadow-sm transition">
-                <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" class="w-5 h-5">
-                Continue with Google
-            </a>
 
             <!-- FORM LOGIN -->
             <form class="space-y-6" method="POST" action="{% url 'login' %}">

@@ -251,9 +251,55 @@ def user_logout(request):
     return redirect('login')
 
 def user_home(request):
-    user = request.user
-    products = products = Product.objects.filter(is_active=True,approval_status='APPROVED').prefetch_related('variants__images')
-    return render(request,'user/home.html',{'products':products})
+    # Primary storefront rule: only show active + APPROVED products.
+    base_qs = (
+        Product.objects.filter(is_active=True, approval_status="APPROVED")
+        .select_related("subcategory", "subcategory__category")
+        .prefetch_related(
+            Prefetch(
+                "variants",
+                queryset=ProductVariant.objects.order_by("cost_price", "id").prefetch_related(
+                    Prefetch(
+                        "images",
+                        queryset=ProductImage.objects.filter(product_images__isnull=False)
+                        .exclude(product_images="")
+                        .order_by("-is_primary", "id"),
+                    )
+                ),
+            )
+        )
+        .order_by("-created_at")
+    )
+
+    products = list(base_qs)
+
+    # Developer-friendly fallback: if nothing is approved yet, show active products
+    # (typically still PENDING) so the UI isn't blank during setup/testing.
+    if not products and settings.DEBUG:
+        products = list(
+            Product.objects.filter(is_active=True)
+            .select_related("subcategory", "subcategory__category")
+            .prefetch_related(
+                Prefetch(
+                    "variants",
+                    queryset=ProductVariant.objects.order_by("cost_price", "id").prefetch_related(
+                        Prefetch(
+                            "images",
+                            queryset=ProductImage.objects.filter(product_images__isnull=False)
+                            .exclude(product_images="")
+                            .order_by("-is_primary", "id"),
+                        )
+                    ),
+                )
+            )
+            .order_by("-created_at")
+        )
+        messages.info(
+            request,
+            "No APPROVED products found yet. Showing active products (including PENDING) because DEBUG=True.",
+        )
+
+    return render(request, "user/home.html", {"products": products})
 
 def user_product_filter(request):
     q = (request.GET.get('q') or '').strip()
@@ -262,22 +308,28 @@ def user_product_filter(request):
     subcategory_id = (request.GET.get('subcategory') or '').strip()
     sort = (request.GET.get('sort') or '').strip()
 
-    products = Product.objects.filter(
-        is_active=True,
-        approval_status='APPROVED',
-    ).select_related(
-        'subcategory',
-        'subcategory__category',
-    ).prefetch_related(
-        Prefetch(
-            'variants',
-            queryset=ProductVariant.objects.prefetch_related('images').order_by('cost_price', 'id'),
+    def _base_products_queryset(*, approved_only: bool):
+        qs = Product.objects.filter(is_active=True)
+        if approved_only:
+            qs = qs.filter(approval_status="APPROVED")
+        return (
+            qs.select_related(
+                "subcategory",
+                "subcategory__category",
+            )
+            .prefetch_related(
+                Prefetch(
+                    "variants",
+                    queryset=ProductVariant.objects.prefetch_related("images").order_by(
+                        "cost_price", "id"
+                    ),
+                )
+            )
+            .annotate(min_variant_price=Min("variants__cost_price"))
+            .filter(min_variant_price__isnull=False)
         )
-    ).annotate(
-        min_variant_price=Min('variants__cost_price')
-    ).filter(
-        min_variant_price__isnull=False
-    )
+
+    products = _base_products_queryset(approved_only=True)
 
     if q:
         products = products.filter(
@@ -301,6 +353,37 @@ def user_product_filter(request):
         products = products.order_by('-min_variant_price', '-created_at')
     else:
         products = products.order_by('-created_at')
+
+    # Development convenience: mirror user_home behavior.
+    # If no APPROVED products match and DEBUG=True, show active products (incl. PENDING).
+    if getattr(settings, "DEBUG", False) and not products.exists():
+        fallback = _base_products_queryset(approved_only=False)
+        if q:
+            fallback = fallback.filter(
+                Q(name__icontains=q)
+                | Q(description__icontains=q)
+                | Q(brand__icontains=q)
+                | Q(model_number__icontains=q)
+            )
+        if brand:
+            fallback = fallback.filter(brand__iexact=brand)
+        if subcategory_id.isdigit():
+            fallback = fallback.filter(subcategory_id=int(subcategory_id))
+        elif category_id.isdigit():
+            fallback = fallback.filter(subcategory__category_id=int(category_id))
+
+        if sort == "price_low":
+            fallback = fallback.order_by("min_variant_price", "-created_at")
+        elif sort == "price_high":
+            fallback = fallback.order_by("-min_variant_price", "-created_at")
+        else:
+            fallback = fallback.order_by("-created_at")
+
+        products = fallback
+        messages.info(
+            request,
+            "No APPROVED products matched your search. Showing active products (including PENDING) because DEBUG=True.",
+        )
 
     categories = Category.objects.all().order_by('name')
     subcategories = SubCategory.objects.select_related('category').all().order_by('name')

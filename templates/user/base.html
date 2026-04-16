@@ -30,6 +30,7 @@
 </head>
 <body class="{% block body_class %}bg-[#fdfaff] text-slate-900 min-w-0 overflow-x-hidden{% endblock %}" {% block body_attrs %}{% endblock %}>
 
+    {% block header %}
     <div class="bg-violet-900 text-violet-100 text-center py-2 px-2 text-[10px] sm:text-xs font-semibold tracking-wide uppercase leading-relaxed">
         ⚡ Super Sale: Extra 20% Off | Code: <span class="text-amber-300 underline cursor-pointer">VIOLET20</span>
     </div>
@@ -113,8 +114,12 @@
                         <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-white">
                             <i class="fa-solid fa-cart-shopping"></i>
                         </div>
-                        <span class="hidden font-bold text-white text-sm tracking-tight sm:inline">₹0.00</span>
-                        <span class="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                        <span class="hidden font-bold text-white text-sm tracking-tight sm:inline">
+                            ₹{{ cart_total|default:0|floatformat:2 }}
+                        </span>
+                        <span class="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-bold h-5 min-w-5 px-1 rounded-full flex items-center justify-center border-2 border-white">
+                            {{ cart_count|default:0 }}
+                        </span>
                     </a>
                 </div>
             </div>
@@ -148,6 +153,7 @@
             </div>
         </div>
     </nav>
+    {% endblock header %}
 
     {% block content %}{% endblock %}
 

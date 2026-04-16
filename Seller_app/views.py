@@ -10,6 +10,7 @@ from django.utils.text import slugify
 from django.contrib.auth import authenticate, login ,logout
 from User_app.decorators import seller_required
 from django.contrib import messages
+from django.db.models import Prefetch
 
 def _unique_store_slug(name: str) -> str:
     base = slugify(name) or "store"
@@ -114,9 +115,38 @@ def sellerlogin(request):
 
 @seller_required
 def sellerhome(request):
-    seller=SellerProfile.objects.get(user=request.user)
-    products=(Product.objects.filter(seller=seller,is_active=True).prefetch_related("variants__images").order_by("-created_at"))
-    return render(request, "seller/sellerhome.html", {"products": products,"seller":seller})
+    seller = SellerProfile.objects.select_related("user").get(user=request.user)
+
+    # Order images so the "featured" one (is_primary=True) comes first; if none are
+    # marked primary, the first uploaded image is used as a fallback.
+    product_images_qs = (
+        ProductImage.objects.filter(product_images__isnull=False)
+        .exclude(product_images="")
+        .order_by("-is_primary", "id")
+    )
+    variants_qs = ProductVariant.objects.prefetch_related(Prefetch("images", queryset=product_images_qs))
+
+    products_qs = (
+        Product.objects.filter(seller=seller, is_active=True)
+        .select_related("subcategory")
+        .prefetch_related(Prefetch("variants", queryset=variants_qs))
+        .order_by("-created_at")
+    )
+
+    products = list(products_qs)
+    for product in products:
+        product.primary_image = None
+        for variant in product.variants.all():
+            images = list(variant.images.all())
+            if images:
+                product.primary_image = images[0]
+                break
+
+    return render(
+        request,
+        "seller/sellerhome.html",
+        {"products": products, "seller": seller},
+    )
 
 
 @seller_required
@@ -127,7 +157,7 @@ def sellerprofile(request):
 
 def seller_logout(request):
     logout(request)
-    return redirect('sellerlogin')
+    return redirect('login')
 
 @seller_required
 def sellerproduct(request):
@@ -231,7 +261,7 @@ def sellerimage(request,id):
     if request.method=="POST":
         data.variant=ProductVariant.objects.get(product=product)
         data.product_images=request.FILES.get("images")
-        data.alt_text=request.POST.get("alt_text")
+        data.alt_text = (request.POST.get("alt_text") or "").strip()
         data.is_primary = bool(request.POST.get("is_primary"))
         data.save()
     return render(request,"seller/sellerproductimages.html",{"images":images})

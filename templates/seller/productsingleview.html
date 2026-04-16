@@ -55,7 +55,7 @@
                 <div class="glass rounded-[2.5rem] p-4 product-gradient">
                     <div class="aspect-square rounded-[2rem] overflow-hidden bg-white border border-[#4c1d95]/5 relative">
                         {% if images %}
-                            <img id="mainPreview" src="{{ images.0.images.url }}" class="w-full h-full object-cover transition-opacity duration-300">
+                            <img id="mainPreview" src="{{ images.0.product_images.url }}" class="w-full h-full object-cover transition-opacity duration-300">
                         {% else %}
                             <div class="w-full h-full flex flex-col items-center justify-center text-[#4c1d95]/10">
                                 <i class="fa-solid fa-image text-8xl mb-4"></i>
@@ -67,8 +67,8 @@
 
                 <div class="grid grid-cols-4 gap-4 px-2">
                     {% for img in images %}
-                    <div onclick="updatePreview('{{ img.images.url }}')" class="aspect-square rounded-2xl border border-[#4c1d95]/5 glass p-1 overflow-hidden cursor-pointer hover:border-[#7c3aed]/30 transition-colors">
-                        <img src="{{ img.images.url }}" class="w-full h-full object-cover rounded-xl">
+                    <div onclick="updatePreview('{{ img.product_images.url }}')" class="aspect-square rounded-2xl border border-[#4c1d95]/5 glass p-1 overflow-hidden cursor-pointer hover:border-[#7c3aed]/30 transition-colors">
+                        <img src="{{ img.product_images.url }}" class="w-full h-full object-cover rounded-xl">
                     </div>
                     {% endfor %}
                 </div>

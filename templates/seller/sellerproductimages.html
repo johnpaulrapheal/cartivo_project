@@ -165,7 +165,7 @@
                     {% for img in images %}
                     <div class="card-container asset-card overflow-hidden group">
                         <div class="aspect-[4/3] relative overflow-hidden bg-gray-50 border-b border-gray-100">
-                            <img src="{{ img.images.url }}" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                            <img src="{{ img.product_images.url }}" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
                             
                             <div class="absolute top-4 left-4 flex flex-col gap-2">
                                 {% if img.is_primary %}
