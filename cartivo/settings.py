@@ -38,15 +38,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django.contrib.sites',
+
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+
     'Admin_app',
     'User_app',
     'Core_app',
     'Seller_app',
-    'django.contrib.sites',
 ]
 
 SITE_ID = 1
@@ -135,8 +138,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
-AUTH_USER_MODEL = 'core.User'
 AUTH_USER_MODEL="Core_app.User"
 
 
@@ -155,7 +156,9 @@ EMAIL_HOST_PASSWORD = 'xgbczgxluzoiuccu'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # --- Allauth Configuration ---
-ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
@@ -172,6 +175,7 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 
 # Redirects & UX
 LOGIN_REDIRECT_URL = '/'
+SOCIALACCOUNT_LOGIN_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_SESSION_REMEMBER = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
