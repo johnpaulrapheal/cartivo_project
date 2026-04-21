@@ -130,12 +130,13 @@
                             <span class="text-lg font-bold text-slate-900">Total Amount</span>
                             <span id="final-amount" class="text-3xl font-black text-violet-700">₹0</span>
                         </div>
-                    </div>
+                    {% if cart_item %}
                     <a href="{% url 'user_order_cart_confirm' cart.id %}">
                     <button class="w-full violet-gradient text-white py-5 rounded-2xl font-bold shadow-xl shadow-violet-200 hover:scale-[1.02] transition active:scale-95 mb-6">
                         Proceed to Checkout
                     </button>
                     </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
