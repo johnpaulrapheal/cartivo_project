@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q, Min, Prefetch
+from django.db.models import Q, Min, Prefetch, Avg, Count
 from django.core.mail import send_mail
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.conf import settings
 from decimal import Decimal
 from Core_app.models import User
-from .models import Cart,CartItem,Order,OrderItem,Wishlist,WishlistItem
+from .models import Cart, CartItem, Order, OrderItem, Wishlist, WishlistItem, Review
 from User_app.decorators import customer_login_required,customer_required
 from Seller_app.models import Product,ProductImage,ProductVariant,VariantAttributeBridge,Attribute
 from Core_app.models import Address, Category, SubCategory
@@ -505,22 +505,79 @@ def user_payment_method(request):
 
 def user_product_view(request, id):
     user = request.user
-    variant = ProductVariant.objects.select_related('product').prefetch_related('images').get(id=id)
-    variants = ProductVariant.objects.filter(product=variant.product).prefetch_related('images')
+    variant = ProductVariant.objects.select_related("product").prefetch_related("images").get(
+        id=id
+    )
+    variants = ProductVariant.objects.filter(product=variant.product).prefetch_related(
+        "images"
+    )
+
     attributebridge = VariantAttributeBridge.objects.filter(variant=variant)
     attributes = []
     for item in attributebridge:
         attribute = Attribute.objects.get(id=item.option.id)
         attributes.append(attribute)
-    discount=(variant.cost_price*100)/variant.mrp
-    discount_percentage=discount-100
-    return render(request, 'user/product_view.html', {
-                                                        'discount':discount_percentage,
-                                                        'variant': variant,
-                                                        'variants': variants,
-                                                        'user': user,
-                                                        'attribute': attributes
-                                                        })
+
+    discount = (variant.cost_price * 100) / variant.mrp
+    discount_percentage = discount - 100
+
+    reviews = (
+        Review.objects.filter(product=variant.product)
+        .select_related("user")
+        .order_by("-created_at")
+    )
+    review_stats = reviews.aggregate(
+        avg_rating=Avg("rating"),
+        total_reviews=Count("id"),
+    )
+    avg_rating = review_stats.get("avg_rating") or 0
+    total_reviews = review_stats.get("total_reviews") or 0
+
+    context = {
+        "discount": discount_percentage,
+        "variant": variant,
+        "variants": variants,
+        "user": user,
+        "attribute": attributes,
+        "reviews": reviews,
+        "avg_rating": avg_rating,
+        "total_reviews": total_reviews,
+    }
+    return render(request, "user/product_view.html", context)
+
+
+@customer_login_required
+def add_product_review(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method != "POST":
+        return redirect("product_view", id=request.GET.get("variant_id") or product.variants.first().id)
+
+    rating_raw = request.POST.get("rating") or ""
+    comment = (request.POST.get("comment") or "").strip()
+    variant_id = request.POST.get("variant_id")
+
+    try:
+        rating = int(rating_raw)
+    except ValueError:
+        rating = 0
+
+    if rating < 1 or rating > 5:
+        messages.error(request, "Please select a rating between 1 and 5 stars.")
+    else:
+        Review.objects.update_or_create(
+            user=request.user,
+            product=product,
+            defaults={"rating": rating, "comment": comment},
+        )
+        messages.success(request, "Your review has been saved.")
+
+    if variant_id:
+        return redirect("product_view", id=variant_id)
+    default_variant = ProductVariant.objects.filter(product=product).first()
+    if default_variant:
+        return redirect("product_view", id=default_variant.id)
+    return redirect("home")
 
 @customer_login_required
 def user_payment_choice(request):
@@ -603,8 +660,12 @@ def user_payment_choice(request):
 
 @customer_login_required
 def user_orders(request):
-    orders=Order.objects.filter(order_status='Processing')
-    return render(request,'user/myorders.html',{"orders":orders})
+    orders = (
+        Order.objects.filter(user=request.user)
+        .order_by("-ordered_at")
+        .prefetch_related("items__variant__product", "items__variant__images")
+    )
+    return render(request, "user/myorders.html", {"orders": orders})
                                                                                                                                
 @customer_login_required
 def user_order_confirmation(request,id):

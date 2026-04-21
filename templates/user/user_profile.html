@@ -38,14 +38,14 @@
                             <a href="{% url 'address' %}" class="flex items-center gap-4 p-4 rounded-2xl text-gray-500 hover:bg-violet-50 hover:text-violet-700 font-semibold transition">
                                 <i class="fa-solid fa-location-dot"></i> Addresses
                             </a>
-                            <a href="{% url 'payment_method' %}" class="flex items-center gap-4 p-4 rounded-2xl text-gray-500 hover:bg-violet-50 hover:text-violet-700 font-semibold transition">
+                            <!-- <a href="{% url 'payment_method' %}" class="flex items-center gap-4 p-4 rounded-2xl text-gray-500 hover:bg-violet-50 hover:text-violet-700 font-semibold transition">
                                 <i class="fa-solid fa-credit-card"></i> Payment Methods
-                            </a>
+                            </a> -->
                             <hr class="my-4 border-gray-50">
                             <a href="{% url 'logout' %}" class="flex items-center gap-4 p-4 rounded-2xl text-rose-500 hover:bg-rose-50 font-semibold transition">
                                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                             </a>
-                        </form>
+                        </form>  
                     </nav>
                 </div>
             </div>
@@ -80,10 +80,10 @@
                         </div>
                         <div>
                             <p class="text-xs text-gray-400 font-bold uppercase">Total Orders</p>
-                            <p class="text-2xl font-black text-slate-800">12</p>
+                            <p class="text-2xl font-black text-slate-800">1</p>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-[2rem] shadow-lg border border-violet-50 flex items-center gap-5 profile-card">
+                    <!-- <div class="bg-white p-6 rounded-[2rem] shadow-lg border border-violet-50 flex items-center gap-5 profile-card">
                         <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xl shadow-inner">
                             <i class="fa-solid fa-wallet"></i>
                         </div>
@@ -91,7 +91,7 @@
                             <p class="text-xs text-gray-400 font-bold uppercase">Cartivo Credit</p>
                             <p class="text-2xl font-black text-slate-800">₹499</p>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 
                 <form method="POST" action="{% url 'profile' %}">
@@ -133,7 +133,7 @@
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Gender</label>
+                             <label class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Gender</label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                                     <i class="fa-regular fa-envelope"></i>

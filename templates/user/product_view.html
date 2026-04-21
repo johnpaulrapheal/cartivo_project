@@ -65,9 +65,17 @@
                     <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-2 break-words">{{variant.product.name}}</h1>
                     <div class="flex items-center gap-3">
                         <div class="flex text-amber-400 text-sm">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            {% for _ in "12345" %}
+                                {% if forloop.counter <= avg_rating|default:0 %}
+                                    <i class="fa-solid fa-star"></i>
+                                {% else %}
+                                    <i class="fa-regular fa-star text-gray-300"></i>
+                                {% endif %}
+                            {% endfor %}
                         </div>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">(4.8 / 5.0)</span>
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                            ({{ avg_rating|default:0|floatformat:1 }} / 5.0 · {{ total_reviews }} review{{ total_reviews|pluralize }})
+                        </span>
                     </div>
                 </div>
 
@@ -148,6 +156,103 @@
         </div>
         {% endif %}
 
+        {% if variant.product.description %}
+        <section class="mt-16 border-t border-violet-100 pt-10">
+            <div class="max-w-3xl space-y-4">
+                <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 flex items-center gap-3">
+                    <span class="w-2 h-7 violet-gradient rounded-full"></span>
+                    Product Description
+                </h2>
+                <p class="text-sm sm:text-base text-slate-600 leading-relaxed whitespace-pre-line">
+                    {{ variant.product.description }}
+                </p>
+            </div>
+        </section>
+        {% endif %}
+
+        <section id="reviews" class="mt-20 border-t border-violet-100 pt-16">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-slate-900 mb-1">Customer Reviews</h2>
+                            <p class="text-sm text-slate-500">
+                                Average rating <span class="font-bold text-violet-600">{{ avg_rating|default:0|floatformat:1 }}</span> from {{ total_reviews }} review{{ total_reviews|pluralize }}.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        {% if reviews %}
+                            {% for r in reviews %}
+                                <article class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-100 shadow-sm">
+                                    <div class="flex items-center justify-between gap-3 mb-2">
+                                        <div>
+                                            <p class="text-sm font-bold text-slate-800">{{ r.user.username }}</p>
+                                            <p class="text-[11px] text-slate-400 uppercase tracking-widest">
+                                                {{ r.created_at|date:"M d, Y" }}
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center gap-1 text-amber-400 text-xs">
+                                            {% for _ in "12345" %}
+                                                {% if forloop.counter <= r.rating %}
+                                                    <i class="fa-solid fa-star"></i>
+                                                {% else %}
+                                                    <i class="fa-regular fa-star text-gray-300"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% if r.comment %}
+                                        <p class="text-sm text-slate-600 leading-relaxed">{{ r.comment }}</p>
+                                    {% endif %}
+                                </article>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-sm text-slate-500">No reviews yet. Be the first to share your experience.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5">
+                    <div class="p-5 sm:p-6 rounded-2xl bg-white border border-violet-100 shadow-lg">
+                        <h3 class="text-lg font-extrabold text-slate-900 mb-2">Write a Review</h3>
+                        {% if user.is_authenticated %}
+                            <form method="POST" action="{% url 'add_product_review' variant.product.id %}" class="space-y-4">
+                                {% csrf_token %}
+                                <input type="hidden" name="variant_id" value="{{ variant.id }}">
+
+                                <div>
+                                    <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Your Rating</p>
+                                    <div class="flex flex-row-reverse justify-end gap-1 text-2xl text-amber-400 cursor-pointer" id="star-rating">
+                                        {% for i in "54321" %}
+                                            <button type="button" data-value="{{ i }}" class="star-btn">
+                                                <i class="fa-regular fa-star"></i>
+                                            </button>
+                                        {% endfor %}
+                                    </div>
+                                    <input type="hidden" name="rating" id="rating-input" value="0">
+                                </div>
+
+                                <div>
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Your Review</label>
+                                    <textarea name="comment" rows="4" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-200" placeholder="Share details about quality, taste, freshness..."></textarea>
+                                </div>
+
+                                <button type="submit" class="w-full violet-gradient text-white py-3.5 rounded-xl font-bold shadow-md hover:scale-[1.01] active:scale-95 transition">
+                                    Submit Review
+                                </button>
+                            </form>
+                        {% else %}
+                            <p class="text-sm text-slate-600">
+                                Please <a href="{% url 'login' %}" class="text-violet-600 font-semibold underline">sign in</a> to write a review.
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- <section class="mt-20 border-t border-violet-100 pt-16">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
                 <div class="lg:col-span-8 space-y-10">
@@ -220,6 +325,36 @@
             });
             element.classList.add('active');
         }
+
+        // Star rating interaction for review form
+        (function () {
+            const container = document.getElementById("star-rating");
+            const ratingInput = document.getElementById("rating-input");
+            if (!container || !ratingInput) return;
+
+            function setRating(value) {
+                ratingInput.value = value;
+                const buttons = container.querySelectorAll(".star-btn");
+                buttons.forEach((btn) => {
+                    const v = parseInt(btn.dataset.value, 10);
+                    const icon = btn.querySelector("i");
+                    if (v <= value) {
+                        icon.classList.remove("fa-regular", "text-gray-300");
+                        icon.classList.add("fa-solid", "text-amber-400");
+                    } else {
+                        icon.classList.remove("fa-solid", "text-amber-400");
+                        icon.classList.add("fa-regular", "text-gray-300");
+                    }
+                });
+            }
+
+            container.addEventListener("click", (e) => {
+                const btn = e.target.closest(".star-btn");
+                if (!btn) return;
+                const value = parseInt(btn.dataset.value, 10) || 0;
+                setRating(value);
+            });
+        })();
 
     </script>
 {% endblock %}
