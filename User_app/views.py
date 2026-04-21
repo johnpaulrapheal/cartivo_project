@@ -494,7 +494,7 @@ def user_cart_item_delete(request,id):
 @customer_login_required
 def user_cart_display(request):    
     user_name=request.user
-    cart=Cart.objects.filter(user=user_name).first()
+    cart, created=Cart.objects.get_or_create(user=user_name)
     cart_item=CartItem.objects.filter(cart=cart)
     return render(request,'user/cart.html',{'cart_item':cart_item,'cart':cart})
 
