@@ -22,7 +22,7 @@ class Category(models.Model):
     slug = models.SlugField(unique=True)
     description = models.TextField(max_length=200)
     is_active = models.BooleanField(default=True)
-
+    
     def __str__(self):
         return self.name
 
@@ -32,6 +32,8 @@ class SubCategory(models.Model):
     slug = models.SlugField(unique=True)
     description = models.TextField(max_length=200)
     is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
