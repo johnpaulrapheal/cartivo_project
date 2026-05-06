@@ -10,25 +10,6 @@ from django.utils.text import slugify
 from django.contrib.auth import authenticate, login ,logout
 from User_app.decorators import seller_required
 from django.contrib import messages
-from django.db.models import Prefetch
-
-def _unique_store_slug(name: str) -> str:
-    base = slugify(name) or "store"
-    slug = base
-    idx = 1
-    while SellerProfile.objects.filter(store_slug=slug).exists():
-        slug = f"{base}-{idx}"
-        idx += 1
-    return slug
-
-def _unique_product_slug(name: str) -> str:
-    base = slugify(name) or "product"
-    slug = base
-    idx = 1
-    while Product.objects.filter(slug=slug).exists():
-        slug = f"{base}-{idx}"
-        idx += 1
-    return slug
 
 
 
@@ -37,57 +18,32 @@ def selleregis(request):
     if request.method=="POST":
         username=request.POST.get("username")
         password=request.POST.get("password")
-        confirm_password = request.POST.get("confirm_password")
         email=request.POST.get("email")
-        phone_number = request.POST.get("phone_number")
-        store_name = request.POST.get("store_name")
-        store_slug = (request.POST.get("store_slug") or "").strip()
-        
-        if password != confirm_password:
-            messages.error(request, "Password and confirm password do not match.")
-            return redirect("selleregis")
-
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists.")
-            return redirect("selleregis")
-
-        if User.objects.filter(email=email).exists():
-            messages.error(request, "Email already exists.")
-            return redirect("selleregis")
-
-        if phone_number and User.objects.filter(phone_number=phone_number).exists():
-            messages.error(request, "Phone number already exists.")
-            return redirect("selleregis")
-
-        resolved_store_slug = slugify(store_slug or store_name)
-        if not resolved_store_slug:
-            messages.error(request, "Please enter a valid store name or slug.")
-            return redirect("selleregis")
-
-        if SellerProfile.objects.filter(store_slug=resolved_store_slug).exists():
-            resolved_store_slug = _unique_store_slug(store_name)
-
-        user=User.objects.create_user(username=username,
-                                      password=password,
-                                      email=email,
-                                      first_name=request.POST.get("first_name"),
-                                      last_name=request.POST.get("last_name"),
-                                      phone_number=phone_number,
-                                      role="SELLER",
-                                      profile_image=request.FILES.get("profile_image"),
-                                      )
-        
-        SellerProfile.objects.create( user=user,
-                                      store_name=store_name,
-                                      store_slug=resolved_store_slug,
-                                      gst_number=request.POST.get("gst_number"),
-                                      pan_number=request.POST.get("pan_number"),
-                                      bank_account_number=request.POST.get("bank_account_number"),
-                                      ifsc_code=request.POST.get("ifsc_code"),
-                                      business_address=request.POST.get("business_address"),
-                                      )
-        messages.success(request, "Seller registration successful. Please login.")
-        return redirect("sellerlogin")
+        data=User.objects.filter(username=username,email=email)
+        if data:
+            return HttpResponse("user already exist")
+        else:
+            user=User.objects.create_user(username=username,
+                                          password=password,
+                                          email=email,
+                                          first_name=request.POST.get("first_name"),
+                                          last_name=request.POST.get("last_name"),
+                                          phone_number=request.POST.get("phone_number"),
+                                          role="seller",
+                                          profile_image=request.FILES.get("profile_image"),
+                                          )
+            
+            sellr=SellerProfile.objects.create( user=user,
+                                                store_name=request.POST.get("store_name"),
+                                                store_slug=slugify(request.POST.get("store_name")),
+                                                gst_number=request.POST.get("gst_number"),
+                                                pan_number=request.POST.get("pan_number"),
+                                                bank_account_number=request.POST.get("bank_account_number"),
+                                                ifsc_code=request.POST.get("ifsc_code"),
+                                                business_address=request.POST.get("business_address"),
+                                                )
+            
+            return redirect("/login/")
     return render(request,"seller/sellerregistration.html")
 
 def sellerlogin(request):
@@ -96,57 +52,22 @@ def sellerlogin(request):
         password=request.POST.get("password")
         data=authenticate(request,username=username,password=password)
         if data:
-            if str(getattr(data, "role", "")).upper() == "SELLER":
-                # Normalize legacy lowercase roles from older registrations.
-                if data.role != "SELLER":
-                    data.role = "SELLER"
-                    data.save(update_fields=["role"])
+            if data.role =="Seller":
                 login(request,data)
-                return redirect("sellerhome")
+                return redirect("/sellerhome/")
                 
             else:
                 messages.error(request,"invalid username or password")
-                return redirect("sellerlogin")
         else:
-            messages.error(request,"invalid username or password")
-            return redirect("sellerlogin")
+            return redirect("/seller/sellerhome/")     
     return render(request,"seller/sellerlogin.html")
 
 
 @seller_required
 def sellerhome(request):
-    seller = SellerProfile.objects.select_related("user").get(user=request.user)
-
-    # Order images so the "featured" one (is_primary=True) comes first; if none are
-    # marked primary, the first uploaded image is used as a fallback.
-    product_images_qs = (
-        ProductImage.objects.filter(product_images__isnull=False)
-        .exclude(product_images="")
-        .order_by("-is_primary", "id")
-    )
-    variants_qs = ProductVariant.objects.prefetch_related(Prefetch("images", queryset=product_images_qs))
-
-    products_qs = (
-        Product.objects.filter(seller=seller, is_active=True)
-        .select_related("subcategory")
-        .prefetch_related(Prefetch("variants", queryset=variants_qs))
-        .order_by("-created_at")
-    )
-
-    products = list(products_qs)
-    for product in products:
-        product.primary_image = None
-        for variant in product.variants.all():
-            images = list(variant.images.all())
-            if images:
-                product.primary_image = images[0]
-                break
-
-    return render(
-        request,
-        "seller/sellerhome.html",
-        {"products": products, "seller": seller},
-    )
+    seller=SellerProfile.objects.get(user=request.user)
+    products=(Product.objects.filter(seller=seller,is_active=True).prefetch_related("variants__images").order_by("-created_at"))
+    return render(request, "seller/sellerhome.html", {"products": products,"seller":seller})
 
 
 @seller_required
@@ -157,7 +78,7 @@ def sellerprofile(request):
 
 def seller_logout(request):
     logout(request)
-    return redirect('login')
+    return redirect('/login/')
 
 @seller_required
 def sellerproduct(request):
@@ -170,7 +91,6 @@ def sellerproduct(request):
             seller=SellerProfile.objects.get(user=request.user),
             subcategory=m,
             name=request.POST.get("name"),
-            slug=_unique_product_slug(request.POST.get("name")),
             description=request.POST.get("description"),
             brand=request.POST.get("brand"),
             model_number=request.POST.get("model_number"),
@@ -194,7 +114,7 @@ def sellerproduct(request):
             tax_percentage=request.POST.get("tax_percentage"),
         )
         
-        return redirect("sellerhome")
+        return redirect("/sellerhome/")
 
     return render(request,"seller/sellerproduct.html",{"sub":sub})    
 
@@ -230,7 +150,7 @@ def sellerproduct_update(request, id):
         variant.tax_percentage=request.POST.get("tax_percentage")
         variant.save()
 
-        return redirect("sellerhome")
+        return redirect("/sellerhome/")
     return render(request,"seller/sellerproductupdate.html",{"sub": sub,"product": product,"variant": variant})    
 
 @seller_required
@@ -243,7 +163,7 @@ def toggleproductstatus(request, slug):
     else:
         product.is_active = True
     product.save()
-    return redirect("sellerhome")
+    return redirect("/sellerhome/")
 
 
 @seller_required
@@ -260,8 +180,8 @@ def sellerimage(request,id):
     data=ProductImage()
     if request.method=="POST":
         data.variant=ProductVariant.objects.get(product=product)
-        data.product_images=request.FILES.get("images")
-        data.alt_text = (request.POST.get("alt_text") or "").strip()
+        data.images=request.FILES.get("images")
+        data.alt_text=request.POST.get("alt_text")
         data.is_primary = bool(request.POST.get("is_primary"))
         data.save()
     return render(request,"seller/sellerproductimages.html",{"images":images})
@@ -271,21 +191,19 @@ def sellerimage(request,id):
 def imagedelete(request,id):
     data=ProductImage.objects.get(id=id)
     data.delete()
-    previous_url = request.META.get("HTTP_REFERER")
-    return redirect(previous_url or "sellerhome")
+    return redirect("/sellerimage/")
 
 @seller_required
 def selleratribute(request):
     atr=AttributeOption()
     AT=Attribute.objects.all()
-    attribute_options = AttributeOption.objects.select_related("attribute").all().order_by("-id")
     if request.method=="POST":
-        atr.attribute=Attribute.objects.get(id=request.POST.get('attribute'))
+        atr.attribute=Attribute.objects.get(id=request.POST.get('Atribute'))
         atr.value=request.POST.get('value')
         atr.save()
-        return redirect('sellerattribute')
+        return redirect('/sellerhome/')
 
-    return render(request,"seller/sellerattribute.html",{"AT":AT,"attribute_options":attribute_options})
+    return render(request,"seller/sellerattribute.html",{"AT":AT})
 
 
 # @seller_required
@@ -329,16 +247,7 @@ def sellerorder(request):
 def productdelete(request,id):
     product=Product.objects.get(id=id)
     product.delete()
-    return redirect("sellerhome")
-
-
-@seller_required
-def delete_option(request, id):
-    if request.method == "POST":
-        option = AttributeOption.objects.filter(id=id).first()
-        if option:
-            option.delete()
-    return redirect("sellerattribute")
+    return redirect("/sellerhome/")
 
 
 
@@ -380,4 +289,3 @@ def sellerdashboard(request):
             active_orders += 1    
 
     return render(request, "seller/sellerdashboard.html",{"total_revenue":total_revenue,"total_products":total_products,"total_returns":total_returns,"active_orders":active_orders,"activelisting":activelisting,"seller":seller})
-
