@@ -47,20 +47,38 @@ def selleregis(request):
     return render(request,"seller/sellerregistration.html")
 
 def sellerlogin(request):
-    if request.method=="POST":
-        username=request.POST.get("username")
-        password=request.POST.get("password")
-        data=authenticate(request,username=username,password=password)
-        if data:
-            if data.role =="Seller":
-                login(request,data)
-                return redirect("/sellerhome/")
-                
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        data = authenticate(request, username=username, password=password)
+
+        if data is not None:
+
+            if data.role == "SELLER":
+
+                try:
+                    seller = SellerProfile.objects.get(user=data)
+
+                    if seller.is_verified:
+                        login(request, data)
+                        return redirect("/sellerhome/")
+                    else:
+                        messages.error(
+                            request,
+                            "You are not verified kindly try after some time"
+                        )
+
+                except SellerProfile.DoesNotExist:
+                    messages.error(request, "Seller profile not found")
+
             else:
-                messages.error(request,"invalid username or password")
+                messages.error(request, "You are not a seller")
+
         else:
-            return redirect("/seller/sellerhome/")     
-    return render(request,"seller/sellerlogin.html")
+            messages.error(request, "Invalid username or password")
+
+    return render(request, "seller/sellerlogin.html")
 
 
 @seller_required
