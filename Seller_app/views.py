@@ -43,7 +43,7 @@ def selleregis(request):
                                                 business_address=request.POST.get("business_address"),
                                                 )
             
-            return redirect("/Slogin/")
+            return redirect("/slogin/")
     return render(request,"seller/sellerregistration.html")
 
 def sellerlogin(request):
