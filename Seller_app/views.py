@@ -62,7 +62,7 @@ def sellerlogin(request):
 
                     if seller.is_verified:
                         login(request, data)
-                        return redirect("/sellerhome/")
+                        return redirect("sellerhome")
                     else:
                         messages.error(
                             request,
