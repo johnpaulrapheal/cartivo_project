@@ -29,7 +29,7 @@ def selleregis(request):
                                           first_name=request.POST.get("first_name"),
                                           last_name=request.POST.get("last_name"),
                                           phone_number=request.POST.get("phone_number"),
-                                          role="SELLER",
+                                          role="seller",
                                           profile_image=request.FILES.get("profile_image"),
                                           )
             
@@ -43,42 +43,24 @@ def selleregis(request):
                                                 business_address=request.POST.get("business_address"),
                                                 )
             
-            return redirect("/slogin/")
+            return redirect("/login/")
     return render(request,"seller/sellerregistration.html")
 
 def sellerlogin(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-
-        data = authenticate(request, username=username, password=password)
-
-        if data is not None:
-
-            if data.role == "SELLER":
-
-                try:
-                    seller = SellerProfile.objects.get(user=data)
-
-                    if seller.is_verified:
-                        login(request, data)
-                        return redirect("sellerhome")
-                    else:
-                        messages.error(
-                            request,
-                            "You are not verified kindly try after some time"
-                        )
-
-                except SellerProfile.DoesNotExist:
-                    messages.error(request, "Seller profile not found")
-
+    if request.method=="POST":
+        username=request.POST.get("username")
+        password=request.POST.get("password")
+        data=authenticate(request,username=username,password=password)
+        if data:
+            if data.role =="Seller":
+                login(request,data)
+                return redirect("/sellerhome/")
+                
             else:
-                messages.error(request, "You are not a seller")
-
+                messages.error(request,"invalid username or password")
         else:
-            messages.error(request, "Invalid username or password")
-
-    return render(request, "seller/sellerlogin.html")
+            return redirect("/seller/sellerhome/")     
+    return render(request,"seller/sellerlogin.html")
 
 
 @seller_required

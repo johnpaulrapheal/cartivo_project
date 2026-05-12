@@ -1051,4 +1051,30 @@ def razorpay_verify(request):
 
         except Exception:
             return JsonResponse({"status": "failed"})
+
+
+@customer_login_required
+def cod_payment(request):
+    """Handle Cash on Delivery payment - mark order as paid and redirect to confirmation"""
+    if request.method == "POST":
+        user = request.user
+        order = Order.objects.filter(user=user).first()
+        
+        if not order:
+            return JsonResponse({"status": "failed", "reason": "No order found"}, status=400)
+        
+        # Mark payment as completed for COD
+        order.payment_status = 'PENDING'
+        order.order_status='processing'
+        order.save()
+        
+        return JsonResponse({"status": "success"})
+    
+    return JsonResponse({"status": "failed", "reason": "Invalid request"}, status=400)
+
+
+@customer_login_required
+def payment_success_page(request):
+    """Display payment success page"""
+    return render(request, "user/payment_success.html")
   

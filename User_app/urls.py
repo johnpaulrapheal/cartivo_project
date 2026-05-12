@@ -26,6 +26,9 @@ urlpatterns=[
     path('payment_choice',views.user_payment_choice,name='payment_choice'),
     path('create_payment/', views.create_payment, name='create_payment'),
     path('razorpay_verify/', views.razorpay_verify, name='razorpay_verify'),
+    path('cod_payment/', views.cod_payment, name='cod_payment'),
+    path('payment_success/', views.payment_success_page, name='payment_success'),
+    path('success/', views.payment_success_page, name='success'),
 
     path('cart/',views.user_cart_display,name='cart'),
     path('add_cart/<int:id>/',views.user_cart,name='add_cart'),
